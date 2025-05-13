@@ -7,7 +7,7 @@ module org.example.testproj1 {
     requires org.kordamp.ikonli.javafx;
     requires org.kordamp.bootstrapfx.core;
     requires com.almasb.fxgl.all;
+    requires com.fasterxml.jackson.databind;
 
     opens org.example.testproj1 to javafx.fxml;
-    exports org.example.testproj1;
 }

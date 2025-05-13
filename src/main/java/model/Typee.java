@@ -1,9 +1,9 @@
 package model;
 
-public class Type {
+public class Typee {
     private String name;
     private int id;
-    public Type(int id) {
+    public Typee(int id) {
         this.id = id;
         if(id==1){
             this.name = "rectangle";
