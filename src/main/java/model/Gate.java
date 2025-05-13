@@ -6,6 +6,8 @@ public class Gate {
     private boolean is_outer;
     private double x;
     private double y;
+    private boolean in_use;
+    private Integer wire_id;
 
     public double getX() {
         return x;
@@ -45,6 +47,22 @@ public class Gate {
 
     public void setIs_outer(boolean is_outer) {
         this.is_outer = is_outer;
+    }
+
+    public Typee getTypee() {
+        return typee;
+    }
+
+    public void setTypee(Typee typee) {
+        this.typee = typee;
+    }
+
+    public boolean isIn_use() {
+        return in_use;
+    }
+
+    public void setIn_use(boolean in_use) {
+        this.in_use = in_use;
     }
 
     public Gate() {

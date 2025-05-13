@@ -7,9 +7,8 @@ public class Signal {
     private String state;
     private int noise;
     private double length_on_wire;
-    private Wire linked_wire;
+    private Wire linked_decoy_wire;
     private boolean is_updated;
-
 
     public Signal() {}
 
@@ -45,12 +44,12 @@ public class Signal {
         this.length_on_wire = length_on_wire;
     }
 
-    public Wire getLinked_wire() {
-        return linked_wire;
+    public Wire getLinked_decoy_wire() {
+        return linked_decoy_wire;
     }
 
-    public void setLinked_wire(Wire linked_wire) {
-        this.linked_wire = linked_wire;
+    public void setLinked_decoy_wire(Wire linked_decoy_wire) {
+        this.linked_decoy_wire = linked_decoy_wire;
     }
 
     public boolean isIs_updated() {
