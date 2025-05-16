@@ -30,12 +30,7 @@ public class Methods {
         return null;
 
     }
-    public Wire assign_Wire(int given_wire_id){
-        for(Wire wire: level_stack.wires){
-            if(wire.getWire_id()==given_wire_id){
-                return wire;
-            }
-        }
-        return null;
+    public void update_signal_postion_onwire(Signal signal) {
+
     }
 }

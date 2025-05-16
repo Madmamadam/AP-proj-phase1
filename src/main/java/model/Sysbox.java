@@ -8,21 +8,13 @@ import java.io.ObjectInputFilter;
 import java.util.ArrayList;
 
 public class Sysbox {
-    private int id;
     private Rectangle rectangle;
     private boolean indicator_state;
     private Rectangle indicator_rectangle;
     public ArrayList<Signal> signal_bank = new ArrayList<>();
     public ArrayList<Gate> inner_gates = new ArrayList<>(); ;
     public ArrayList<Gate> outer_gates = new ArrayList<>(); ;
-
-    public int getId() {
-        return id;
-    }
-
-    public void setId(int id) {
-        this.id = id;
-    }
+    public boolean isupdated;
 
     public Rectangle getRectangle() {
         return rectangle;

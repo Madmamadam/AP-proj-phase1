@@ -1,15 +1,22 @@
 package model;
 
 public class Wire {
-    private int wire_id;
     Gate decoy_firstgate;
     Gate decoy_secondgate;
 
-    public int getWire_id() {
-        return wire_id;
+    public Gate getDecoy_firstgate() {
+        return decoy_firstgate;
     }
 
-    public void setWire_id(int wire_id) {
-        this.wire_id = wire_id;
+    public void setDecoy_firstgate(Gate decoy_firstgate) {
+        this.decoy_firstgate = decoy_firstgate;
+    }
+
+    public Gate getDecoy_secondgate() {
+        return decoy_secondgate;
+    }
+
+    public void setDecoy_secondgate(Gate decoy_secondgate) {
+        this.decoy_secondgate = decoy_secondgate;
     }
 }

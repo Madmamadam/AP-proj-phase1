@@ -3,6 +3,13 @@ package mains;
 import javafx.scene.paint.Color;
 
 public class Configg {
+    int bank_capacity=5;
+    double delta_wire_length;
+
+
+
+
+
     double sysbox_default_width=40;
     double sysbox_default_height=100;
     double indicator_default_width=4;
@@ -19,6 +26,16 @@ public class Configg {
     Color off_indicator_color=Color.GREEN;
     Color on_indicator_color=Color.BLUE;
     Color sysbox_color=Color.PURPLE;
+
+
+
+    public int getBank_capacity() {
+        return bank_capacity;
+    }
+
+    public double getDelta_wire_length() {
+        return delta_wire_length;
+    }
 
     public Color getSysbox_color() {
         return sysbox_color;
