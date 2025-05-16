@@ -1,13 +1,18 @@
 package model;
 
+import javafx.scene.shape.Polygon;
+
+import java.util.Objects;
+
 public class Gate {
-    private int sysbox_id;
+    private Sysbox sysbox;
     private Typee typee;
     private boolean is_outer;
     private double x;
     private double y;
     private boolean in_use;
-    private Integer wire_id;
+    private Wire wire;
+    public Polygon poly=new Polygon();
 
     public double getX() {
         return x;
@@ -25,23 +30,27 @@ public class Gate {
         this.y = y;
     }
 
-    public int getSysbox_id() {
-        return sysbox_id;
+    public Sysbox getSysbox() {
+        return sysbox;
     }
 
-    public void setSysbox_id(int sysbox_id) {
-        this.sysbox_id = sysbox_id;
-    }
-
-    public Typee getType() {
-        return typee;
-    }
-
-    public void setType(Typee typee) {
-        this.typee = typee;
+    public void setSysbox(Sysbox sysbox) {
+        this.sysbox = sysbox;
     }
 
     public boolean isIs_outer() {
+        return is_outer;
+    }
+
+    public Wire getWire() {
+        return wire;
+    }
+
+    public void setWire(Wire wire) {
+        this.wire = wire;
+    }
+
+    public boolean Is_outer() {
         return is_outer;
     }
 
@@ -69,8 +78,17 @@ public class Gate {
 
     }
 
+
+    public Gate cloneGate() {
+        return new Gate(this.typee, this.is_outer);
+    }
     public Gate(Typee typee, boolean is_outer) {
         this.typee = typee;
         this.is_outer = is_outer;
+//        if (Objects.equals(this.typee.getName(), "rectangle")) {
+//            poly.getPoints().clear();
+//            poly.getPoints().addAll(this.x);
+//
+//        }
     }
 }

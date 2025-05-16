@@ -3,15 +3,22 @@ package mains;
 import javafx.scene.paint.Color;
 
 public class Configg {
-    double sysbox_default_width=20;
-    double sysbox_default_height=50;
+    double sysbox_default_width=40;
+    double sysbox_default_height=100;
     double indicator_default_width=4;
     double indicator_default_height=2;
     double indicator_y_from_head=5;
-    Color off_indicator_color=Color.BLACK;
+    double border=0.2;
+
+    double gate_rectangle_width=10;
+    double gate_rectangle_height=10;
+    double gate_triangle_radius =10;
+    Color gate_rectangle_color=Color.BROWN;
+    Color gate_triangle_color=Color.BROWN;
+
+    Color off_indicator_color=Color.GREEN;
     Color on_indicator_color=Color.BLUE;
-    Color sysbox_color=Color.WHITE;
-    double border=2;
+    Color sysbox_color=Color.PURPLE;
 
     public Color getSysbox_color() {
         return sysbox_color;
@@ -85,6 +92,47 @@ public class Configg {
         this.border = border;
     }
 
+    public double getGate_rectangle_width() {
+        return gate_rectangle_width;
+    }
+
+    public void setGate_rectangle_width(double gate_rectangle_width) {
+        this.gate_rectangle_width = gate_rectangle_width;
+    }
+
+    public double getGate_rectangle_height() {
+        return gate_rectangle_height;
+    }
+
+    public void setGate_rectangle_height(double gate_rectangle_height) {
+        this.gate_rectangle_height = gate_rectangle_height;
+    }
+
+    public double getGate_triangle_radius() {
+        return gate_triangle_radius;
+    }
+
+    public void setGate_triangle_radius(double gate_triangle_radius) {
+        this.gate_triangle_radius = gate_triangle_radius;
+    }
+
+    public Color getGate_rectangle_color() {
+        return gate_rectangle_color;
+    }
+
+    public void setGate_rectangle_color(Color gate_rectangle_color) {
+        this.gate_rectangle_color = gate_rectangle_color;
+    }
+
+    public Color getGate_triangle_color() {
+        return gate_triangle_color;
+    }
+
+    public void setGate_triangle_color(Color gate_triangle_color) {
+        this.gate_triangle_color = gate_triangle_color;
+    }
+
+    private Configg(){}
     private static Configg instance;
     public static Configg getInstance() {
         if (instance == null) {

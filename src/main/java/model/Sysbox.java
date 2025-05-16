@@ -49,19 +49,35 @@ public class Sysbox {
     }
 
     public Sysbox() {
-        Configg cons=Configg.getInstance();
-        this.rectangle = new Rectangle();
-        this.rectangle.setFill(cons.getSysbox_color());
-        this.indicator_rectangle.setFill(cons.getOff_indicator_color());
+//        Configg cons=Configg.getInstance();
+//        this.rectangle = new Rectangle();
+//        this.indicator_rectangle=new Rectangle();
+//        this.rectangle.setFill(cons.getSysbox_color());
+//        this.indicator_rectangle.setFill(cons.getOff_indicator_color());
+//        this.indicator_rectangle.setWidth(cons.getIndicator_default_width());
+//        this.indicator_rectangle.setHeight(cons.getIndicator_default_height());
     }
     public Sysbox(int x,int y) {
-        this();
         Configg cons=Configg.getInstance();
-        this.rectangle = new Rectangle(x,y,cons.getIndicator_default_width(),cons.getIndicator_default_height());
+        this.rectangle = new Rectangle(x,y,cons.getSysbox_default_width(),cons.getSysbox_default_height());
+        this.rectangle.setFill(cons.getSysbox_color());
+        this.indicator_rectangle=new Rectangle();
+        this.indicator_rectangle.setFill(cons.getOff_indicator_color());
+        this.indicator_rectangle.setWidth(cons.getIndicator_default_width());
+        this.indicator_rectangle.setHeight(cons.getIndicator_default_height());
+        this.indicator_rectangle.setX(this.rectangle.getX()+this.rectangle.getWidth()/2-this.indicator_rectangle.getWidth()/2);
+        this.indicator_rectangle.setY(this.rectangle.getY()+cons.getIndicator_y_from_head());
     }
     public Sysbox(int x ,int y, int width, int height) {
-        this();
+        Configg cons=Configg.getInstance();
         this.rectangle = new Rectangle(x, y, width, height);
+        this.rectangle.setFill(cons.getSysbox_color());
+        this.indicator_rectangle=new Rectangle();
+        this.indicator_rectangle.setFill(cons.getOff_indicator_color());
+        this.indicator_rectangle.setWidth(cons.getIndicator_default_width());
+        this.indicator_rectangle.setHeight(cons.getIndicator_default_height());
+        this.indicator_rectangle.setX(this.rectangle.getX()+this.rectangle.getWidth()/2-this.indicator_rectangle.getWidth()/2);
+        this.indicator_rectangle.setY(this.rectangle.getY()+cons.getIndicator_y_from_head());
     }
 
 
