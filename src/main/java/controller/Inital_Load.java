@@ -2,6 +2,7 @@ package controller;
 
 import mains.Configg;
 import mains.Filee;
+import model.Signal;
 import model.Sysbox;
 
 public class Inital_Load {
@@ -28,9 +29,11 @@ public class Inital_Load {
     }
 
 
-    public void Load_and_Signal_Stack(){
+    public void Load_and_initial_Signal_Stack(){
         for (Sysbox sysbox :Filee.level_stack.sysboxes){
+            for (Signal signal : sysbox.signal_bank){
 
+            }
         }
     }
 }

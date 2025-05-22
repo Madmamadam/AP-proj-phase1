@@ -1,9 +1,12 @@
 package view;
 
+import javafx.animation.PauseTransition;
+import javafx.util.Duration;
 import mains.Configg;
 import model.Gate;
 import model.Signal;
 import model.Sysbox;
+import model.Wire;
 
 import java.util.Objects;
 
@@ -16,8 +19,7 @@ import static mains.Main.just_game_pane;
 public class Paintt {
     public void addtopane_signals() {
         for (Signal signal : level_stack.signals) {
-
-
+            just_game_pane.getChildren().add(signal.poly);
         }
     }
     public void addtopane_sysboxsandindicators(){
@@ -57,4 +59,7 @@ public class Paintt {
             }
         }
     }
+
+
+
 }

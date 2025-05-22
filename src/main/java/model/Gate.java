@@ -13,6 +13,8 @@ public class Gate {
     private boolean in_use;
     private Wire wire;
     public Polygon poly=new Polygon();
+    private double line_width=12;
+
 
     public double getX() {
         return x;
@@ -72,6 +74,14 @@ public class Gate {
 
     public void setIn_use(boolean in_use) {
         this.in_use = in_use;
+    }
+
+    public double getLine_width() {
+        return line_width;
+    }
+
+    public void setLine_width(double line_width) {
+        this.line_width = line_width;
     }
 
     public Gate() {

@@ -1,22 +1,74 @@
 package model;
 
+import javafx.scene.shape.Line;
+import mains.Configg;
+
 public class Wire {
-    Gate decoy_firstgate;
-    Gate decoy_secondgate;
+    private Gate firstgate;
+    private Gate secondgate;
+    private double length;
+    private Line line ;
 
-    public Gate getDecoy_firstgate() {
-        return decoy_firstgate;
+
+    public Wire(){
+        Configg cons = Configg.getInstance();
+        line=new Line();
+        line.setStrokeWidth(cons.getLine_width());
+        line.setStroke(cons.getLine_color());
+
+    }
+    public Wire(Gate firstgate, Gate secondgate) {
+        Configg cons = Configg.getInstance();
+        this.firstgate = firstgate;
+        this.secondgate = secondgate;
+        this.line=new Line(firstgate.getX(),firstgate.getY(),secondgate.getX(),secondgate.getY());
+        line.setStrokeWidth(cons.getLine_width());
+        line.setStroke(cons.getLine_color());
     }
 
-    public void setDecoy_firstgate(Gate decoy_firstgate) {
-        this.decoy_firstgate = decoy_firstgate;
+    public Gate getFirstgate() {
+        return firstgate;
     }
 
-    public Gate getDecoy_secondgate() {
-        return decoy_secondgate;
+    public void setFirstgate(Gate firstgate) {
+        Configg cons = Configg.getInstance();
+        this.firstgate = firstgate;
+        if(secondgate!= null){
+            line=new Line(firstgate.getX(),firstgate.getY(),secondgate.getX(),secondgate.getY());
+            line.setStrokeWidth(cons.getLine_width());
+            line.setStroke(cons.getLine_color());
+        }
     }
 
-    public void setDecoy_secondgate(Gate decoy_secondgate) {
-        this.decoy_secondgate = decoy_secondgate;
+    public Gate getSecondgate() {
+        return secondgate;
+    }
+
+    public void setSecondgate(Gate secondgate) {
+        Configg cons = Configg.getInstance();
+        this.secondgate = secondgate;
+        if(firstgate!= null){
+            line=new Line(firstgate.getX(),firstgate.getY(),secondgate.getX(),secondgate.getY());
+            line.setStrokeWidth(cons.getLine_width());
+            line.setFill(cons.getLine_color());
+        }
+    }
+    public double getLength() {
+        return length;
+    }
+    public void setLength(double length) {
+        this.length = length;
+    }
+
+    public Line getLine() {
+        return line;
+    }
+
+    public void setLine(Line line) {
+        this.line = line;
+    }
+
+    public Wire cloneWire() {
+        return new Wire(this.firstgate, this.secondgate);
     }
 }

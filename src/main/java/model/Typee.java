@@ -3,6 +3,10 @@ package model;
 public class Typee {
     private String name;
     private int id;
+
+
+
+    private Typee(){}
     public Typee(int id) {
         this.id = id;
         if(id==1){

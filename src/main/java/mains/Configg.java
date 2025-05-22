@@ -3,29 +3,38 @@ package mains;
 import javafx.scene.paint.Color;
 
 public class Configg {
-    int bank_capacity=5;
-    double delta_wire_length;
+    private int bank_capacity=5;
+    private double delta_wire_length;
 
 
 
 
 
-    double sysbox_default_width=40;
-    double sysbox_default_height=100;
-    double indicator_default_width=4;
-    double indicator_default_height=2;
-    double indicator_y_from_head=5;
-    double border=0.2;
+    private double sysbox_default_width=40;
+    private double sysbox_default_height=100;
+    private double indicator_default_width=4;
+    private double indicator_default_height=2;
+    private double indicator_y_from_head=5;
+    private double border=0.2;
 
-    double gate_rectangle_width=10;
-    double gate_rectangle_height=10;
-    double gate_triangle_radius =10;
-    Color gate_rectangle_color=Color.BROWN;
-    Color gate_triangle_color=Color.BROWN;
+    private double gate_rectangle_width=15;
+    private double gate_rectangle_height=15;
+    private double gate_triangle_radius =12;
+    private Color gate_rectangle_color=Color.BROWN;
+    private Color gate_triangle_color=Color.BROWN;
 
-    Color off_indicator_color=Color.GREEN;
-    Color on_indicator_color=Color.BLUE;
-    Color sysbox_color=Color.PURPLE;
+    private double signal_rectangle_width=gate_rectangle_width;
+    private double signal_rectangle_height=gate_rectangle_height;
+    private double signal_triangle_radius =gate_triangle_radius;
+
+    private Color off_indicator_color=Color.GREEN;
+    private Color on_indicator_color=Color.BLUE;
+    private Color sysbox_color=Color.PURPLE;
+
+    private Color line_color=Color.GREEN;
+    private Color wrong_line_color=Color.RED;
+    private double seeing_wrong_line_duration=3;
+    private double line_width=4;
 
 
 
@@ -147,6 +156,46 @@ public class Configg {
 
     public void setGate_triangle_color(Color gate_triangle_color) {
         this.gate_triangle_color = gate_triangle_color;
+    }
+
+    public double getSignal_rectangle_width() {
+        return signal_rectangle_width;
+    }
+
+    public double getSignal_rectangle_height() {
+        return signal_rectangle_height;
+    }
+
+    public double getSignal_triangle_radius() {
+        return signal_triangle_radius;
+    }
+
+    public double getLine_width() {
+        return line_width;
+    }
+
+    public void setLine_width(double line_width) {
+        this.line_width = line_width;
+    }
+
+    public Color getLine_color() {
+        return line_color;
+    }
+
+    public void setLine_color(Color line_color) {
+        this.line_color = line_color;
+    }
+
+    public Color getWrong_line_color() {
+        return wrong_line_color;
+    }
+
+    public void setWrong_line_color(Color wrong_line_color) {
+        this.wrong_line_color = wrong_line_color;
+    }
+
+    public double getSeeing_wrong_line_duration() {
+        return seeing_wrong_line_duration;
     }
 
     private Configg(){}

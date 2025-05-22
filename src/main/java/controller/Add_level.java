@@ -2,6 +2,7 @@ package controller;
 
 import mains.Filee;
 import model.Gate;
+import model.Signal;
 import model.Sysbox;
 import model.Typee;
 
@@ -11,10 +12,20 @@ import static mains.Filee.level_stack;
 
 public class Add_level {
     public static void start(){
+        //level constraint
+        level_stack.constraintss.setMaximum_length(555000);
+
+
+        //intial model
         Gate gateout1 = new Gate(new Typee(1),true);
         Gate gateout2 = new Gate(new Typee(2),true);
         Gate gatein1 = new Gate(new Typee(1),false);
         Gate gatein2 = new Gate(new Typee(2),false);
+
+        Signal recSignal = new Signal(new Typee(1));
+        Signal triSignal = new Signal(new Typee(2));
+
+
         level_stack.sysboxes.add(new Sysbox(50,50,150,400));
         level_stack.sysboxes.getLast().inner_gates.addAll(Arrays.asList(gatein1.cloneGate(), gatein2.cloneGate(), gatein1.cloneGate()));
         level_stack.sysboxes.getLast().outer_gates.addAll(Arrays.asList(gateout1.cloneGate(), gateout1.cloneGate(), gateout2.cloneGate()));
@@ -25,6 +36,9 @@ public class Add_level {
         level_stack.sysboxes.add(new Sysbox(450,45));
         level_stack.sysboxes.getLast().inner_gates.addAll(Arrays.asList(gatein1.cloneGate(), gatein1.cloneGate()));
         level_stack.sysboxes.getLast().outer_gates.addAll(Arrays.asList(gateout2.cloneGate(), gateout1.cloneGate()));
+
+        Sysbox starterSysbox = level_stack.sysboxes.getFirst();
+        starterSysbox.signal_bank.addAll(Arrays.asList(recSignal.cloneSignal(),recSignal.cloneSignal(),triSignal.cloneSignal()));
 
         for(Sysbox sysbox:level_stack.sysboxes) {
             Inital_Load.GateAssign(sysbox);

@@ -14,7 +14,8 @@ public class Sysbox {
     public ArrayList<Signal> signal_bank = new ArrayList<>();
     public ArrayList<Gate> inner_gates = new ArrayList<>(); ;
     public ArrayList<Gate> outer_gates = new ArrayList<>(); ;
-    public boolean isupdated;
+    public boolean is_startter;
+
 
     public Rectangle getRectangle() {
         return rectangle;
@@ -50,6 +51,7 @@ public class Sysbox {
 //        this.indicator_rectangle.setHeight(cons.getIndicator_default_height());
     }
     public Sysbox(int x,int y) {
+        this.is_startter=false;
         Configg cons=Configg.getInstance();
         this.rectangle = new Rectangle(x,y,cons.getSysbox_default_width(),cons.getSysbox_default_height());
         this.rectangle.setFill(cons.getSysbox_color());
@@ -59,9 +61,11 @@ public class Sysbox {
         this.indicator_rectangle.setHeight(cons.getIndicator_default_height());
         this.indicator_rectangle.setX(this.rectangle.getX()+this.rectangle.getWidth()/2-this.indicator_rectangle.getWidth()/2);
         this.indicator_rectangle.setY(this.rectangle.getY()+cons.getIndicator_y_from_head());
+        this.signal_bank=new ArrayList<>();
     }
     public Sysbox(int x ,int y, int width, int height) {
         Configg cons=Configg.getInstance();
+        this.is_startter=false;
         this.rectangle = new Rectangle(x, y, width, height);
         this.rectangle.setFill(cons.getSysbox_color());
         this.indicator_rectangle=new Rectangle();
@@ -70,6 +74,7 @@ public class Sysbox {
         this.indicator_rectangle.setHeight(cons.getIndicator_default_height());
         this.indicator_rectangle.setX(this.rectangle.getX()+this.rectangle.getWidth()/2-this.indicator_rectangle.getWidth()/2);
         this.indicator_rectangle.setY(this.rectangle.getY()+cons.getIndicator_y_from_head());
+        this.signal_bank=new ArrayList<>();
     }
 
 

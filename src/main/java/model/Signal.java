@@ -5,20 +5,83 @@ import javafx.scene.shape.Polygon;
 public class Signal {
 //  anything
     private Typee typee;
-//    can be on_wire on_sysbox ended
+//    can be 1.on_wire 2.on_sysbox 3.ended
     private String state;
-    private int noise;
+    private double noise;
     private double length_on_wire;
     private Wire linked_wire;
     private boolean is_updated;
 
     private double x;
     private double y;
-    public Polygon poly;
+    public Polygon poly=new Polygon();
+    private double x_on_wire;
+    private double y_on_wire;
+    private double x_ekhtelaf;
+    private double y_ekhtelaf;
 
+    public Signal(Typee typee) {
+        x_ekhtelaf=0.0;
+        y_ekhtelaf=0.0;
+        noise=0.0;
+        length_on_wire=0.0;
+        is_updated=false;
+        this.typee=typee;
+        state="on_wire";
+    }
+    public Signal cloneSignal() {
+        return new Signal(this.typee);
+    }
 
+    public double getY() {
+        return y;
+    }
 
-    public Signal() {}
+    public void setY(double y) {
+        this.y = y;
+    }
+
+    public double getX() {
+        return x;
+    }
+
+    public void setX(double x) {
+        this.x = x;
+    }
+
+    public double getX_on_wire() {
+        return x_on_wire;
+    }
+
+    public void setX_on_wire(double x_on_wire) {
+        this.x_on_wire = x_on_wire;
+        this.x=this.x_on_wire+this.x_ekhtelaf;
+    }
+
+    public double getY_on_wire() {
+        return y_on_wire;
+    }
+
+    public void setY_on_wire(double y_on_wire) {
+        this.y_on_wire = y_on_wire;
+        this.y=this.y_on_wire+this.y_ekhtelaf;
+    }
+
+    public double getX_ekhtelaf() {
+        return x_ekhtelaf;
+    }
+
+    public void setX_ekhtelaf(double x_ekhtelaf) {
+        this.x_ekhtelaf = x_ekhtelaf;
+    }
+
+    public double getY_ekhtelaf() {
+        return y_ekhtelaf;
+    }
+
+    public void setY_ekhtelaf(double y_ekhtelaf) {
+        this.y_ekhtelaf = y_ekhtelaf;
+    }
 
     public Typee getTypee() {
         return typee;
@@ -36,7 +99,7 @@ public class Signal {
         this.state = state;
     }
 
-    public int getNoise() {
+    public double getNoise() {
         return noise;
     }
 
