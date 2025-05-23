@@ -1,20 +1,18 @@
 package model;
 
-import javafx.scene.shape.Polygon;
 import javafx.scene.shape.Rectangle;
 import mains.Configg;
 
-import java.io.ObjectInputFilter;
 import java.util.ArrayList;
 
 public class Sysbox {
     private Rectangle rectangle;
-    private boolean indicator_state;
+    private boolean indicator_on_state;
     private Rectangle indicator_rectangle;
     public ArrayList<Signal> signal_bank = new ArrayList<>();
     public ArrayList<Gate> inner_gates = new ArrayList<>(); ;
     public ArrayList<Gate> outer_gates = new ArrayList<>(); ;
-    public boolean is_startter;
+    private boolean starter;
 
 
     public Rectangle getRectangle() {
@@ -25,12 +23,14 @@ public class Sysbox {
         this.rectangle = rectangle;
     }
 
-    public boolean isIndicator_state() {
-        return indicator_state;
+    public boolean isIndicator_on_state() {
+        return indicator_on_state;
     }
 
-    public void setIndicator_state(boolean indicator_state) {
-        this.indicator_state = indicator_state;
+    public void setIndicator_on_state(boolean indicator_on_state) {
+        Configg cons = Configg.getInstance();
+        this.indicator_on_state = indicator_on_state;
+        indicator_rectangle.setFill(indicator_on_state ? cons.getOn_indicator_color() : cons.getOff_indicator_color());
     }
 
     public Rectangle getIndicator_rectangle() {
@@ -39,6 +39,14 @@ public class Sysbox {
 
     public void setIndicator_rectangle(Rectangle indicator_rectangle) {
         this.indicator_rectangle = indicator_rectangle;
+    }
+
+    public boolean isStarter() {
+        return starter;
+    }
+
+    public void setStarter(boolean starter) {
+        this.starter = starter;
     }
 
     public Sysbox() {
@@ -51,7 +59,7 @@ public class Sysbox {
 //        this.indicator_rectangle.setHeight(cons.getIndicator_default_height());
     }
     public Sysbox(int x,int y) {
-        this.is_startter=false;
+        this.starter =false;
         Configg cons=Configg.getInstance();
         this.rectangle = new Rectangle(x,y,cons.getSysbox_default_width(),cons.getSysbox_default_height());
         this.rectangle.setFill(cons.getSysbox_color());
@@ -65,7 +73,7 @@ public class Sysbox {
     }
     public Sysbox(int x ,int y, int width, int height) {
         Configg cons=Configg.getInstance();
-        this.is_startter=false;
+        this.starter =false;
         this.rectangle = new Rectangle(x, y, width, height);
         this.rectangle.setFill(cons.getSysbox_color());
         this.indicator_rectangle=new Rectangle();

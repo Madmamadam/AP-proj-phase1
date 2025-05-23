@@ -2,21 +2,23 @@ package mains;
 
 import controller.Add_level;
 import controller.Controller;
-import controller.Inital_Load;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
 import javafx.application.Application;
 import javafx.scene.Scene;
+import javafx.scene.input.KeyCombination;
 import javafx.scene.layout.Pane;
+import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
 import javafx.util.Duration;
 import view.Paintt;
 
-import static mains.Filee.level_stack;
-
 public class Main extends Application {
     public static Pane just_game_pane = new Pane();
     public static Boolean stop_wiring = false;
+    public static Pane HUDpane = new Pane();
+    public static StackPane main_game_root = new StackPane(just_game_pane, HUDpane);
+
 //    public static void main(String[] args) {
 
 
@@ -29,7 +31,15 @@ public class Main extends Application {
     @Override
     public void start(Stage primaryStage) throws Exception {
         Paintt paintt = new Paintt();
-        Scene main_game_scene = new Scene(just_game_pane);
+
+
+
+
+        paintt.initial_UI();
+        Scene main_game_scene = new Scene(main_game_root);
+        primaryStage.setScene(main_game_scene);
+        primaryStage.setFullScreenExitKeyCombination(KeyCombination.NO_MATCH); // غیرفعال‌سازی ESC
+        primaryStage.setFullScreen(true);
         primaryStage.setScene(main_game_scene);
         primaryStage.show();
         Add_level.start();
@@ -44,13 +54,22 @@ public class Main extends Application {
 
 
 //      in signal move mode
-        Timeline timeline = new Timeline(new KeyFrame(Duration.millis(17), event -> {
+        Timeline timeline_wiring = new Timeline(new KeyFrame(Duration.millis(17*6), event -> {
 //            Controller.wiring();
 
-//            Controller.Signals_Update();
+            Controller.indicator_update();
         }));
 
-        timeline.setCycleCount(Timeline.INDEFINITE);
-        timeline.play();
+        timeline_wiring.setCycleCount(Timeline.INDEFINITE);
+        timeline_wiring.play();
+
+        Timeline timeline_signals_run = new Timeline(new KeyFrame(Duration.millis(17), event -> {
+            if (stop_wiring) {
+                Controller.Signals_Update();
+
+            }
+        }));
+        timeline_signals_run.setCycleCount(Timeline.INDEFINITE);
+        timeline_signals_run.play();
     }
 }

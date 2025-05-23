@@ -29,17 +29,13 @@ public class Controller {
         //first: update signals that on sysbox  (Assign wire)
         for (Sysbox sysbox : level_stack.sysboxes) {
 
-            for (int i=0;i<cons.getBank_capacity() &&sysbox.signal_bank.getFirst()!=null;i++){
+            for (int i=0;i<cons.getBank_capacity() && !sysbox.signal_bank.isEmpty();i++){
                 Signal signal=sysbox.signal_bank.getFirst();
                 signal.setIs_updated(true);
                 if(methods.recommended_gate(sysbox,signal) != null){
                     Gate recom_gate = (Gate) methods.recommended_gate(sysbox,signal);
-                    signal.setLinked_wire(recom_gate.getWire());
-                    signal.setLength_on_wire(0.0);
+                    signal_go_to_wire(signal,recom_gate);
 
-                    sysbox.signal_bank.removeFirst();
-                    signal.setState("on_wire");
-                    just_game_pane.getChildren().add(signal.poly);
                 }
                 //if every gate is used
                 else {
@@ -55,7 +51,7 @@ public class Controller {
                     Sysbox sysbox =signal.getLinked_wire().getSecondgate().getSysbox();
                     sysbox.signal_bank.add(signal);
                     just_game_pane.getChildren().remove(signal.poly);
-                    if(sysbox.is_startter){
+                    if(sysbox.isStarter()){
                         signal.setState("ended");
                     }
                     else {
@@ -64,6 +60,7 @@ public class Controller {
                 }
                 else {
                     methods.update_signal_onwire(signal);
+                    System.out.println("update on wire ");
                 }
             }
             else{
@@ -72,6 +69,16 @@ public class Controller {
 
         }
 
+    }
+
+    private static void signal_go_to_wire(Signal signal, Gate recom_gate) {
+        signal.setLinked_wire(recom_gate.getWire());
+        signal.setLength_on_wire(0.0);
+        recom_gate.getSysbox().signal_bank.removeFirst();
+        signal.setState("on_wire");
+        System.out.println("go to on wire ");
+        recom_gate.setIn_use(true);
+        just_game_pane.getChildren().add(signal.poly);
     }
 
 
@@ -85,7 +92,6 @@ public class Controller {
         for (Sysbox sysbox : level_stack.sysboxes) {
             for(Gate gate:sysbox.inner_gates){
                 gate.poly.setOnMousePressed(e -> {if(stop_wiring) return;
-                    System.out.println("caught in inner gates");
                     Wire candidate_wire = new Wire();
                     candidate_wire.setFirstgate(gate);
                     decoy_wire.set(candidate_wire);
@@ -94,7 +100,6 @@ public class Controller {
             }
             for(Gate gate:sysbox.outer_gates){
                 gate.poly.setOnMousePressed(e -> {if(stop_wiring) return;
-                    System.out.println("caught in outer gates");
                     Wire candidate_wire = new Wire();
                     candidate_wire.setFirstgate(gate);
                     decoy_wire.set(candidate_wire);
@@ -108,10 +113,8 @@ public class Controller {
         //----------------------------second selection
         boolean ended_correctly = false;
         just_game_pane.setOnMouseReleased(event -> { if(stop_wiring) return;
-            System.out.println("just released (isstartedinGate="+isStartedinGate.get()+")");
             if(isStartedinGate.get()) {
                 isStartedinGate.set(false);
-                System.out.println("started from a gate");
                 Node nodeUnderMouse = event.getPickResult().getIntersectedNode();
 
                 AtomicBoolean isEndedinGate = new AtomicBoolean(false);
@@ -191,4 +194,75 @@ public class Controller {
         pause.play();
     }
 
+    public static void exit() {
+        System.exit(1);
+    }
+
+    public static void run_stop_button_pressed() {
+        if(stop_wiring){
+            time_to_restart();
+        }
+        else {
+            boolean access=true;
+            for(Sysbox sysbox: level_stack.sysboxes) {
+                if(!sysbox.isIndicator_on_state()){
+                    access=false;
+                    break;
+                }
+                for(Gate gate: sysbox.inner_gates) {
+                    if(gate.getWire()==null){
+                        access=false;
+                    }
+                }
+                for(Gate gate: sysbox.outer_gates) {
+                    if(gate.getWire()==null){
+                        access=false;
+                    }
+                }
+            }
+            if(access){
+                time_to_stop_wiring();
+            }
+            else {
+                false_try_for_stop_wiring();
+            }
+
+        }
+
+    }
+
+    private static void time_to_restart() {
+    }
+
+    private static void false_try_for_stop_wiring() {
+    }
+
+    private static void time_to_stop_wiring() {
+        stop_wiring=true;
+    }
+
+
+    public static void indicator_update() {
+        for(Sysbox sysbox : level_stack.sysboxes) {
+            if(sysbox.isStarter()){
+                sysbox.setIndicator_on_state(true);
+            }
+            else {
+                boolean found = false;
+    //            System.out.println("sysbox.isStarter()"+sysbox.isStarter());
+                for (Gate gate : sysbox.inner_gates) {
+                    if(gate.getWire()!=null){
+                        if(gate.getWire().getFirstgate().getSysbox().isIndicator_on_state()){
+                            sysbox.setIndicator_on_state(true);
+                            found = true;
+                            break;
+                        }
+                    }
+                }
+                if(!found){
+                    sysbox.setIndicator_on_state(false);
+                }
+            }
+        }
+    }
 }

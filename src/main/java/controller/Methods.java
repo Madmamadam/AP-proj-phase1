@@ -19,7 +19,7 @@ public class Methods {
         boolean second_found = false;
         Gate secound_gate = null;
         for(Gate gate:sysbox.outer_gates){
-            if (Objects.equals(gate.getTypee(),signal.getTypee()) && !gate.isIn_use()){
+            if (Objects.equals(gate.getTypee().getName(),signal.getTypee().getName()) && !gate.isIn_use()){
                 return gate;
             }
             if(!gate.isIn_use() && !second_found){
@@ -51,11 +51,14 @@ public class Methods {
             poly.getPoints().addAll(signal.getX()-cons.getSignal_rectangle_width()/2,signal.getY()+cons.getSignal_rectangle_height()/2);
             poly.getPoints().addAll(signal.getX()+cons.getSignal_rectangle_width()/2,signal.getY()+cons.getSignal_rectangle_height()/2);
             poly.getPoints().addAll(signal.getX()+cons.getSignal_rectangle_width()/2,signal.getY()-cons.getSignal_rectangle_height()/2);
+            poly.setFill(cons.getSignal_rectangle_color());
+
         }
         if(Objects.equals(signal.getTypee().getName(),"triangle")){
             for (int i=0 ; i<3;i++) {
                 poly.getPoints().addAll(signal.getX()-cons.getSignal_triangle_radius()*sin(i*2*pi/3), signal.getY() - cons.getSignal_triangle_radius()*cos(i*2*pi/3));
             }
+            poly.setFill(cons.getSignal_triangle_color());
         }
     }
 

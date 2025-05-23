@@ -12,10 +12,14 @@ public class Configg {
 
     private double sysbox_default_width=40;
     private double sysbox_default_height=100;
-    private double indicator_default_width=4;
-    private double indicator_default_height=2;
-    private double indicator_y_from_head=5;
-    private double border=0.2;
+    private double indicator_default_width=12;
+    private double indicator_default_height=4;
+    private double indicator_y_from_head=10;
+    private double border=0;  // باگ داره
+    private Color off_indicator_color=Color.RED;
+    private Color on_indicator_color=Color.BLUE;
+    private Color sysbox_color=Color.GRAY;
+
 
     private double gate_rectangle_width=15;
     private double gate_rectangle_height=15;
@@ -26,10 +30,10 @@ public class Configg {
     private double signal_rectangle_width=gate_rectangle_width;
     private double signal_rectangle_height=gate_rectangle_height;
     private double signal_triangle_radius =gate_triangle_radius;
+    private Color signal_rectangle_color=Color.BLUE;
+    private Color signal_triangle_color=Color.BLUE;
 
-    private Color off_indicator_color=Color.GREEN;
-    private Color on_indicator_color=Color.BLUE;
-    private Color sysbox_color=Color.PURPLE;
+
 
     private Color line_color=Color.GREEN;
     private Color wrong_line_color=Color.RED;
@@ -198,7 +202,16 @@ public class Configg {
         return seeing_wrong_line_duration;
     }
 
+    public Color getSignal_rectangle_color() {
+        return signal_rectangle_color;
+    }
+
+    public Color getSignal_triangle_color() {
+        return signal_triangle_color;
+    }
+
     private Configg(){}
+
     private static Configg instance;
     public static Configg getInstance() {
         if (instance == null) {
