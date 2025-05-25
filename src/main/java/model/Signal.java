@@ -103,7 +103,7 @@ public class Signal {
         return noise;
     }
 
-    public void setNoise(int noise) {
+    public void setNoise(double noise) {
         this.noise = noise;
     }
 

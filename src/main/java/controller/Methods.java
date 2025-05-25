@@ -2,18 +2,29 @@ package controller;
 
 import javafx.scene.shape.Polygon;
 import mains.Configg;
-import model.Gate;
-import model.Signal;
-import model.Sysbox;
-import model.Wire;
+import model.*;
+import org.locationtech.jts.geom.*;
 
+import java.util.List;
 import java.util.Objects;
 
 import static java.lang.Math.cos;
 import static java.lang.Math.sin;
+import static mains.Filee.level_stack;
 
 
 public class Methods {
+    public static boolean found_in_pairs(Signal signal1, Signal signal2) {
+        for(Pairs pair : level_stack.collapsedPairs){
+            if(pair.signal1==signal1 && pair.signal2==signal2 || pair.signal1==signal2 && pair.signal2==signal1){
+                return true;
+            }
+
+        }
+
+        return false;
+    }
+
     //simple just find first better
     public Object recommended_gate(Sysbox sysbox, Signal signal) {
         boolean second_found = false;
@@ -66,6 +77,68 @@ public class Methods {
     public double calculate_wire_length(Wire wire) {
         double dx =  wire.getFirstgate().getX() - wire.getSecondgate().getX();
         double dy =  wire.getFirstgate().getY() - wire.getSecondgate().getY();
+        return Math.sqrt(dx*dx+dy*dy);
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    private static final GeometryFactory factory = new GeometryFactory();
+
+    public static Object checkCollisionAndGetPoint(Polygon fxPoly1, Polygon fxPoly2) {
+
+
+
+        org.locationtech.jts.geom.Polygon jtsPoly1 = toJTSPolygon(fxPoly1);
+        org.locationtech.jts.geom.Polygon jtsPoly2 = toJTSPolygon(fxPoly2);
+
+        if (jtsPoly1 == null || jtsPoly2 == null) return null;
+        double mean_x=0;
+        double mean_y=0;
+        if (jtsPoly1.intersects(jtsPoly2)) {
+            Geometry intersection = jtsPoly1.intersection(jtsPoly2);
+            for (Coordinate coord : intersection.getCoordinates()) {
+                mean_x+=coord.getX()/intersection.getCoordinates().length;
+                mean_y+=coord.getY()/intersection.getCoordinates().length;
+            }
+            Coordinate interaction_point = new Coordinate(mean_x, mean_y);
+            return interaction_point;
+        } else {
+            return null; // بدون برخورد
+        }
+    }
+
+    private static org.locationtech.jts.geom.Polygon toJTSPolygon(Polygon fxPolygon) {
+        List<Double> fxPoints = fxPolygon.getPoints();
+        int numPoints = fxPoints.size();
+        if (numPoints < 6 || numPoints % 2 != 0) return null;
+
+        Coordinate[] coords = new Coordinate[(numPoints / 2) + 1];
+        for (int i = 0; i < numPoints; i += 2) {
+            coords[i / 2] = new Coordinate(fxPoints.get(i), fxPoints.get(i + 1));
+        }
+        coords[coords.length - 1] = coords[0]; // بستن حلقه
+
+        return factory.createPolygon(coords);
+    }
+
+    public double calculate_distance(double x, double y, double x1, double y1) {
+        double dx=x-x1;
+        double dy=y-y1;
         return Math.sqrt(dx*dx+dy*dy);
     }
 }

@@ -1,18 +1,20 @@
 package controller;
 
+import javafx.animation.KeyFrame;
 import javafx.animation.PauseTransition;
+import javafx.animation.Timeline;
 import javafx.scene.Node;
+import javafx.scene.shape.Circle;
 import javafx.scene.shape.Polygon;
 import javafx.util.Duration;
 import mains.Configg;
-import model.Gate;
-import model.Signal;
-import model.Sysbox;
-import model.Wire;
+import model.*;
+import org.locationtech.jts.geom.Coordinate;
 import view.Paintt;
 
 import java.util.Objects;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicReference;
 
 import static mains.Filee.level_stack;
@@ -21,7 +23,7 @@ import static mains.Main.stop_wiring;
 
 public class Controller {
 
-    public static void Signals_Update(){
+    public static void Signals_Pos_Update(){
         Methods methods = new Methods();
         Configg cons = Configg.getInstance();
         //it's after load signals stack
@@ -45,22 +47,16 @@ public class Controller {
         }
         //second: update signals that on wire (move on wire or add them to a sysbox)
         for(Signal signal : level_stack.signals){
+            check_noise(signal);
+            check_signal_wire_distance(signal);
             if(!signal.isIs_updated() && Objects.equals(signal.getState(), "on_wire")){
                 signal.setLength_on_wire(signal.getLength_on_wire()+cons.getDelta_wire_length());
                 if(signal.getLength_on_wire()>signal.getLinked_wire().getLength()){
-                    Sysbox sysbox =signal.getLinked_wire().getSecondgate().getSysbox();
-                    sysbox.signal_bank.add(signal);
-                    just_game_pane.getChildren().remove(signal.poly);
-                    if(sysbox.isStarter()){
-                        signal.setState("ended");
-                    }
-                    else {
-                        signal.setState("on_sysbox");
-                    }
+                    signal_go_to_bank(signal);
                 }
                 else {
                     methods.update_signal_onwire(signal);
-                    System.out.println("update on wire ");
+//                    System.out.println("update on wire ");
                 }
             }
             else{
@@ -69,6 +65,52 @@ public class Controller {
 
         }
 
+    }
+
+    private static void check_signal_wire_distance(Signal signal) {
+        Configg cons = Configg.getInstance();
+        double x=signal.getX_ekhtelaf();
+        double y=signal.getY_ekhtelaf();
+        double ekhtelaf_r =Math.sqrt(x*x+y*y);
+//        در داک شرط خاصی برای حذف کردن نیامده
+        if(signal.getTypee().getId()==1){
+            if(2*ekhtelaf_r>Math.min(cons.getGate_rectangle_height(),cons.getGate_rectangle_width())){
+                go_to_dead(signal);
+            }
+        }
+        if(signal.getTypee().getId()==2){
+            if(2*ekhtelaf_r>cons.getSignal_triangle_radius()){
+                go_to_dead(signal);
+            }
+        }
+
+    }
+
+    private static void signal_go_to_bank(Signal signal) {
+        Configg cons = Configg.getInstance();
+
+        Sysbox sysbox =signal.getLinked_wire().getSecondgate().getSysbox();
+        if(sysbox.signal_bank.size()>5 && !sysbox.isStarter()){
+            signal.setState("ended");
+            return;
+        }
+
+        sysbox.signal_bank.add(signal);
+        if(signal.getTypee().getId()==1) {
+            level_stack.setSekke(level_stack.getSekke() + cons.getRectangle_signal_sekke_added());
+        }
+        if(signal.getTypee().getId()==2) {
+            level_stack.setSekke(level_stack.getSekke() + cons.getTraiangle_signal_sekke_added());
+        }
+        just_game_pane.getChildren().remove(signal.poly);
+        if(sysbox.isStarter()){
+            signal.setState("ended");
+        }
+        else {
+//           did not use method because it's easy
+            signal.setState("on_sysbox");
+
+        }
     }
 
     private static void signal_go_to_wire(Signal signal, Gate recom_gate) {
@@ -210,13 +252,15 @@ public class Controller {
                     break;
                 }
                 for(Gate gate: sysbox.inner_gates) {
-                    if(gate.getWire()==null){
-                        access=false;
+                    if (gate.getWire() == null) {
+                        access = false;
+                        break;
                     }
                 }
                 for(Gate gate: sysbox.outer_gates) {
-                    if(gate.getWire()==null){
-                        access=false;
+                    if (gate.getWire() == null) {
+                        access = false;
+                        break;
                     }
                 }
             }
@@ -264,5 +308,117 @@ public class Controller {
                 }
             }
         }
+    }
+
+    public static void check_and_do_collision() {
+        Methods methods = new Methods();
+        if(!level_stack.Oairyaman) {
+
+            for(int i=0;i<level_stack.signals.size();i++) {
+                Signal signal1 = level_stack.signals.get(i);
+                for (int j = 0; j < i; j++) {
+
+                    Signal signal2 = level_stack.signals.get(j);
+                    if (null != Methods.checkCollisionAndGetPoint(signal1.poly, signal2.poly)) {
+                        if (!Methods.found_in_pairs(signal1, signal2)) {
+                            just_collapse_noise(signal1,signal2);
+
+                            collapse_happen_in_a_location((Coordinate) Methods.checkCollisionAndGetPoint(signal1.poly, signal2.poly) ,signal1,signal2 );
+
+                        }
+                    }
+                    colapsedpairs_update();
+                }
+//                check_noise(signal1);
+            }
+        }
+
+    }
+
+    private static void check_noise(Signal signal) {
+        Configg cons = Configg.getInstance();
+        if(signal.getNoise()>level_stack.constraintss.getMaximum_noise()){
+            go_to_dead(signal);
+        }
+    }
+
+    private static void go_to_dead(Signal signal) {
+        signal.setIs_updated(true);
+        signal.setState("ended");
+        just_game_pane.getChildren().remove(signal.poly);
+    }
+
+    private static void just_collapse_noise(Signal signal1, Signal signal2) {
+        Configg cons = Configg.getInstance();
+        signal1.setNoise(signal1.getNoise()+cons.getNoise_add_every_hit());
+        signal2.setNoise(signal2.getNoise()+cons.getNoise_add_every_hit());
+    }
+
+    private static void colapsedpairs_update() {
+        Configg cons= Configg.getInstance();
+        long long_current_time = System.currentTimeMillis();
+        double current_time = long_current_time/1000000000.0;
+        for(Pairs pair :level_stack.collapsedPairs){
+            if(current_time-pair.adding_time > cons.getImpulse_resttime()){
+                level_stack.collapsedPairs.remove(pair);
+            }
+        }
+    }
+
+    private static void collapse_happen_in_a_location(Coordinate coordinate,Signal signal1,Signal signal2) {
+        Methods methods = new Methods();
+        Configg cons = Configg.getInstance();
+//      just show
+        Circle impulse_circle = new Circle();
+        impulse_circle.setCenterX(coordinate.x);
+        impulse_circle.setCenterY(coordinate.y);
+        impulse_circle.setFill(cons.getImpulse_color());
+        just_game_pane.getChildren().add(impulse_circle);
+        int maxcyclecount =(int) (cons.getImpulse_show_time() / 0.017);
+        AtomicInteger cyclecount= new AtomicInteger();
+        cyclecount.set(0);
+        Timeline timeline_signals_run = new Timeline(new KeyFrame(Duration.millis(17), event -> {
+
+            cyclecount.set(cyclecount.get()+1);
+            double ratio=(double) cyclecount.get()/maxcyclecount;
+//            System.out.println("collapse ratio: "+ratio+" maxcyclecount: "+maxcyclecount);
+
+            impulse_circle.setRadius(cons.getImpulse_radius()*ratio);
+        }));
+        timeline_signals_run.setCycleCount(maxcyclecount);
+        timeline_signals_run.play();
+        timeline_signals_run.setOnFinished(event -> {
+            just_game_pane.getChildren().remove(impulse_circle);
+        });
+
+
+//        control
+        level_stack.collapsedPairs.add(new Pairs(signal1,signal2));
+        for(Signal signal: level_stack.signals) {
+            if(signal.getState()=="on_wire"){
+                //central of signal is matter
+                if(methods.calculate_distance(signal.getX(),signal.getY(),coordinate.getX(),coordinate.getY())< cons.getImpulse_radius()){
+                    in_radius_impulse_wave(signal,coordinate);
+                }
+            }
+        }
+    }
+
+    private static void in_radius_impulse_wave(Signal signal, Coordinate coordinate) {
+        if(level_stack.Oatar){return;}
+
+        Configg cons=Configg.getInstance();
+        double dx=signal.getX()-coordinate.getX();
+        double dy=signal.getY()-coordinate.getY();
+        double r=Math.sqrt(dx*dx+dy*dy);
+        double step = (double) 1/ (int)(cons.getImpulse_move_time()/0.017);
+        Timeline signal_shouting = new Timeline(new KeyFrame(Duration.millis(17), event -> {
+
+            signal.setX_ekhtelaf(signal.getX_ekhtelaf()+(dx/r)*step*cons.getImpulse_delta_r());
+            signal.setY_ekhtelaf(signal.getY_ekhtelaf()+(dy/r)*step*cons.getImpulse_delta_r());
+
+        }));
+        signal_shouting.setCycleCount((int) (cons.getImpulse_move_time()/0.017));
+        signal_shouting.play();
     }
 }

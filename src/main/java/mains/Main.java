@@ -35,6 +35,8 @@ public class Main extends Application {
 
 
 
+
+
         paintt.initial_UI();
         Scene main_game_scene = new Scene(main_game_root);
         primaryStage.setScene(main_game_scene);
@@ -55,9 +57,9 @@ public class Main extends Application {
 
 //      in signal move mode
         Timeline timeline_wiring = new Timeline(new KeyFrame(Duration.millis(17*6), event -> {
-//            Controller.wiring();
-
-            Controller.indicator_update();
+            if (!stop_wiring) {
+                Controller.indicator_update();
+            }
         }));
 
         timeline_wiring.setCycleCount(Timeline.INDEFINITE);
@@ -65,8 +67,8 @@ public class Main extends Application {
 
         Timeline timeline_signals_run = new Timeline(new KeyFrame(Duration.millis(17), event -> {
             if (stop_wiring) {
-                Controller.Signals_Update();
-
+                Controller.Signals_Pos_Update();
+                Controller.check_and_do_collision();
             }
         }));
         timeline_signals_run.setCycleCount(Timeline.INDEFINITE);

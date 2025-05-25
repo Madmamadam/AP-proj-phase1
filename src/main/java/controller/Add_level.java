@@ -13,6 +13,7 @@ public class Add_level {
     public static void start(){
         //level constraint
         level_stack.constraintss.setMaximum_length(555000);
+        level_stack.constraintss.setMaximum_noise(5.0);
 
 
         //intial model

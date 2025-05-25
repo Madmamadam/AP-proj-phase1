@@ -1,10 +1,24 @@
 package mains;
 
 import javafx.scene.paint.Color;
+import javafx.scene.shape.Polygon;
 
 public class Configg {
     private int bank_capacity=5;
-    private double delta_wire_length;
+    private double delta_wire_length=2;
+
+
+
+    private double noise_add_every_hit=1;
+
+
+    private double impulse_radius=250;
+    private Color impulse_color=Color.rgb(236, 193, 20, 0.7);
+    private double impulse_show_time=0.5;
+    private double impulse_resttime=0.5;
+
+    private double impulse_delta_r=5;
+    private double impulse_move_time=1.0;
 
 
 
@@ -37,8 +51,12 @@ public class Configg {
 
     private Color line_color=Color.GREEN;
     private Color wrong_line_color=Color.RED;
-    private double seeing_wrong_line_duration=3;
+    private double seeing_wrong_line_duration=1;
     private double line_width=4;
+
+    private double rectangle_signal_sekke_added =1;
+    private double traiangle_signal_sekke_added =2;
+
 
 
 
@@ -210,6 +228,45 @@ public class Configg {
         return signal_triangle_color;
     }
 
+    public double getRectangle_signal_sekke_added() {
+        return rectangle_signal_sekke_added;
+    }
+
+    public double getTraiangle_signal_sekke_added() {
+        return traiangle_signal_sekke_added;
+    }
+
+    public double getImpulse_radius() {
+        return impulse_radius;
+    }
+
+    public Color getImpulse_color() {
+        return impulse_color;
+    }
+
+    public double getImpulse_show_time() {
+        return impulse_show_time;
+    }
+
+    public double getImpulse_resttime() {
+        return impulse_resttime;
+    }
+
+    public double getImpulse_move_time() {
+        return impulse_move_time;
+    }
+
+    public double getImpulse_delta_r() {
+        return impulse_delta_r;
+    }
+
+    public double getNoise_add_every_hit() {
+        return noise_add_every_hit;
+    }
+
+    //
+//  constructors
+    //
     private Configg(){}
 
     private static Configg instance;

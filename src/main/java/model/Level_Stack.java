@@ -10,6 +10,11 @@ public class Level_Stack {
     public ArrayList<Signal> signals = new ArrayList<>();
     public ArrayList<Wire> wires = new ArrayList<>();
     public Constraintss constraintss = new Constraintss(); ;
+    public ArrayList<Pairs> collapsedPairs = new ArrayList<>();
+    public Boolean Oairyaman = false;
+    public boolean Oatar = false;
+
+    private double sekke;
 
     public Level_Stack() {
         this.level_wires_length=0;
@@ -23,6 +28,13 @@ public class Level_Stack {
         this.level_wires_length = level_wires_length;
     }
 
+    public double getSekke() {
+        return sekke;
+    }
+
+    public void setSekke(double sekke) {
+        this.sekke = sekke;
+    }
     //    private static Level_Stack level_instance;
 //    public static Level_Stack getLevel_instance() {
 //        if (level_instance == null) {
