@@ -1,25 +1,22 @@
 package view;
 
 import controller.Controller;
-import javafx.animation.PauseTransition;
 import javafx.geometry.Pos;
 import javafx.scene.control.Button;
 import javafx.scene.input.KeyCode;
 import javafx.scene.layout.Region;
 import javafx.scene.layout.StackPane;
-import javafx.util.Duration;
 import mains.Configg;
 import model.Gate;
 import model.Signal;
 import model.Sysbox;
-import model.Wire;
 
 import java.util.Objects;
 
 import static java.lang.Math.cos;
 import static java.lang.Math.sin;
 import static mains.Filee.level_stack;
-import static mains.Main.*;
+import static mains.MainGame.*;
 
 
 public class Paintt {

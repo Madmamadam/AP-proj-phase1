@@ -4,7 +4,6 @@ import controller.Add_level;
 import controller.Controller;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
-import javafx.application.Application;
 import javafx.scene.Scene;
 import javafx.scene.input.KeyCombination;
 import javafx.scene.layout.Pane;
@@ -13,7 +12,7 @@ import javafx.stage.Stage;
 import javafx.util.Duration;
 import view.Paintt;
 
-public class Main extends Application {
+public class MainGame {
     public static Pane just_game_pane = new Pane();
     public static Boolean stop_wiring = false;
     public static Pane HUDpane = new Pane();
@@ -28,8 +27,7 @@ public class Main extends Application {
 //        -------------------------------------
 //    }
 
-    @Override
-    public void start(Stage primaryStage) throws Exception {
+    public static void start(Stage primaryStage) throws Exception {
         Paintt paintt = new Paintt();
 
 
@@ -67,7 +65,7 @@ public class Main extends Application {
 
         Timeline timeline_signals_run = new Timeline(new KeyFrame(Duration.millis(17), event -> {
             if (stop_wiring) {
-                Controller.Signals_Pos_Update();
+                Controller.Signals_Update();
                 Controller.check_and_do_collision();
             }
         }));

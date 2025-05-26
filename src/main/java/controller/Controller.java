@@ -18,12 +18,12 @@ import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicReference;
 
 import static mains.Filee.level_stack;
-import static mains.Main.just_game_pane;
-import static mains.Main.stop_wiring;
+import static mains.MainGame.just_game_pane;
+import static mains.MainGame.stop_wiring;
 
 public class Controller {
 
-    public static void Signals_Pos_Update(){
+    public static void Signals_Update(){
         Methods methods = new Methods();
         Configg cons = Configg.getInstance();
         //it's after load signals stack
