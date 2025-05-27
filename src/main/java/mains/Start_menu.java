@@ -166,7 +166,8 @@ public class Start_menu extends Application {
 
         newGameButton.setOnAction(event ->{
             try {
-                MainGame.start(primaryStage);
+                MainGame mainGame = new MainGame();
+                mainGame.start(primaryStage);
             } catch (Exception e) {
                 throw new RuntimeException(e);
             }

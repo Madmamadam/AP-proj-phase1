@@ -8,6 +8,7 @@ import javafx.scene.shape.Circle;
 import javafx.scene.shape.Polygon;
 import javafx.util.Duration;
 import mains.Configg;
+import mains.MainGame;
 import model.*;
 import org.locationtech.jts.geom.Coordinate;
 import view.Paintt;
@@ -18,8 +19,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicReference;
 
 import static mains.Filee.level_stack;
-import static mains.MainGame.just_game_pane;
-import static mains.MainGame.stop_wiring;
+import static mains.MainGame.*;
 
 public class Controller {
 
@@ -276,6 +276,7 @@ public class Controller {
     }
 
     private static void time_to_restart() {
+//        MainGame.start(primary_stage);
     }
 
     private static void false_try_for_stop_wiring() {

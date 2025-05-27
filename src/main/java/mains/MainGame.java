@@ -10,7 +10,10 @@ import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
 import javafx.util.Duration;
+import model.Level_Stack;
 import view.Paintt;
+
+import static mains.Filee.level_stack;
 
 public class MainGame {
     public static Pane just_game_pane = new Pane();
@@ -29,9 +32,14 @@ public class MainGame {
 
     public static void start(Stage primaryStage) throws Exception {
         Paintt paintt = new Paintt();
+        Configg cons = Configg.getInstance();
 
 
-
+        just_game_pane = new Pane();
+        stop_wiring = false;
+        HUDpane = new Pane();
+        main_game_root = new StackPane(just_game_pane, HUDpane);
+        level_stack=new Level_Stack();
 
 
 
@@ -45,6 +53,8 @@ public class MainGame {
         Add_level.start();
         paintt.addtopane_sysboxsandindicators();
         paintt.addtopane_gates();
+
+//        level_stack_start=level_stack;
 //        paintt.addtopane_signals();
 
 
@@ -63,13 +73,17 @@ public class MainGame {
         timeline_wiring.setCycleCount(Timeline.INDEFINITE);
         timeline_wiring.play();
 
-        Timeline timeline_signals_run = new Timeline(new KeyFrame(Duration.millis(17), event -> {
+        Timeline signals_run = new Timeline(new KeyFrame(Duration.millis(17), event -> {
             if (stop_wiring) {
                 Controller.Signals_Update();
                 Controller.check_and_do_collision();
             }
         }));
-        timeline_signals_run.setCycleCount(Timeline.INDEFINITE);
-        timeline_signals_run.play();
+        signals_run.setCycleCount(Timeline.INDEFINITE);
+        signals_run.play();
+
+        Timeline signals_virtual_run = new Timeline(new KeyFrame(Duration.millis(cons.getVirtual_frequency()), event -> {
+
+        }));
     }
 }

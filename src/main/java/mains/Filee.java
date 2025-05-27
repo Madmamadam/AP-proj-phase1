@@ -12,6 +12,7 @@ import java.util.List;
 
 public class Filee {
     public static Level_Stack level_stack = new Level_Stack();
+    public static Level_Stack level_stack_start = new Level_Stack();
     static ObjectMapper objectMapper = new ObjectMapper();
 
     static File file = new File("level_stack.json");
