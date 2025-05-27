@@ -3,6 +3,8 @@ package view;
 import controller.Controller;
 import javafx.geometry.Pos;
 import javafx.scene.control.Button;
+import javafx.scene.control.Label;
+import javafx.scene.control.Slider;
 import javafx.scene.input.KeyCode;
 import javafx.scene.layout.Region;
 import javafx.scene.layout.StackPane;
@@ -73,6 +75,7 @@ public class Paintt {
         HUDpane.setPrefHeight(100);
         HUDpane.setMaxHeight(Region.USE_PREF_SIZE);
         add_run_stop_button();
+        virtual_slider();
 
         main_game_root.setOnKeyPressed(event -> {
             if (event.getCode() == KeyCode.ESCAPE) {
@@ -80,6 +83,32 @@ public class Paintt {
             }
         });
 
+
+
+    }
+
+    private void virtual_slider() {
+
+        String textStyle = "-fx-font-size: 16px; -fx-text-fill: white; -fx-font-weight: bold";
+
+
+        // Volume slider and its controller
+        Label volumeLabel = new Label("time line");
+        volumeLabel.setStyle(textStyle);
+        Slider vitual_time_Slider = new Slider(0, 1, 0.0);
+        vitual_time_Slider.setShowTickMarks(true);
+        vitual_time_Slider.setShowTickLabels(true);
+        vitual_time_Slider.setMajorTickUnit(0.25);
+        vitual_time_Slider.setBlockIncrement(0.1);
+        vitual_time_Slider.setPrefWidth(200);
+        vitual_time_Slider.valueProperty().addListener((obs, oldVal, newVal) -> {
+            Controller.virtual_time_clicked(newVal.doubleValue());
+        });
+        StackPane.setAlignment(volumeLabel, Pos.TOP_RIGHT);
+
+
+
+        HUDpane.getChildren().addAll(vitual_time_Slider);
 
 
     }
@@ -93,9 +122,10 @@ public class Paintt {
             // اینجا می‌تونید کد دلخواه خودتون رو با توجه به running اجرا کنید
         });
 
+
         // قرار دادن دکمه در مرکز StackPane
         StackPane.setAlignment(run_stop_button, Pos.TOP_LEFT);
-        HUDpane.getChildren().add(run_stop_button);
+        HUDpane.getChildren().addAll(run_stop_button);
     }
 
 

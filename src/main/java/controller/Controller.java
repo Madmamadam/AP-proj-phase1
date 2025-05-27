@@ -422,4 +422,7 @@ public class Controller {
         signal_shouting.setCycleCount((int) (cons.getImpulse_move_time()/0.017));
         signal_shouting.play();
     }
+
+    public static void virtual_time_clicked(double v) {
+    }
 }

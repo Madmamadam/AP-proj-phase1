@@ -7,7 +7,7 @@ public class Configg {
     private int bank_capacity=5;
     private double delta_wire_length=2;
 
-    private double virtual_frequency=17/100;
+    private double virtual_frequency=17/10;
 
     private double noise_add_every_hit=1;
 
