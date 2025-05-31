@@ -14,12 +14,16 @@ import model.Level_Stack;
 import view.Paintt;
 
 import static mains.Filee.level_stack;
+import static mains.Filee.level_stack_start;
+import static view.Paintt.gameTimer;
 
 public class MainGame {
     public static Pane just_game_pane = new Pane();
     public static Boolean stop_wiring = false;
     public static Pane HUDpane = new Pane();
     public static StackPane main_game_root = new StackPane(just_game_pane, HUDpane);
+    public static boolean user_changing=true;
+    public static boolean virtual_run = false;
 
 //    public static void main(String[] args) {
 
@@ -43,7 +47,7 @@ public class MainGame {
 
 
 
-        paintt.initial_UI();
+        paintt.initial_UI(primaryStage);
         Scene main_game_scene = new Scene(main_game_root);
         primaryStage.setScene(main_game_scene);
         primaryStage.setFullScreenExitKeyCombination(KeyCombination.NO_MATCH); // غیرفعال‌سازی ESC
@@ -53,6 +57,7 @@ public class MainGame {
         Add_level.start();
         paintt.addtopane_sysboxsandindicators();
         paintt.addtopane_gates();
+        level_stack_start=level_stack.getClone();
 
 //        level_stack_start=level_stack;
 //        paintt.addtopane_signals();
@@ -74,16 +79,21 @@ public class MainGame {
         timeline_wiring.play();
 
         Timeline signals_run = new Timeline(new KeyFrame(Duration.millis(17), event -> {
-            if (stop_wiring) {
+            if (stop_wiring || !virtual_run) {
                 Controller.Signals_Update();
                 Controller.check_and_do_collision();
+                gameTimer.setStopping(false);
+                Paintt.HUD_update();
+            }
+            else {
+                gameTimer.setStopping(true);
             }
         }));
         signals_run.setCycleCount(Timeline.INDEFINITE);
         signals_run.play();
 
-        Timeline signals_virtual_run = new Timeline(new KeyFrame(Duration.millis(cons.getVirtual_frequency()), event -> {
-
-        }));
+//        Timeline signals_virtual_run = new Timeline(new KeyFrame(Duration.millis(cons.getVirtual_frequency()), event -> {
+//
+//        }));
     }
 }

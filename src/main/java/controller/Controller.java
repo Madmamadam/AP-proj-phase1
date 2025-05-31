@@ -4,8 +4,11 @@ import javafx.animation.KeyFrame;
 import javafx.animation.PauseTransition;
 import javafx.animation.Timeline;
 import javafx.scene.Node;
+import javafx.scene.input.MouseButton;
 import javafx.scene.shape.Circle;
+import javafx.scene.shape.Line;
 import javafx.scene.shape.Polygon;
+import javafx.stage.Stage;
 import javafx.util.Duration;
 import mains.Configg;
 import mains.MainGame;
@@ -13,13 +16,16 @@ import model.*;
 import org.locationtech.jts.geom.Coordinate;
 import view.Paintt;
 
+import java.util.ArrayList;
 import java.util.Objects;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicReference;
 
 import static mains.Filee.level_stack;
+import static mains.Filee.level_stack_start;
 import static mains.MainGame.*;
+import static view.Paintt.gameTimer;
 
 public class Controller {
 
@@ -37,6 +43,7 @@ public class Controller {
                 if(methods.recommended_gate(sysbox,signal) != null){
                     Gate recom_gate = (Gate) methods.recommended_gate(sysbox,signal);
                     signal_go_to_wire(signal,recom_gate);
+                    System.out.println("nice");
 
                 }
                 //if every gate is used
@@ -118,7 +125,7 @@ public class Controller {
         signal.setLength_on_wire(0.0);
         recom_gate.getSysbox().signal_bank.removeFirst();
         signal.setState("on_wire");
-        System.out.println("go to on wire ");
+//        System.out.println("go to on wire ");
         recom_gate.setIn_use(true);
         just_game_pane.getChildren().add(signal.poly);
     }
@@ -133,15 +140,20 @@ public class Controller {
         //-----------------------------first selection
         for (Sysbox sysbox : level_stack.sysboxes) {
             for(Gate gate:sysbox.inner_gates){
-                gate.poly.setOnMousePressed(e -> {if(stop_wiring) return;
+                gate.poly.setOnMousePressed(e -> {
+                    if(stop_wiring) return;
+                    if (e.getButton() != MouseButton.PRIMARY) {return;}
                     Wire candidate_wire = new Wire();
                     candidate_wire.setFirstgate(gate);
                     decoy_wire.set(candidate_wire);
                     isStartedinGate.set(true);
+
                 });
             }
             for(Gate gate:sysbox.outer_gates){
-                gate.poly.setOnMousePressed(e -> {if(stop_wiring) return;
+                gate.poly.setOnMousePressed(e -> {
+                    if(stop_wiring) return;
+                    if (e.getButton() != MouseButton.PRIMARY) {return;}
                     Wire candidate_wire = new Wire();
                     candidate_wire.setFirstgate(gate);
                     decoy_wire.set(candidate_wire);
@@ -187,6 +199,46 @@ public class Controller {
             }
         });
 
+
+        //wire removing
+
+        just_game_pane.setOnMouseClicked(event ->{
+            if(stop_wiring) return;
+            if(event.getButton() != MouseButton.SECONDARY) return;
+
+            Node nodeUnderMouse = event.getPickResult().getIntersectedNode();
+
+            for(Wire wire: level_stack.wires){
+                Line poly =wire.getLine();
+//                System.out.println("right before if");
+                if(nodeUnderMouse == poly || poly.equals(nodeUnderMouse) || poly.isHover()){
+//                    System.out.println("right after if");
+                    time_to_remove_wire(wire);
+                    return;
+                }
+            }
+        });
+//        System.out.println("number of wire right before for:"+level_stack.wires.size());
+//        for(Wire wire: level_stack.wires){
+//            System.out.println("wire");
+//            wire.getLine().setOnMouseClicked(e2 -> {
+//                if(stop_wiring) return;
+//                System.out.println("time to check mouse input");
+//
+//                if(e2.getButton() != MouseButton.SECONDARY) return;
+//                System.out.println("time ho remove wire");
+//                time_to_remove_wire(wire);
+//            });
+//        }
+
+    }
+
+    private static void time_to_remove_wire(Wire wire) {
+        just_game_pane.getChildren().remove(wire.getLine());
+        wire.getFirstgate().setWire(null);
+        wire.getSecondgate().setWire(null);
+        level_stack.wires.remove(wire);
+
     }
 
     private static void wire_check_to_add(Wire wire) {
@@ -216,6 +268,7 @@ public class Controller {
         wire.getFirstgate().setWire(wire);
         wire.getSecondgate().setWire(wire);
         level_stack.wires.add(wire);
+//        System.out.println("number of wires:"+level_stack.wires.size());
         level_stack.setLevel_wires_length(level_stack.getLevel_wires_length() + wire.getLength());
         //paint it forever
         just_game_pane.getChildren().add(wire.getLine());
@@ -240,9 +293,9 @@ public class Controller {
         System.exit(1);
     }
 
-    public static void run_stop_button_pressed() {
+    public static void run_stop_button_pressed(Stage primaryStage) throws Exception {
         if(stop_wiring){
-            time_to_restart();
+            time_to_restart(primaryStage);
         }
         else {
             boolean access=true;
@@ -275,8 +328,11 @@ public class Controller {
 
     }
 
-    private static void time_to_restart() {
-//        MainGame.start(primary_stage);
+    private static void time_to_restart(Stage primaryStage) throws Exception {
+        stop_wiring=false;
+        primaryStage.hide();
+        MainGame.start(primaryStage);
+
     }
 
     private static void false_try_for_stop_wiring() {
@@ -423,6 +479,51 @@ public class Controller {
         signal_shouting.play();
     }
 
-    public static void virtual_time_clicked(double v) {
+    public static void virtual_time_clicked(double virtual_ratio) {
+        double max_t=level_stack.constraintss.getMaximum_time_sec();
+        double go_to_time_sec = virtual_ratio*max_t;
+        half_restart(go_to_time_sec);
+
+    }
+
+    private static void half_restart(double goToTime_sec) {
+        gameTimer.setTime_sec(goToTime_sec);
+        Configg cons = Configg.getInstance();
+        double cyclecount=goToTime_sec*cons.getVirtual_frequency();
+        restart_signal_pos();
+        virtual_run=true;
+        Timeline signals_virtual_run = new Timeline();
+        signals_virtual_run.getKeyFrames().add(new KeyFrame(Duration.millis(1000/cons.getVirtual_frequency()), event -> {
+            if (stop_wiring) {
+                Controller.Signals_Update();
+                Controller.check_and_do_collision();
+            }
+//            if(gameTimer.getTime_sec()>goToTime_sec){
+//                signals_virtual_run.stop();
+//            }
+        }));
+        signals_virtual_run.setCycleCount((int) (cyclecount));
+        signals_virtual_run.play();
+        signals_virtual_run.setOnFinished(event -> {
+            virtual_run=false;
+        });
+    }
+
+    private static void restart_signal_pos() {
+        for (Signal signal : level_stack.signals) {
+            just_game_pane.getChildren().remove(signal.poly);
+        }
+        level_stack.signals=level_stack_start.signals;
+        System.out.println("signals size now: "+level_stack.signals.size());
+
+        level_stack.sysboxes=level_stack_start.sysboxes;
+        update_gate_from_wires();
+    }
+
+    private static void update_gate_from_wires() {
+        for (Wire wire: level_stack.wires) {
+            wire.getFirstgate().setWire(wire);
+            wire.getSecondgate().setWire(wire);
+        }
     }
 }

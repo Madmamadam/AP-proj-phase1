@@ -13,6 +13,7 @@ public class Level_Stack {
     public ArrayList<Pairs> collapsedPairs = new ArrayList<>();
     public Boolean Oairyaman = false;
     public boolean Oatar = false;
+    public boolean OAnahita =false;
 
     private double sekke;
 
@@ -34,6 +35,27 @@ public class Level_Stack {
 
     public void setSekke(double sekke) {
         this.sekke = sekke;
+    }
+
+    public Level_Stack getClone() {
+        Level_Stack clone = new Level_Stack();
+        clone.level_wires_length = this.level_wires_length;
+        clone.sekke = this.sekke;
+        clone.collapsedPairs = new ArrayList<Pairs>();
+        clone.wires = this.wires;
+        for (Signal signal : this.signals) {
+            clone.signals.add(signal.cloneSignal());
+        }
+        for (Sysbox sysbox : this.sysboxes) {
+            clone.sysboxes.add(sysbox.getclone());
+        }
+
+        clone.collapsedPairs=new ArrayList<Pairs>();
+        clone.constraintss = this.constraintss;
+        clone.Oairyaman = this.Oairyaman;
+        clone.Oatar = this.Oatar;
+        clone.OAnahita=this.OAnahita;
+        return clone;
     }
     //    private static Level_Stack level_instance;
 //    public static Level_Stack getLevel_instance() {

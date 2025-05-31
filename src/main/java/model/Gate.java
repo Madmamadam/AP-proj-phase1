@@ -95,10 +95,5 @@ public class Gate {
     public Gate(Typee typee, boolean is_outer) {
         this.typee = typee;
         this.is_outer = is_outer;
-//        if (Objects.equals(this.typee.getName(), "rectangle")) {
-//            poly.getPoints().clear();
-//            poly.getPoints().addAll(this.x);
-//
-//        }
     }
 }

@@ -173,12 +173,12 @@ public class Start_menu extends Application {
             }
         });
 
-        primaryStage.setOnHidden(event -> {
-            Platform.runLater(() -> {
-                primaryStage.setScene(menuscene);
-                primaryStage.show();
-            });
-        });
+//        primaryStage.setOnHidden(event -> {
+//            Platform.runLater(() -> {
+//                primaryStage.setScene(menuscene);
+//                primaryStage.show();
+//            });
+//        });
 
 
 
@@ -191,5 +191,9 @@ public class Start_menu extends Application {
         backButton.setOnAction(event ->{
             primaryStage.setScene(menuscene);
         } );
+
+        exitButton.setOnAction(event -> {
+            System.exit(1);
+        });
     }
 }

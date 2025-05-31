@@ -29,8 +29,19 @@ public class Signal {
         this.typee=typee;
         state="on_wire";
     }
+    public Signal(Typee typee,Sysbox sysbox) {
+        x_ekhtelaf=0.0;
+        y_ekhtelaf=0.0;
+        noise=0.0;
+        length_on_wire=0.0;
+        is_updated=false;
+        this.typee=typee;
+        state="on_wire";
+    }
+
     public Signal cloneSignal() {
-        return new Signal(this.typee);
+        Signal clone = new Signal(this.typee);
+        return clone;
     }
 
     public double getY() {
