@@ -90,6 +90,14 @@ public class Sysbox {
         for (Signal signal : signal_bank) {
             clone.signal_bank.add(signal.cloneSignal());
         }
+        for (Gate gate : inner_gates) {
+            clone.inner_gates.add(gate.cloneGate());
+            gate.setIn_use(false);
+        }
+        for (Gate gate : outer_gates) {
+            clone.outer_gates.add(gate.cloneGate());
+            gate.setIn_use(false);
+        }
 
         clone.rectangle=this.rectangle;
         clone.indicator_on_state=this.indicator_on_state;

@@ -36,19 +36,17 @@ public class Controller {
 
         //first: update signals that on sysbox  (Assign wire)
         for (Sysbox sysbox : level_stack.sysboxes) {
-
+            System.out.println("sysbox.signal_bank.size() "+sysbox.signal_bank.size());
             for (int i=0;i<cons.getBank_capacity() && !sysbox.signal_bank.isEmpty();i++){
                 Signal signal=sysbox.signal_bank.getFirst();
                 signal.setIs_updated(true);
+                System.out.println("nice1");
                 if(methods.recommended_gate(sysbox,signal) != null){
                     Gate recom_gate = (Gate) methods.recommended_gate(sysbox,signal);
+                    System.out.println("sysbox.signal_bank.size() "+sysbox.signal_bank.size());
                     signal_go_to_wire(signal,recom_gate);
-                    System.out.println("nice");
+                    System.out.println("nice2");
 
-                }
-                //if every gate is used
-                else {
-                    break;
                 }
             }
         }
@@ -56,7 +54,9 @@ public class Controller {
         for(Signal signal : level_stack.signals){
             check_noise(signal);
             check_signal_wire_distance(signal);
-            if(!signal.isIs_updated() && Objects.equals(signal.getState(), "on_wire")){
+            System.out.println("signal.isIs_updated() "+signal.isIs_updated());
+            System.out.println("signal.getState() "+signal.getState());
+            if((!signal.isIs_updated()) && Objects.equals(signal.getState(),"on_wire")){
                 signal.setLength_on_wire(signal.getLength_on_wire()+cons.getDelta_wire_length());
                 if(signal.getLength_on_wire()>signal.getLinked_wire().getLength()){
                     signal_go_to_bank(signal);
@@ -110,6 +110,8 @@ public class Controller {
             level_stack.setSekke(level_stack.getSekke() + cons.getTraiangle_signal_sekke_added());
         }
         just_game_pane.getChildren().remove(signal.poly);
+        signal.getLinked_wire().getFirstgate().setIn_use(false);
+
         if(sysbox.isStarter()){
             signal.setState("ended");
         }
@@ -123,6 +125,7 @@ public class Controller {
     private static void signal_go_to_wire(Signal signal, Gate recom_gate) {
         signal.setLinked_wire(recom_gate.getWire());
         signal.setLength_on_wire(0.0);
+        System.out.println("recom_gate.getSysbox().signal_bank.size() "+recom_gate.getSysbox().signal_bank.size());
         recom_gate.getSysbox().signal_bank.removeFirst();
         signal.setState("on_wire");
 //        System.out.println("go to on wire ");
@@ -482,7 +485,7 @@ public class Controller {
     public static void virtual_time_clicked(double virtual_ratio) {
         double max_t=level_stack.constraintss.getMaximum_time_sec();
         double go_to_time_sec = virtual_ratio*max_t;
-        half_restart(go_to_time_sec);
+//        half_restart(go_to_time_sec);
 
     }
 
@@ -495,8 +498,10 @@ public class Controller {
         Timeline signals_virtual_run = new Timeline();
         signals_virtual_run.getKeyFrames().add(new KeyFrame(Duration.millis(1000/cons.getVirtual_frequency()), event -> {
             if (stop_wiring) {
+                System.out.println("in virtual run");
                 Controller.Signals_Update();
                 Controller.check_and_do_collision();
+                signal_run_frame_counter++;
             }
 //            if(gameTimer.getTime_sec()>goToTime_sec){
 //                signals_virtual_run.stop();
@@ -504,7 +509,7 @@ public class Controller {
         }));
         signals_virtual_run.setCycleCount((int) (cyclecount));
         signals_virtual_run.play();
-        signals_virtual_run.setOnFinished(event -> {
+        signals_virtual_run.setOnFinished(event2 -> {
             virtual_run=false;
         });
     }
@@ -513,10 +518,12 @@ public class Controller {
         for (Signal signal : level_stack.signals) {
             just_game_pane.getChildren().remove(signal.poly);
         }
-        level_stack.signals=level_stack_start.signals;
-        System.out.println("signals size now: "+level_stack.signals.size());
-
-        level_stack.sysboxes=level_stack_start.sysboxes;
+        level_stack = level_stack_start.getClone();
+        System.out.println("signals size now: " + level_stack.signals.size());
+        for (Signal signal : level_stack.signals) {
+            System.out.println("signal_state: "+signal.getState());
+        }
+        System.out.println("level_stack.sysboxes.getFirst().signal_bank.size() "+level_stack.sysboxes.getFirst().signal_bank.size());
         update_gate_from_wires();
     }
 

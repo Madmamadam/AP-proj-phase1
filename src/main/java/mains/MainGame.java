@@ -11,6 +11,7 @@ import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
 import javafx.util.Duration;
 import model.Level_Stack;
+import model.Sysbox;
 import view.Paintt;
 
 import static mains.Filee.level_stack;
@@ -24,6 +25,7 @@ public class MainGame {
     public static StackPane main_game_root = new StackPane(just_game_pane, HUDpane);
     public static boolean user_changing=true;
     public static boolean virtual_run = false;
+    public static int signal_run_frame_counter = 0;
 
 //    public static void main(String[] args) {
 
@@ -39,11 +41,17 @@ public class MainGame {
         Configg cons = Configg.getInstance();
 
 
+
         just_game_pane = new Pane();
         stop_wiring = false;
         HUDpane = new Pane();
         main_game_root = new StackPane(just_game_pane, HUDpane);
         level_stack=new Level_Stack();
+        gameTimer.restart();
+        signal_run_frame_counter = 0;
+        Paintt.HUD_update();
+
+
 
 
 
@@ -57,11 +65,16 @@ public class MainGame {
         Add_level.start();
         paintt.addtopane_sysboxsandindicators();
         paintt.addtopane_gates();
+        for (Sysbox sysbox:level_stack.sysboxes){
+            System.out.println("before clone sysbox.signal_bank.size() "+sysbox.signal_bank.size());
+        }
         level_stack_start=level_stack.getClone();
 
+        for (Sysbox sysbox:level_stack.sysboxes){
+            System.out.println("before wiring sysbox.signal_bank.size() "+sysbox.signal_bank.size());
+        }
 //        level_stack_start=level_stack;
 //        paintt.addtopane_signals();
-
 
 
 //       wiring mode
@@ -79,11 +92,14 @@ public class MainGame {
         timeline_wiring.play();
 
         Timeline signals_run = new Timeline(new KeyFrame(Duration.millis(17), event -> {
-            if (stop_wiring || !virtual_run) {
+            if (stop_wiring && !virtual_run) {
+                System.out.println("in real run");
                 Controller.Signals_Update();
                 Controller.check_and_do_collision();
                 gameTimer.setStopping(false);
                 Paintt.HUD_update();
+                Add_level.add_source_signals();
+                signal_run_frame_counter++;
             }
             else {
                 gameTimer.setStopping(true);

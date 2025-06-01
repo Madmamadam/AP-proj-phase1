@@ -8,6 +8,7 @@ import model.Typee;
 import java.util.Arrays;
 
 import static mains.Filee.level_stack;
+import static mains.MainGame.signal_run_frame_counter;
 
 public class Add_level {
     public static void start(){
@@ -45,9 +46,14 @@ public class Add_level {
 
         for(Sysbox sysbox:level_stack.sysboxes) {
             Inital_Load.GateAssign(sysbox);
+            System.out.println("Add_level sysbox.signal_bank.size() "+sysbox.signal_bank.size());
         }
         level_stack.signals.addAll(starterSysbox.signal_bank);
+
     }
 
 
+    public static void add_source_signals() {
+//        if(signal_run_frame_counter>)
+    }
 }

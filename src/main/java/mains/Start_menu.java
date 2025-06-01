@@ -25,6 +25,7 @@ public class Start_menu extends Application {
 
 
     public void start(Stage primaryStage) throws Exception {
+        System.out.println("hello");
 
 //        filee.read();
 
