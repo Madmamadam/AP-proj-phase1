@@ -485,7 +485,7 @@ public class Controller {
     public static void virtual_time_clicked(double virtual_ratio) {
         double max_t=level_stack.constraintss.getMaximum_time_sec();
         double go_to_time_sec = virtual_ratio*max_t;
-//        half_restart(go_to_time_sec);
+        half_restart(go_to_time_sec);
 
     }
 

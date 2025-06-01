@@ -90,12 +90,16 @@ public class Sysbox {
         for (Signal signal : signal_bank) {
             clone.signal_bank.add(signal.cloneSignal());
         }
-        for (Gate gate : inner_gates) {
-            clone.inner_gates.add(gate.cloneGate());
+        for (Gate oldgate : inner_gates) {
+            Gate gate = oldgate.cloneGate();
+            clone.inner_gates.add(gate);
+            gate.setSysbox(clone);
             gate.setIn_use(false);
         }
-        for (Gate gate : outer_gates) {
-            clone.outer_gates.add(gate.cloneGate());
+        for (Gate oldgate : outer_gates) {
+            Gate gate = oldgate.cloneGate();
+            clone.outer_gates.add(gate);
+            gate.setSysbox(clone);
             gate.setIn_use(false);
         }
 
