@@ -90,7 +90,10 @@ public class Gate {
 
 
     public Gate cloneGate() {
-        return new Gate(this.typee, this.is_outer);
+        Gate gate = new Gate(this.typee, this.is_outer);
+        gate.setX(this.getX());
+        gate.setY(this.getY());
+        return gate;
     }
     public Gate(Typee typee, boolean is_outer) {
         this.typee = typee;

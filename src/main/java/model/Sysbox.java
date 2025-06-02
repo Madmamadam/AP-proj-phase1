@@ -5,6 +5,8 @@ import mains.Configg;
 
 import java.util.ArrayList;
 
+import static javafx.scene.input.KeyCode.W;
+
 public class Sysbox {
     private Rectangle rectangle;
     private boolean indicator_on_state;
@@ -95,6 +97,7 @@ public class Sysbox {
             clone.inner_gates.add(gate);
             gate.setSysbox(clone);
             gate.setIn_use(false);
+
         }
         for (Gate oldgate : outer_gates) {
             Gate gate = oldgate.cloneGate();
@@ -102,7 +105,6 @@ public class Sysbox {
             gate.setSysbox(clone);
             gate.setIn_use(false);
         }
-
         clone.rectangle=this.rectangle;
         clone.indicator_on_state=this.indicator_on_state;
         clone.indicator_rectangle=this.indicator_rectangle;

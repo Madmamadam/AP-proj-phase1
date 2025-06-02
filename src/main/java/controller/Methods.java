@@ -31,10 +31,10 @@ public class Methods {
         boolean second_found = false;
         Gate secound_gate = null;
         for(Gate gate:sysbox.outer_gates){
-            if (Objects.equals(gate.getTypee().getName(),signal.getTypee().getName()) && !gate.isIn_use()){
+            if (Objects.equals(gate.getTypee().getName(),signal.getTypee().getName()) && !gate.isIn_use() && gate.getWire()!=null){
                 return gate;
             }
-            if(!gate.isIn_use() && !second_found){
+            if(!gate.isIn_use() && !second_found && gate.getWire()!=null){
                 second_found = true;
                 secound_gate = gate;
             }

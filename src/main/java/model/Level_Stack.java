@@ -2,8 +2,6 @@ package model;
 
 import java.util.ArrayList;
 
-import static mains.Filee.level_stack;
-
 public class Level_Stack {
     public ArrayList<Sysbox> sysboxes = new ArrayList<>();
     private double level_wires_length ;
@@ -39,11 +37,12 @@ public class Level_Stack {
 
     public Level_Stack getClone() {
         Level_Stack clone_stack = new Level_Stack();
+        clone_stack.signals = new ArrayList<Signal>();
         clone_stack.sysboxes = new ArrayList<Sysbox>();
         clone_stack.level_wires_length = this.level_wires_length;
         clone_stack.sekke = this.sekke;
         clone_stack.collapsedPairs = new ArrayList<Pairs>();
-        clone_stack.wires = this.wires;
+        clone_stack.wires = new ArrayList<Wire>();
         clone_stack.collapsedPairs=new ArrayList<Pairs>();
         clone_stack.constraintss = this.constraintss;
         clone_stack.Oairyaman = this.Oairyaman;
@@ -54,29 +53,34 @@ public class Level_Stack {
         for(Sysbox sysbox : this.sysboxes) {
             clone_stack.sysboxes.add(sysbox.getclone());
         }
-        level_stack.signals.addAll(clone_stack.sysboxes.getFirst().signal_bank);
+
+        clone_stack.signals.addAll(clone_stack.sysboxes.getFirst().signal_bank);
+
+
+        //clone wires
+        for(Wire old_wire : this.wires) {
+
+            Sysbox First_old_Sysbox = old_wire.getFirstgate().getSysbox();
+            Sysbox Second_old_Sysbox = old_wire.getSecondgate().getSysbox();
+            int outer_index=First_old_Sysbox.outer_gates.indexOf(old_wire.getFirstgate());
+            int inner_index=Second_old_Sysbox.inner_gates.indexOf(old_wire.getSecondgate());
+
+            Sysbox First_new_Sysbox  =clone_stack.sysboxes.get(this.sysboxes.indexOf(First_old_Sysbox));
+            Sysbox Second_new_Sysbox =clone_stack.sysboxes.get(this.sysboxes.indexOf(Second_old_Sysbox));
+
+            Gate outer_gate=First_new_Sysbox.outer_gates.get(outer_index);
+            Gate inner_gate=Second_new_Sysbox.inner_gates.get(inner_index);
+
+            Wire wire = new Wire(outer_gate,inner_gate);
+            outer_gate.setWire(wire);
+            inner_gate.setWire(wire);
+
+            clone_stack.wires.add(wire);
+
+        }
 
 
 
-
-//      clone_stack.sysboxes = this.sysboxes;
-
-//        for (int i = 0; i < this.sysboxes.size(); i++) {
-//            clone_stack.sysboxes.get(i).signal_bank = new ArrayList<Signal>();
-//            for(Signal signal: this.sysboxes.get(i).signal_bank) {
-//                clone_stack.sysboxes.get(i).signal_bank.add(signal.cloneSignal());
-//            }
-//        }
-//        clone_stack.signals.addAll(clone_stack.sysboxes.getFirst().signal_bank);
-//
-//        for(Sysbox sysbox : clone_stack.sysboxes) {
-//            for(Gate gate:sysbox.inner_gates){
-//                gate.setIn_use(false);
-//            }
-//            for (Gate gate : sysbox.outer_gates) {
-//                gate.setIn_use(false);
-//            }
-//        }
         return clone_stack;
     }
 }

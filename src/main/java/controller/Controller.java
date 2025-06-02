@@ -32,19 +32,27 @@ public class Controller {
         Methods methods = new Methods();
         Configg cons = Configg.getInstance();
         //it's after load signals stack
+        System.out.println("///Signals_Update()");
 
         //first: update signals that on sysbox  (Assign wire)
         for (Sysbox sysbox : level_stack.sysboxes) {
             System.out.println("sysbox.signal_bank.size() "+sysbox.signal_bank.size());
-            for (int i=0;i<cons.getBank_capacity() && !sysbox.signal_bank.isEmpty();i++){
-                Signal signal=sysbox.signal_bank.getFirst();
+            for (int i=0;i<sysbox.signal_bank.size() && !sysbox.signal_bank.isEmpty();i++){
+                Signal signal=sysbox.signal_bank.get(i);
                 signal.setIs_updated(true);
-                System.out.println("nice1");
+                System.out.println("nice1  sysbox_index: "+level_stack.sysboxes.indexOf(sysbox));
+                //just check outer_gates
+                System.out.println("just check outer_gates");
+                for (Gate gate:sysbox.outer_gates){
+                    System.out.println("gate.isIn_use() "+gate.isIn_use());
+                }
+                System.out.println("end check");
+                //end check
                 if(methods.recommended_gate(sysbox,signal) != null){
                     Gate recom_gate = (Gate) methods.recommended_gate(sysbox,signal);
                     System.out.println("sysbox.signal_bank.size() "+sysbox.signal_bank.size());
                     System.out.println("nice2");
-                    signal_go_to_wire(signal,recom_gate);
+                    signal_go_to_wire(signal,recom_gate,i);
                     System.out.println("nice3");
 
                 }
@@ -57,6 +65,9 @@ public class Controller {
             System.out.println("signal.isIs_updated() "+signal.isIs_updated());
             System.out.println("signal.getState() "+signal.getState());
             if((!signal.isIs_updated()) && Objects.equals(signal.getState(),"on_wire")){
+                if(signal.getLinked_wire()==null){
+                    System.out.println("signal.getLinked_wire() is null ---");
+                }
                 signal.setLength_on_wire(signal.getLength_on_wire()+cons.getDelta_wire_length());
                 if(signal.getLength_on_wire()>signal.getLinked_wire().getLength()){
                     signal_go_to_bank(signal);
@@ -71,6 +82,7 @@ public class Controller {
             }
 
         }
+        System.out.println("/// end-  Signals_Update()");
 
     }
 
@@ -122,11 +134,11 @@ public class Controller {
         }
     }
 
-    private static void signal_go_to_wire(Signal signal, Gate recom_gate) {
+    private static void signal_go_to_wire(Signal signal, Gate recom_gate,int i) {
         signal.setLinked_wire(recom_gate.getWire());
         signal.setLength_on_wire(0.0);
         System.out.println("recom_gate.getSysbox().signal_bank.size() "+recom_gate.getSysbox().signal_bank.size());
-        recom_gate.getSysbox().signal_bank.removeFirst();
+        recom_gate.getSysbox().signal_bank.remove(i);
         signal.setState("on_wire");
 //        System.out.println("go to on wire ");
         recom_gate.setIn_use(true);
@@ -498,7 +510,7 @@ public class Controller {
         Timeline signals_virtual_run = new Timeline();
         signals_virtual_run.getKeyFrames().add(new KeyFrame(Duration.millis(1000/cons.getVirtual_frequency()), event -> {
             if (stop_wiring) {
-                System.out.println("in virtual run");
+                System.out.println("//////////in virtual run");
                 Controller.Signals_Update();
                 Controller.check_and_do_collision();
                 signal_run_frame_counter++;

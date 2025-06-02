@@ -73,7 +73,7 @@ public class MainGame {
         for (Sysbox sysbox:level_stack.sysboxes){
             System.out.println("before wiring sysbox.signal_bank.size() "+sysbox.signal_bank.size());
         }
-//        level_stack_start=level_stack;
+
 //        paintt.addtopane_signals();
 
 
@@ -93,7 +93,7 @@ public class MainGame {
 
         Timeline signals_run = new Timeline(new KeyFrame(Duration.millis(17), event -> {
             if (stop_wiring && !virtual_run) {
-                System.out.println("in real run");
+                System.out.println("////////////// in real run");
                 Controller.Signals_Update();
                 Controller.check_and_do_collision();
                 gameTimer.setStopping(false);

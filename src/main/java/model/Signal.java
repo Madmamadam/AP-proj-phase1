@@ -41,6 +41,7 @@ public class Signal {
 
     public Signal cloneSignal() {
         Signal clone = new Signal(this.typee);
+        clone.setState("on_sysbox");
         return clone;
     }
 
