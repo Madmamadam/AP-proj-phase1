@@ -16,7 +16,6 @@ import model.*;
 import org.locationtech.jts.geom.Coordinate;
 import view.Paintt;
 
-import java.util.ArrayList;
 import java.util.Objects;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -44,8 +43,9 @@ public class Controller {
                 if(methods.recommended_gate(sysbox,signal) != null){
                     Gate recom_gate = (Gate) methods.recommended_gate(sysbox,signal);
                     System.out.println("sysbox.signal_bank.size() "+sysbox.signal_bank.size());
-                    signal_go_to_wire(signal,recom_gate);
                     System.out.println("nice2");
+                    signal_go_to_wire(signal,recom_gate);
+                    System.out.println("nice3");
 
                 }
             }
@@ -493,7 +493,7 @@ public class Controller {
         gameTimer.setTime_sec(goToTime_sec);
         Configg cons = Configg.getInstance();
         double cyclecount=goToTime_sec*cons.getVirtual_frequency();
-        restart_signal_pos();
+        restart_level_signals();
         virtual_run=true;
         Timeline signals_virtual_run = new Timeline();
         signals_virtual_run.getKeyFrames().add(new KeyFrame(Duration.millis(1000/cons.getVirtual_frequency()), event -> {
@@ -514,7 +514,7 @@ public class Controller {
         });
     }
 
-    private static void restart_signal_pos() {
+    private static void restart_level_signals() {
         for (Signal signal : level_stack.signals) {
             just_game_pane.getChildren().remove(signal.poly);
         }

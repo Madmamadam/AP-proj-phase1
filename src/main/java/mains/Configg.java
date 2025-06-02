@@ -5,7 +5,7 @@ import javafx.scene.shape.Polygon;
 
 public class Configg {
     private int bank_capacity=5;
-    private double delta_wire_length=0.4;
+    private double delta_wire_length=1;
 
     private double virtual_frequency=60*5;
 

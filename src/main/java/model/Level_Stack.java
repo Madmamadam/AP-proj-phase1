@@ -2,6 +2,8 @@ package model;
 
 import java.util.ArrayList;
 
+import static mains.Filee.level_stack;
+
 public class Level_Stack {
     public ArrayList<Sysbox> sysboxes = new ArrayList<>();
     private double level_wires_length ;
@@ -42,10 +44,17 @@ public class Level_Stack {
         clone_stack.sekke = this.sekke;
         clone_stack.collapsedPairs = new ArrayList<Pairs>();
         clone_stack.wires = this.wires;
+        clone_stack.collapsedPairs=new ArrayList<Pairs>();
+        clone_stack.constraintss = this.constraintss;
+        clone_stack.Oairyaman = this.Oairyaman;
+        clone_stack.Oatar = this.Oatar;
+        clone_stack.OAnahita=this.OAnahita;
+
         // anything in sysbox but signal_bank and gate state
         for(Sysbox sysbox : this.sysboxes) {
             clone_stack.sysboxes.add(sysbox.getclone());
         }
+        level_stack.signals.addAll(clone_stack.sysboxes.getFirst().signal_bank);
 
 
 
@@ -68,11 +77,6 @@ public class Level_Stack {
 //                gate.setIn_use(false);
 //            }
 //        }
-        clone_stack.collapsedPairs=new ArrayList<Pairs>();
-        clone_stack.constraintss = this.constraintss;
-        clone_stack.Oairyaman = this.Oairyaman;
-        clone_stack.Oatar = this.Oatar;
-        clone_stack.OAnahita=this.OAnahita;
         return clone_stack;
     }
 }

@@ -107,8 +107,6 @@ public class Sysbox {
         clone.indicator_on_state=this.indicator_on_state;
         clone.indicator_rectangle=this.indicator_rectangle;
 
-        clone.outer_gates=this.outer_gates;
-        clone.inner_gates=this.inner_gates;
         clone.starter=this.starter;
         return clone;
 

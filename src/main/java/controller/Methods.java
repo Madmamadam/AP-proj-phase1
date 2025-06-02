@@ -11,6 +11,7 @@ import java.util.Objects;
 import static java.lang.Math.cos;
 import static java.lang.Math.sin;
 import static mains.Filee.level_stack;
+import static mains.MainGame.virtual_run;
 
 
 public class Methods {
@@ -57,20 +58,26 @@ public class Methods {
 
         Polygon poly =signal.poly;
         poly.getPoints().clear();
+        //just for debugging
+        if(virtual_run){
+            System.out.println("virtual run polygon");
+        }
         if(Objects.equals(signal.getTypee().getName(),"rectangle")){
             poly.getPoints().addAll(signal.getX()-cons.getSignal_rectangle_width()/2,signal.getY()-cons.getSignal_rectangle_height()/2);
             poly.getPoints().addAll(signal.getX()-cons.getSignal_rectangle_width()/2,signal.getY()+cons.getSignal_rectangle_height()/2);
             poly.getPoints().addAll(signal.getX()+cons.getSignal_rectangle_width()/2,signal.getY()+cons.getSignal_rectangle_height()/2);
             poly.getPoints().addAll(signal.getX()+cons.getSignal_rectangle_width()/2,signal.getY()-cons.getSignal_rectangle_height()/2);
             poly.setFill(cons.getSignal_rectangle_color());
-
+            System.out.println("add rectangle");
         }
         if(Objects.equals(signal.getTypee().getName(),"triangle")){
             for (int i=0 ; i<3;i++) {
                 poly.getPoints().addAll(signal.getX()-cons.getSignal_triangle_radius()*sin(i*2*pi/3), signal.getY() - cons.getSignal_triangle_radius()*cos(i*2*pi/3));
             }
             poly.setFill(cons.getSignal_triangle_color());
+            System.out.println("add triangle");
         }
+        System.out.println("end poly");
     }
 
 
