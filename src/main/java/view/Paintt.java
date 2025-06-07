@@ -11,6 +11,7 @@ import javafx.scene.input.KeyCode;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Region;
 import javafx.scene.layout.StackPane;
+import javafx.scene.shape.Line;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
 import mains.Configg;
@@ -30,15 +31,25 @@ public class Paintt {
     static Slider virtualTimeSlider = new Slider(0, 1, 0.0);
     private static Text timetext = new Text("");
     public static GameTimer gameTimer = new GameTimer();
+    static Line showline = new Line();
 
-    public static void HUD_update() {
-        user_changing=false;
-        virtualTimeSlider.setValue(gameTimer.getTime_sec()/level_stack.constraintss.getMaximum_time_sec());
-        user_changing=true;
+    public static void HUD_signal_run_update() {
+
+            user_changing = false;
+            virtualTimeSlider.setValue(gameTimer.getTime_sec() / level_stack.constraintss.getMaximum_time_sec());
+            user_changing = true;
 
         double time = gameTimer.getTime_sec();
         timetext.setText(String.format("Time: %.1fs", time));
 
+
+
+    }
+    public static void HUD_wiring_update() {
+        Configg cons = Configg.getInstance();
+        double ratio=1 - level_stack.getLevel_wires_length()/level_stack.constraintss.getMaximum_length();
+
+        showline.setEndX(500+ratio*cons.getHealth_bar_back_length());
     }
 
     public void addtopane_signals() {
@@ -120,6 +131,26 @@ public class Paintt {
         });
 
 
+        //نوار طول سیم
+        Configg cons = Configg.getInstance();
+
+        Line backline = new Line(500,25,500+cons.getHealth_bar_back_length(),25);
+        backline.setStrokeWidth(cons.getHealth_bar_width());
+        backline.setStroke(cons.getHealth_bar_back_color());
+
+
+        showline.setStartX(500);
+        showline.setStartY(25);
+        showline.setEndX(500+cons.getHealth_bar_back_length());
+        showline.setEndY(25);
+        showline.setStrokeWidth(cons.getHealth_bar_width());
+        showline.setStroke(cons.getHealth_bar_show_color());
+
+
+
+
+
+
         // دکمه شروع/توقف
         Button runStopButton = new Button("Run");
         runStopButton.setOnAction(event -> {
@@ -145,6 +176,8 @@ public class Paintt {
 
         // اضافه کردن به HUDpane
         HUDpane.getChildren().add(hudControls);
+        HUDpane.getChildren().add(backline);
+        HUDpane.getChildren().add(showline);
     }
 
 

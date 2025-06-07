@@ -5,7 +5,7 @@ import javafx.scene.shape.Polygon;
 public class Signal {
 //  anything
     private Typee typee;
-//    can be 1.on_wire 2.on_sysbox 3.ended
+//    can be 1.on_wire 2.on_sysbox 3.ended 4.lost
     private String state;
     private double noise;
     private double length_on_wire;

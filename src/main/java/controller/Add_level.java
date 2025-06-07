@@ -1,9 +1,6 @@
 package controller;
 
-import model.Gate;
-import model.Signal;
-import model.Sysbox;
-import model.Typee;
+import model.*;
 
 import java.util.Arrays;
 
@@ -11,9 +8,9 @@ import static mains.Filee.level_stack;
 import static mains.MainGame.signal_run_frame_counter;
 
 public class Add_level {
-    public static void start(){
+    public static void start(int level){
         //level constraint
-        level_stack.constraintss.setMaximum_length(555000);
+        level_stack.constraintss.setMaximum_length(3000);
         level_stack.constraintss.setMaximum_noise(5.0);
         level_stack.constraintss.setMaximum_time_sec(40);
 
@@ -48,8 +45,12 @@ public class Add_level {
             Inital_Load.GateAssign(sysbox);
             System.out.println("Add_level sysbox.signal_bank.size() "+sysbox.signal_bank.size());
         }
+        //باید برای اونایی که بعدا اضافه میشن هم بکنیم اینکارو
         level_stack.signals.addAll(starterSysbox.signal_bank);
 
+        level_stack.After_signals.add(new After_Frame_And_Signal_start(recSignal.cloneSignal(),60*5));
+        level_stack.After_signals.add(new After_Frame_And_Signal_start(recSignal.cloneSignal(),60*2));
+        level_stack.After_signals.add(new After_Frame_And_Signal_start(triSignal.cloneSignal(),60*5));
     }
 
 

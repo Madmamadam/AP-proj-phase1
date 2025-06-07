@@ -26,6 +26,7 @@ public class MainGame {
     public static boolean user_changing=true;
     public static boolean virtual_run = false;
     public static int signal_run_frame_counter = 0;
+    private static boolean first_time = true;
 
 //    public static void main(String[] args) {
 
@@ -49,7 +50,7 @@ public class MainGame {
         level_stack=new Level_Stack();
         gameTimer.restart();
         signal_run_frame_counter = 0;
-        Paintt.HUD_update();
+        Paintt.HUD_signal_run_update();
 
 
 
@@ -62,17 +63,10 @@ public class MainGame {
         primaryStage.setFullScreen(true);
         primaryStage.setScene(main_game_scene);
         primaryStage.show();
-        Add_level.start();
+        Add_level.start(1);
         paintt.addtopane_sysboxsandindicators();
         paintt.addtopane_gates();
-        for (Sysbox sysbox:level_stack.sysboxes){
-            System.out.println("before clone sysbox.signal_bank.size() "+sysbox.signal_bank.size());
-        }
-        level_stack_start=level_stack.getClone();
 
-        for (Sysbox sysbox:level_stack.sysboxes){
-            System.out.println("before wiring sysbox.signal_bank.size() "+sysbox.signal_bank.size());
-        }
 
 //        paintt.addtopane_signals();
 
@@ -80,8 +74,6 @@ public class MainGame {
 //       wiring mode
         Controller.wiring();
 
-
-//      in signal move mode
         Timeline timeline_wiring = new Timeline(new KeyFrame(Duration.millis(17*6), event -> {
             if (!stop_wiring) {
                 Controller.indicator_update();
@@ -91,13 +83,25 @@ public class MainGame {
         timeline_wiring.setCycleCount(Timeline.INDEFINITE);
         timeline_wiring.play();
 
+//      in signal move mode
         Timeline signals_run = new Timeline(new KeyFrame(Duration.millis(17), event -> {
             if (stop_wiring && !virtual_run) {
+                if(first_time){
+                    for (Sysbox sysbox:level_stack.sysboxes){
+                        System.out.println("before clone sysbox.signal_bank.size() "+sysbox.signal_bank.size());
+                    }
+                    level_stack_start=level_stack.getClone();
+
+                    for (Sysbox sysbox:level_stack.sysboxes){
+                        System.out.println("before wiring sysbox.signal_bank.size() "+sysbox.signal_bank.size());
+                    }
+                    first_time=false;
+                }
                 System.out.println("////////////// in real run");
                 Controller.Signals_Update();
                 Controller.check_and_do_collision();
                 gameTimer.setStopping(false);
-                Paintt.HUD_update();
+                Paintt.HUD_signal_run_update();
                 Add_level.add_source_signals();
                 signal_run_frame_counter++;
             }

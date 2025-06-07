@@ -1,9 +1,15 @@
 package model;
 
+import javafx.scene.shape.Circle;
+
 import java.util.ArrayList;
+
+import static view.Paintt.HUD_wiring_update;
 
 public class Level_Stack {
     public ArrayList<Sysbox> sysboxes = new ArrayList<>();
+    public ArrayList<After_Frame_And_Signal_start> After_signals = new ArrayList<>();
+    public ArrayList<Circle> impulse_circles = new ArrayList<>();
     private double level_wires_length ;
     public ArrayList<Signal> signals = new ArrayList<>();
     public ArrayList<Wire> wires = new ArrayList<>();
@@ -25,6 +31,7 @@ public class Level_Stack {
 
     public void setLevel_wires_length(double level_wires_length) {
         this.level_wires_length = level_wires_length;
+        HUD_wiring_update();
     }
 
     public double getSekke() {
@@ -54,10 +61,18 @@ public class Level_Stack {
             clone_stack.sysboxes.add(sysbox.getclone());
         }
 
+        for(After_Frame_And_Signal_start d_signal : this.After_signals) {
+            After_Frame_And_Signal_start d_signal_clone = new After_Frame_And_Signal_start(d_signal.signal.cloneSignal(),d_signal.adding_frame);
+            clone_stack.After_signals.add(d_signal_clone);
+        }
+
+
+
         clone_stack.signals.addAll(clone_stack.sysboxes.getFirst().signal_bank);
 
 
         //clone wires
+        System.out.println("this.wires.size()= "+this.wires.size());
         for(Wire old_wire : this.wires) {
 
             Sysbox First_old_Sysbox = old_wire.getFirstgate().getSysbox();
@@ -65,8 +80,11 @@ public class Level_Stack {
             int outer_index=First_old_Sysbox.outer_gates.indexOf(old_wire.getFirstgate());
             int inner_index=Second_old_Sysbox.inner_gates.indexOf(old_wire.getSecondgate());
 
-            Sysbox First_new_Sysbox  =clone_stack.sysboxes.get(this.sysboxes.indexOf(First_old_Sysbox));
-            Sysbox Second_new_Sysbox =clone_stack.sysboxes.get(this.sysboxes.indexOf(Second_old_Sysbox));
+            int A1 =this.sysboxes.indexOf(First_old_Sysbox);
+            int A2 =this.sysboxes.indexOf(Second_old_Sysbox);
+
+            Sysbox First_new_Sysbox  =clone_stack.sysboxes.get(A1);
+            Sysbox Second_new_Sysbox =clone_stack.sysboxes.get(A2);
 
             Gate outer_gate=First_new_Sysbox.outer_gates.get(outer_index);
             Gate inner_gate=Second_new_Sysbox.inner_gates.get(inner_index);
@@ -74,6 +92,15 @@ public class Level_Stack {
             Wire wire = new Wire(outer_gate,inner_gate);
             outer_gate.setWire(wire);
             inner_gate.setWire(wire);
+
+            if(outer_index<0 || inner_index<0 || A1 <0 || A2 <0) {
+                System.out.println("++++++++++++++ index problem");
+            }
+            else {
+                System.out.println("index is ok");
+            }
+
+
 
             clone_stack.wires.add(wire);
 
@@ -83,4 +110,8 @@ public class Level_Stack {
 
         return clone_stack;
     }
+
+
+
+
 }

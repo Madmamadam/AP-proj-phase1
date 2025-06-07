@@ -24,6 +24,7 @@ import java.util.concurrent.atomic.AtomicReference;
 import static mains.Filee.level_stack;
 import static mains.Filee.level_stack_start;
 import static mains.MainGame.*;
+import static view.Paintt.HUD_wiring_update;
 import static view.Paintt.gameTimer;
 
 public class Controller {
@@ -34,10 +35,21 @@ public class Controller {
         //it's after load signals stack
         System.out.println("///Signals_Update()");
 
+
+        //zero: add signals to start Sysbox
+        for(After_Frame_And_Signal_start d_signal :level_stack.After_signals){
+            if(!d_signal.added && d_signal.adding_frame<signal_run_frame_counter){
+                d_signal.added = true;
+                signal_add_to_start(d_signal.signal);
+            }
+        }
+
+
+
         //first: update signals that on sysbox  (Assign wire)
         for (Sysbox sysbox : level_stack.sysboxes) {
             System.out.println("sysbox.signal_bank.size() "+sysbox.signal_bank.size());
-            for (int i=0;i<sysbox.signal_bank.size() && !sysbox.signal_bank.isEmpty();i++){
+            for (int i=0;i<sysbox.signal_bank.size() && !sysbox.signal_bank.isEmpty();){
                 Signal signal=sysbox.signal_bank.get(i);
                 signal.setIs_updated(true);
                 System.out.println("nice1  sysbox_index: "+level_stack.sysboxes.indexOf(sysbox));
@@ -45,16 +57,22 @@ public class Controller {
                 System.out.println("just check outer_gates");
                 for (Gate gate:sysbox.outer_gates){
                     System.out.println("gate.isIn_use() "+gate.isIn_use());
+                    if(gate.getWire()==null){
+                        System.out.println("gate.getWire()==null");
+                    }
                 }
                 System.out.println("end check");
-                //end check
-                if(methods.recommended_gate(sysbox,signal) != null){
+                //end of checking
+
+                if(methods.recommended_gate(sysbox,signal) != null && signal.getState()=="on_sysbox"){
                     Gate recom_gate = (Gate) methods.recommended_gate(sysbox,signal);
                     System.out.println("sysbox.signal_bank.size() "+sysbox.signal_bank.size());
                     System.out.println("nice2");
-                    signal_go_to_wire(signal,recom_gate,i);
+                    signal_go_to_wire(signal,recom_gate);
                     System.out.println("nice3");
-
+                }
+                else{
+                    i++;
                 }
             }
         }
@@ -86,6 +104,12 @@ public class Controller {
 
     }
 
+    private static void signal_add_to_start(Signal signal) {
+        System.out.println("********* signal_add_to_start  frame counter ="+signal_run_frame_counter);
+        level_stack.signals.add(signal);
+        level_stack.sysboxes.getFirst().signal_bank.add(signal);
+    }
+
     private static void check_signal_wire_distance(Signal signal) {
         Configg cons = Configg.getInstance();
         double x=signal.getX_ekhtelaf();
@@ -109,7 +133,9 @@ public class Controller {
         Configg cons = Configg.getInstance();
 
         Sysbox sysbox =signal.getLinked_wire().getSecondgate().getSysbox();
+
         if(sysbox.signal_bank.size()>5 && !sysbox.isStarter()){
+            //lost
             signal.setState("ended");
             return;
         }
@@ -134,11 +160,11 @@ public class Controller {
         }
     }
 
-    private static void signal_go_to_wire(Signal signal, Gate recom_gate,int i) {
+    private static void signal_go_to_wire(Signal signal, Gate recom_gate) {
         signal.setLinked_wire(recom_gate.getWire());
         signal.setLength_on_wire(0.0);
         System.out.println("recom_gate.getSysbox().signal_bank.size() "+recom_gate.getSysbox().signal_bank.size());
-        recom_gate.getSysbox().signal_bank.remove(i);
+        recom_gate.getSysbox().signal_bank.remove(signal);
         signal.setState("on_wire");
 //        System.out.println("go to on wire ");
         recom_gate.setIn_use(true);
@@ -151,7 +177,6 @@ public class Controller {
 //        System.out.println("in wiring");
         AtomicReference<Wire> decoy_wire = new AtomicReference<>();
         AtomicBoolean isStartedinGate = new AtomicBoolean();
-
         //-----------------------------first selection
         for (Sysbox sysbox : level_stack.sysboxes) {
             for(Gate gate:sysbox.inner_gates){
@@ -253,6 +278,7 @@ public class Controller {
         wire.getFirstgate().setWire(null);
         wire.getSecondgate().setWire(null);
         level_stack.wires.remove(wire);
+        level_stack.setLevel_wires_length(level_stack.getLevel_wires_length() - wire.getLength());
 
     }
 
@@ -437,31 +463,37 @@ public class Controller {
         }
     }
 
-    private static void collapse_happen_in_a_location(Coordinate coordinate,Signal signal1,Signal signal2) {
+    private static void  collapse_happen_in_a_location(Coordinate coordinate,Signal signal1,Signal signal2) {
+//        if(virtual_run) return;
+
         Methods methods = new Methods();
         Configg cons = Configg.getInstance();
-//      just show
-        Circle impulse_circle = new Circle();
-        impulse_circle.setCenterX(coordinate.x);
-        impulse_circle.setCenterY(coordinate.y);
-        impulse_circle.setFill(cons.getImpulse_color());
-        just_game_pane.getChildren().add(impulse_circle);
-        int maxcyclecount =(int) (cons.getImpulse_show_time() / 0.017);
-        AtomicInteger cyclecount= new AtomicInteger();
-        cyclecount.set(0);
-        Timeline timeline_signals_run = new Timeline(new KeyFrame(Duration.millis(17), event -> {
-
-            cyclecount.set(cyclecount.get()+1);
-            double ratio=(double) cyclecount.get()/maxcyclecount;
-//            System.out.println("collapse ratio: "+ratio+" maxcyclecount: "+maxcyclecount);
-
-            impulse_circle.setRadius(cons.getImpulse_radius()*ratio);
-        }));
-        timeline_signals_run.setCycleCount(maxcyclecount);
-        timeline_signals_run.play();
-        timeline_signals_run.setOnFinished(event -> {
-            just_game_pane.getChildren().remove(impulse_circle);
-        });
+////      just show
+//        Circle impulse_circle = new Circle();
+//        impulse_circle.setCenterX(coordinate.x);
+//        impulse_circle.setCenterY(coordinate.y);
+//        impulse_circle.setFill(cons.getImpulse_color());
+//
+//        level_stack.impulse_circles.add(impulse_circle);
+//        just_game_pane.getChildren().add(impulse_circle);
+//
+//        int maxcyclecount =(int) (cons.getImpulse_show_time() / 0.017);
+//        AtomicInteger cyclecount= new AtomicInteger();
+//        cyclecount.set(0);
+//        Timeline timeline_signals_run = new Timeline(new KeyFrame(Duration.millis(17), event -> {
+//
+//            cyclecount.set(cyclecount.get()+1);
+//            double ratio=(double) cyclecount.get()/maxcyclecount;
+////            System.out.println("collapse ratio: "+ratio+" maxcyclecount: "+maxcyclecount);
+//
+//            impulse_circle.setRadius(cons.getImpulse_radius()*ratio);
+//
+//        }));
+//        timeline_signals_run.setCycleCount(maxcyclecount);
+//        timeline_signals_run.play();
+//        timeline_signals_run.setOnFinished(event -> {
+//            just_game_pane.getChildren().remove(impulse_circle);
+//        });
 
 
 //        control
@@ -474,6 +506,15 @@ public class Controller {
                 }
             }
         }
+    }
+
+    private static double runratio() {
+        Configg cons = Configg.getInstance();
+        if(virtual_run){
+            return (1/(cons.getVirtual_frequency()/60));
+        }
+        else
+            return 1;
     }
 
     private static void in_radius_impulse_wave(Signal signal, Coordinate coordinate) {
@@ -504,7 +545,7 @@ public class Controller {
     private static void half_restart(double goToTime_sec) {
         gameTimer.setTime_sec(goToTime_sec);
         Configg cons = Configg.getInstance();
-        double cyclecount=goToTime_sec*cons.getVirtual_frequency();
+        double cyclecount=goToTime_sec*60;
         restart_level_signals();
         virtual_run=true;
         Timeline signals_virtual_run = new Timeline();
@@ -530,13 +571,21 @@ public class Controller {
         for (Signal signal : level_stack.signals) {
             just_game_pane.getChildren().remove(signal.poly);
         }
+//        for (Circle circle: level_stack.impulse_circles){
+//            just_game_pane.getChildren().remove(circle);
+//        }
+
         level_stack = level_stack_start.getClone();
+
         System.out.println("signals size now: " + level_stack.signals.size());
+
         for (Signal signal : level_stack.signals) {
             System.out.println("signal_state: "+signal.getState());
         }
+
         System.out.println("level_stack.sysboxes.getFirst().signal_bank.size() "+level_stack.sysboxes.getFirst().signal_bank.size());
-        update_gate_from_wires();
+
+//        update_gate_from_wires();
     }
 
     private static void update_gate_from_wires() {

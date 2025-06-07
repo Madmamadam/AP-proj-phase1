@@ -7,7 +7,7 @@ public class Configg {
     private int bank_capacity=5;
     private double delta_wire_length=1;
 
-    private double virtual_frequency=60*5;
+    private double virtual_frequency=60*200;
 
     private double noise_add_every_hit=1;
 
@@ -22,7 +22,10 @@ public class Configg {
 
 
 
-
+    private double health_bar_width=4;
+    private double health_bar_back_length=250;
+    private Color health_bar_back_color=Color.GRAY;
+    private Color health_bar_show_color=Color.GREEN;
 
     private double sysbox_default_width=40;
     private double sysbox_default_height=100;
@@ -265,6 +268,22 @@ public class Configg {
     }
     public double getVirtual_frequency(){
         return virtual_frequency;
+    }
+
+    public double getHealth_bar_width() {
+        return health_bar_width;
+    }
+
+    public Color getHealth_bar_back_color() {
+        return health_bar_back_color;
+    }
+
+    public Color getHealth_bar_show_color() {
+        return health_bar_show_color;
+    }
+
+    public double getHealth_bar_back_length() {
+        return health_bar_back_length;
     }
 
     //
