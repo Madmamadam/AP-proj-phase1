@@ -19,6 +19,7 @@ import static mains.Filee.level_stack_start;
 import static view.Paintt.*;
 
 public class MainGame {
+    static Configg cons = Configg.getInstance();
     public static Pane just_game_pane = new Pane();
     public static Boolean stop_wiring = false;
     public static Pane HUDpane = new Pane();
@@ -28,8 +29,50 @@ public class MainGame {
     public static int signal_run_frame_counter = 0;
     private static boolean first_time = true;
     public static Stage primaryStage_static;
+    public static Timeline signals_virtual_run = new Timeline(new KeyFrame(Duration.millis(1000/cons.getVirtual_frequency()), event -> {
+        if (stop_wiring) {
+            System.out.println("//////////in virtual run");
+            Controller.Signals_Update();
+            Controller.check_and_do_collision();
+            signal_run_frame_counter++;
+        }
+//            if(gameTimer.getTime_sec()>goToTime_sec){
+//                signals_virtual_run.stop();
+//            }
+    }));
 
-    public static Timeline signals_run = new Timeline();
+    public static Timeline signals_run =new Timeline(new KeyFrame(Duration.millis(17), event -> {
+        if (stop_wiring && !virtual_run) {
+            if(first_time){
+                for (Sysbox sysbox:level_stack.sysboxes){
+                    System.out.println("before clone sysbox.signal_bank.size() "+sysbox.signal_bank.size());
+                }
+                level_stack_start=level_stack.getClone();
+
+                for (Sysbox sysbox:level_stack.sysboxes){
+                    System.out.println("before wiring sysbox.signal_bank.size() "+sysbox.signal_bank.size());
+                }
+                first_time=false;
+            }
+            System.out.println("////////////// in real run");
+
+
+            Controller.Signals_Update();
+            Controller.check_and_do_collision();
+            Controller.ending_check();
+
+
+            gameTimer.setStopping(false);
+            Paintt.HUD_signal_run_update();
+            Add_level.add_source_signals();
+            signal_run_frame_counter++;
+        }
+        else {
+            gameTimer.setStopping(true);
+        }
+    }));
+
+
 //    public static void main(String[] args) {
 
 
@@ -87,36 +130,6 @@ public class MainGame {
         timeline_wiring.play();
 
 //      in signal move mode
-        signals_run = new Timeline(new KeyFrame(Duration.millis(17), event -> {
-            if (stop_wiring && !virtual_run) {
-                if(first_time){
-                    for (Sysbox sysbox:level_stack.sysboxes){
-                        System.out.println("before clone sysbox.signal_bank.size() "+sysbox.signal_bank.size());
-                    }
-                    level_stack_start=level_stack.getClone();
-
-                    for (Sysbox sysbox:level_stack.sysboxes){
-                        System.out.println("before wiring sysbox.signal_bank.size() "+sysbox.signal_bank.size());
-                    }
-                    first_time=false;
-                }
-                System.out.println("////////////// in real run");
-
-
-                Controller.Signals_Update();
-                Controller.check_and_do_collision();
-                Controller.ending_check();
-
-
-                gameTimer.setStopping(false);
-                Paintt.HUD_signal_run_update();
-                Add_level.add_source_signals();
-                signal_run_frame_counter++;
-            }
-            else {
-                gameTimer.setStopping(true);
-            }
-        }));
         signals_run.setCycleCount(Timeline.INDEFINITE);
         signals_run.play();
 

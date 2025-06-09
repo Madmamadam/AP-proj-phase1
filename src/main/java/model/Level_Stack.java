@@ -50,7 +50,6 @@ public class Level_Stack {
         clone_stack.sekke = this.sekke;
         clone_stack.collapsedPairs = new ArrayList<Pairs>();
         clone_stack.wires = new ArrayList<Wire>();
-        clone_stack.collapsedPairs=new ArrayList<Pairs>();
         clone_stack.constraintss = this.constraintss;
         clone_stack.Oairyaman = this.Oairyaman;
         clone_stack.Oatar = this.Oatar;

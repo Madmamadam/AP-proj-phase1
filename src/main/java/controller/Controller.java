@@ -545,18 +545,8 @@ public class Controller {
         double cyclecount=goToTime_sec*60;
         restart_level_signals();
         virtual_run=true;
-        Timeline signals_virtual_run = new Timeline();
-        signals_virtual_run.getKeyFrames().add(new KeyFrame(Duration.millis(1000/cons.getVirtual_frequency()), event -> {
-            if (stop_wiring) {
-                System.out.println("//////////in virtual run");
-                Controller.Signals_Update();
-                Controller.check_and_do_collision();
-                signal_run_frame_counter++;
-            }
-//            if(gameTimer.getTime_sec()>goToTime_sec){
-//                signals_virtual_run.stop();
-//            }
-        }));
+
+
         signals_virtual_run.setCycleCount((int) (cyclecount));
         signals_virtual_run.play();
         signals_virtual_run.setOnFinished(event2 -> {
@@ -594,9 +584,17 @@ public class Controller {
 
     public static boolean ending_check() {
         boolean is_ended=true;
-        for(Signal signal: level_stack.signals) {
-            if(!(signal.getState()=="dead" ||signal.getState()=="ended")) {
-                is_ended=false;
+        if(gameTimer.getTime_sec()>=level_stack.constraintss.getMaximum_time_sec()){
+//            is_ended=true;
+        }
+        else {
+            for (Signal signal : level_stack.signals) {
+                if(signal.getState()==null){
+                    is_ended=false;
+                }
+                if (!(signal.getState() == "lost" || signal.getState() == "ended")) {
+                    is_ended = false;
+                }
             }
         }
         if(is_ended) {
@@ -607,6 +605,14 @@ public class Controller {
 
     private static void level_ended() {
         System.out.println("******************** LEVEL ENDED *******************");
+        //Check
+        System.out.println("level_stack.signals.size() "+level_stack.signals.size());
+        for (Signal signal : level_stack.signals) {
+            System.out.println("signal_state: "+signal.getState());
+        }
+
+        //end of Check
+        stop_wiring=false;
         Paintt.add_ratio_to_ending_pane();
         MainGame.show_ending_stage();
     }
