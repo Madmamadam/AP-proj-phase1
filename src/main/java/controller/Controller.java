@@ -5,7 +5,6 @@ import javafx.animation.PauseTransition;
 import javafx.animation.Timeline;
 import javafx.scene.Node;
 import javafx.scene.input.MouseButton;
-import javafx.scene.shape.Circle;
 import javafx.scene.shape.Line;
 import javafx.scene.shape.Polygon;
 import javafx.stage.Stage;
@@ -18,13 +17,11 @@ import view.Paintt;
 
 import java.util.Objects;
 import java.util.concurrent.atomic.AtomicBoolean;
-import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicReference;
 
 import static mains.Filee.level_stack;
 import static mains.Filee.level_stack_start;
 import static mains.MainGame.*;
-import static view.Paintt.HUD_wiring_update;
 import static view.Paintt.gameTimer;
 
 public class Controller {
@@ -136,7 +133,7 @@ public class Controller {
 
         if(sysbox.signal_bank.size()>5 && !sysbox.isStarter()){
             //lost
-            signal.setState("ended");
+            signal.setState("lost");
             return;
         }
 
@@ -442,7 +439,7 @@ public class Controller {
 
     private static void go_to_dead(Signal signal) {
         signal.setIs_updated(true);
-        signal.setState("ended");
+        signal.setState("lost");
         just_game_pane.getChildren().remove(signal.poly);
     }
 
@@ -593,5 +590,51 @@ public class Controller {
             wire.getFirstgate().setWire(wire);
             wire.getSecondgate().setWire(wire);
         }
+    }
+
+    public static boolean ending_check() {
+        boolean is_ended=true;
+        for(Signal signal: level_stack.signals) {
+            if(!(signal.getState()=="dead" ||signal.getState()=="ended")) {
+                is_ended=false;
+            }
+        }
+        if(is_ended) {
+            level_ended();
+        }
+        return is_ended;
+    }
+
+    private static void level_ended() {
+        System.out.println("******************** LEVEL ENDED *******************");
+        Paintt.add_ratio_to_ending_pane();
+        MainGame.show_ending_stage();
+    }
+
+    public static boolean is_winner() {
+        //counter dead
+        int dead_count=0;;
+        for (Signal signal : level_stack.signals) {
+            if(signal.getState()=="dead") {
+                dead_count++;
+            }
+        }
+        double dead_ratio = (double)dead_count/(double)level_stack.signals.size();
+
+        if(dead_ratio>level_stack.constraintss.getMaximum_dead_ratio()) {
+            return false;
+        }
+        else {
+            return true;
+        }
+    }
+
+    public static void menuBtn_clicked() {
+    }
+
+    public static void restartBtn_clicked() {
+    }
+
+    public static void nextLevelBtn_clicked() {
     }
 }

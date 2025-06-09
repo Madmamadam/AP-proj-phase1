@@ -4,6 +4,7 @@ public class Constraintss {
     double maximum_length;
     double maximum_noise;
     double maximum_time_sec;
+    double maximum_dead_ratio;
 
 
     public double getMaximum_length() {
@@ -24,5 +25,11 @@ public class Constraintss {
     }
     public void setMaximum_time_sec(double maximum_time_sec) {
         this.maximum_time_sec = maximum_time_sec;
+    }
+    public double getMaximum_dead_ratio() {
+        return maximum_dead_ratio;
+    }
+    public void setMaximum_dead_ratio(double maximum_dead_ratio) {
+        this.maximum_dead_ratio = maximum_dead_ratio;
     }
 }

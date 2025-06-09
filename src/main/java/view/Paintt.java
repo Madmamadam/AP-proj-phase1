@@ -9,6 +9,7 @@ import javafx.scene.control.Label;
 import javafx.scene.control.Slider;
 import javafx.scene.input.KeyCode;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.Pane;
 import javafx.scene.layout.Region;
 import javafx.scene.layout.StackPane;
 import javafx.scene.shape.Line;
@@ -32,6 +33,8 @@ public class Paintt {
     private static Text timetext = new Text("");
     public static GameTimer gameTimer = new GameTimer();
     static Line showline = new Line();
+        public static Pane win_ending_pane=new Pane();
+        public static Pane lose_ending_pane=new Pane();
 
     public static void HUD_signal_run_update() {
 
@@ -50,6 +53,22 @@ public class Paintt {
         double ratio=1 - level_stack.getLevel_wires_length()/level_stack.constraintss.getMaximum_length();
 
         showline.setEndX(500+ratio*cons.getHealth_bar_back_length());
+    }
+
+    public static void add_ratio_to_ending_pane() {
+        Label scoreLabelWin = new Label("dead ratio: " + "445");
+        scoreLabelWin.setStyle("-fx-font-size: 24px; -fx-text-fill: darkgreen;");
+        scoreLabelWin.setLayoutX(350);
+        scoreLabelWin.setLayoutY(180);
+
+        Label scoreLabelLose = new Label("dead ratio: " + "445");
+        scoreLabelLose.setStyle("-fx-font-size: 24px; -fx-text-fill: white;");
+        scoreLabelLose.setLayoutX(350);
+        scoreLabelLose.setLayoutY(180);
+
+        win_ending_pane.getChildren().add(scoreLabelWin);
+        lose_ending_pane.getChildren().add(scoreLabelLose);
+
     }
 
     public void addtopane_signals() {
@@ -101,6 +120,8 @@ public class Paintt {
         HUDpane.setMaxHeight(Region.USE_PREF_SIZE);
         setupHUD(primaryStage);
 
+        setup_ending_panes();
+
 
         main_game_root.setOnKeyPressed(event -> {
             if (event.getCode() == KeyCode.ESCAPE) {
@@ -110,6 +131,54 @@ public class Paintt {
 
 
 
+    }
+
+    private void setup_ending_panes() {
+        // ---------- Lose Ending Pane ----------
+        lose_ending_pane.setStyle("-fx-background-color: red;");
+
+        Label loseLabel = new Label("You Lost!");
+        loseLabel.setStyle("-fx-font-size: 36px; -fx-text-fill: white;");
+        loseLabel.setLayoutX(320);
+        loseLabel.setLayoutY(120);
+
+
+        Button menuBtnLose = new Button("Menu");
+        menuBtnLose.setLayoutX(350);
+        menuBtnLose.setLayoutY(250);
+        menuBtnLose.setOnAction(event ->
+            Controller.menuBtn_clicked());
+
+        Button restartBtn = new Button("Restart");
+        restartBtn.setLayoutX(350);
+        restartBtn.setLayoutY(300);
+        restartBtn.setOnAction(event ->
+                Controller.restartBtn_clicked());
+
+        lose_ending_pane.getChildren().addAll(loseLabel, menuBtnLose, restartBtn);
+
+        // ---------- Win Ending Pane ----------
+        win_ending_pane.setStyle("-fx-background-color: lightgreen;");
+
+        Label winLabel = new Label("You Won!");
+        winLabel.setStyle("-fx-font-size: 36px; -fx-text-fill: darkgreen;");
+        winLabel.setLayoutX(320);
+        winLabel.setLayoutY(120);
+
+
+        Button menuBtnWin = new Button("Menu");
+        menuBtnWin.setLayoutX(350);
+        menuBtnWin.setLayoutY(250);
+        menuBtnWin.setOnAction(event ->
+                Controller.menuBtn_clicked());
+
+        Button nextLevelBtn = new Button("Next Level");
+        nextLevelBtn.setLayoutX(350);
+        nextLevelBtn.setLayoutY(300);
+        nextLevelBtn.setOnAction(event ->
+                Controller.nextLevelBtn_clicked());
+
+        win_ending_pane.getChildren().addAll(winLabel, menuBtnWin, nextLevelBtn);
     }
 
     public void setupHUD(Stage primaryStage) {

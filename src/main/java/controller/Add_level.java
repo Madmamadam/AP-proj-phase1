@@ -13,6 +13,7 @@ public class Add_level {
         level_stack.constraintss.setMaximum_length(3000);
         level_stack.constraintss.setMaximum_noise(5.0);
         level_stack.constraintss.setMaximum_time_sec(40);
+        level_stack.constraintss.setMaximum_dead_ratio(0.2);
 
 
         //intial model
