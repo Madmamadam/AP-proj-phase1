@@ -4,6 +4,8 @@ import javafx.animation.KeyFrame;
 import javafx.animation.PauseTransition;
 import javafx.animation.Timeline;
 import javafx.scene.Node;
+import javafx.scene.Scene;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseButton;
 import javafx.scene.shape.Line;
 import javafx.scene.shape.Polygon;
@@ -19,6 +21,7 @@ import java.util.Objects;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicReference;
 
+import static javafx.scene.input.KeyCode.U;
 import static mains.Filee.level_stack;
 import static mains.Filee.level_stack_start;
 import static mains.MainGame.*;
@@ -470,6 +473,13 @@ public class Controller {
 
     private static void go_to_dead(Signal signal) {
         signal.setIs_updated(true);
+
+        if(signal.getState()=="on_wire")
+        {
+        //خالی کردن اون خط
+            signal.getLinked_wire().getFirstgate().setIn_use(false);
+            signal.getLinked_wire().getSecondgate().setIn_use(false);
+        }
         signal.setState("lost");
         just_game_pane.getChildren().remove(signal.poly);
     }
@@ -577,7 +587,7 @@ public class Controller {
         restart_level_signals();
         virtual_run=true;
 
-
+        if(cyclecount<3){cyclecount=3;}
         signals_virtual_run.setCycleCount((int) (cyclecount));
         signals_virtual_run.play();
         signals_virtual_run.setOnFinished(event2 -> {
@@ -673,5 +683,32 @@ public class Controller {
     }
 
     public static void nextLevelBtn_clicked() {
+    }
+    public static void signal_log_enable(Scene scene) {
+        scene.setOnKeyPressed((KeyEvent event) -> {
+            if (event.getCode().toString().equals("U")) {
+                print_signal_log();
+            }
+        });
+
+
+    }
+
+    private static void print_signal_log() {
+        System.out.println("------------singnal and sysbox log-------------");
+        System.out.println("level_stack.signals.size() "+level_stack.signals.size());
+        for (Signal signal : level_stack.signals) {
+            System.out.println("signal.getState() "+signal.getState());
+            System.out.println("signal.getLinked_wire()" +signal.getLinked_wire());
+            if(signal.getLinked_wire()!=null) {
+                System.out.println("level_stack.sysboxes.indexOf(signal.getLinked_wire().getFirstgate().getSysbox()) " +level_stack.sysboxes.indexOf(signal.getLinked_wire().getFirstgate().getSysbox()));
+            }
+        }
+
+        for (int i = 0; i < level_stack.sysboxes.size(); i++) {
+            Sysbox sysbox = level_stack.sysboxes.get(i);
+            System.out.println("sysbox number "+i +"    sysbox.signal_bank.size() "+sysbox.signal_bank.size() );
+        }
+        System.out.println("-----------------------------------------------");
     }
 }

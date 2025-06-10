@@ -108,6 +108,7 @@ public class MainGame {
         primaryStage.setFullScreen(true);
         primaryStage.setScene(main_game_scene);
         primaryStage.show();
+        Controller.signal_log_enable(main_game_scene);
         Add_level.start(1);
         paintt.addtopane_sysboxsandindicators();
         paintt.addtopane_gates();

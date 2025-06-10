@@ -4,7 +4,7 @@ import javafx.scene.paint.Color;
 
 public class Configg {
     private int bank_capacity=5;
-    private double default_delta_wire_length =1;
+    private double default_delta_wire_length =0.5;
 
     private double virtual_frequency=60*200;
 
