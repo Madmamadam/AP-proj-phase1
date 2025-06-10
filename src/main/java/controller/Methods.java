@@ -35,7 +35,7 @@ public class Methods {
         boolean second_found = false;
         Gate secound_gate = null;
         for(Gate gate:sysbox.outer_gates){
-            if (Objects.equals(gate.getTypee().getName(),signal.getTypee().getName()) && !gate.isIn_use() && gate.getWire()!=null){
+            if (Objects.equals(gate.getTypee().getShapeName(),signal.getTypee().getShapeName()) && !gate.isIn_use() && gate.getWire()!=null){
                 return gate;
             }
             if(!gate.isIn_use() && !second_found && gate.getWire()!=null){
@@ -66,7 +66,7 @@ public class Methods {
         if(mainGameModel.virtual_run){
             System.out.println("virtual run polygon");
         }
-        if(Objects.equals(signal.getTypee().getName(),"rectangle")){
+        if(Objects.equals(signal.getTypee().getShapeName(),"rectangle")){
             poly.getPoints().addAll(signal.getX()-cons.getSignal_rectangle_width()/2,signal.getY()-cons.getSignal_rectangle_height()/2);
             poly.getPoints().addAll(signal.getX()-cons.getSignal_rectangle_width()/2,signal.getY()+cons.getSignal_rectangle_height()/2);
             poly.getPoints().addAll(signal.getX()+cons.getSignal_rectangle_width()/2,signal.getY()+cons.getSignal_rectangle_height()/2);
@@ -74,7 +74,7 @@ public class Methods {
             poly.setFill(cons.getSignal_rectangle_color());
             System.out.println("add rectangle");
         }
-        if(Objects.equals(signal.getTypee().getName(),"triangle")){
+        if(Objects.equals(signal.getTypee().getShapeName(),"triangle")){
             for (int i=0 ; i<3;i++) {
                 poly.getPoints().addAll(signal.getX()-cons.getSignal_triangle_radius()*sin(i*2*pi/3), signal.getY() - cons.getSignal_triangle_radius()*cos(i*2*pi/3));
             }

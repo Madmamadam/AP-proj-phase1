@@ -407,25 +407,25 @@ public class MainGame_Logics {
 
     private void signal_one_step_on_wire(Signal signal) {
         Configg cons = Configg.getInstance();
-        if (signal.getTypee().getName() == "rectangle"){
+        if (signal.getTypee().getShapeName() == "rectangle"){
             //first gate and end gate have same type
-            if (signal.getLinked_wire().getFirstgate().getTypee().getName() == "rectangle") {
+            if (signal.getLinked_wire().getFirstgate().getTypee().getShapeName() == "rectangle") {
                 signal.setLength_on_wire(signal.getLength_on_wire() + cons.getDefault_delta_wire_length());
             }
-            else if (signal.getLinked_wire().getFirstgate().getTypee().getName() == "triangle") {
+            else if (signal.getLinked_wire().getFirstgate().getTypee().getShapeName() == "triangle") {
                 signal.setLength_on_wire(signal.getLength_on_wire() + cons.getDefault_delta_wire_length() / 2);
             }
             else {
-                System.out.println("+++++type not found error firstgateName:"+signal.getLinked_wire().getFirstgate().getTypee().getName());
-                System.out.println("signal.Name :" + signal.getTypee().getName());
+                System.out.println("+++++type not found error firstgateName:"+signal.getLinked_wire().getFirstgate().getTypee().getShapeName());
+                System.out.println("signal.Name :" + signal.getTypee().getShapeName());
             }
         }
-        if(signal.getTypee().getName()=="triangle"){
-            if(signal.getLinked_wire().getFirstgate().getTypee().getName()=="rectangle") {
+        if(signal.getTypee().getShapeName()=="triangle"){
+            if(signal.getLinked_wire().getFirstgate().getTypee().getShapeName()=="rectangle") {
                 double ratio = signal.getLength_on_wire()/signal.getLinked_wire().getLength();
                 signal.setLength_on_wire(signal.getLength_on_wire() + (1+2*ratio)*cons.getDefault_delta_wire_length());
             }
-            else if(signal.getLinked_wire().getFirstgate().getTypee().getName()=="triangle"){
+            else if(signal.getLinked_wire().getFirstgate().getTypee().getShapeName()=="triangle"){
                 signal.setLength_on_wire(signal.getLength_on_wire() + cons.getDefault_delta_wire_length());
             }
             else {
@@ -541,7 +541,7 @@ public class MainGame_Logics {
         if(   wire.getFirstgate().getWire()!=null
                 ||wire.getSecondgate().getWire()!=null){
         }
-        else if(        !Objects.equals(wire.getFirstgate().getTypee().getName(),wire.getSecondgate().getTypee().getName())
+        else if(        !Objects.equals(wire.getFirstgate().getTypee().getShapeName(),wire.getSecondgate().getTypee().getShapeName())
                 || Objects.equals(wire.getFirstgate().getSysbox(),wire.getSecondgate().getSysbox())
                 || !wire.getFirstgate().isIs_outer()
                 || wire.getSecondgate().isIs_outer()

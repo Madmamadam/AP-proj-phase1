@@ -17,7 +17,6 @@ import javafx.scene.text.Text;
 import javafx.stage.Stage;
 import mains.Configg;
 import model.Gate;
-import model.LevelGame_StaticDataModel;
 import model.Signal;
 import model.Sysbox;
 
@@ -110,14 +109,14 @@ public class Paintt {
     private void one_gate_update_polygan(Gate gate) {
         Configg cons = Configg.getInstance();
         double pi=3.1415;
-        if(Objects.equals(gate.getTypee().getName(),"rectangle")){
+        if(Objects.equals(gate.getTypee().getShapeName(),"rectangle")){
             gate.poly.getPoints().clear();
             gate.poly.getPoints().addAll(gate.getX()-cons.getGate_rectangle_width()/2, gate.getY()-cons.getGate_rectangle_height()/2);
             gate.poly.getPoints().addAll(gate.getX()-cons.getGate_rectangle_width()/2, gate.getY()+cons.getGate_rectangle_height()/2);
             gate.poly.getPoints().addAll(gate.getX()+cons.getGate_rectangle_width()/2, gate.getY()+cons.getGate_rectangle_height()/2);
             gate.poly.getPoints().addAll(gate.getX()+cons.getGate_rectangle_width()/2, gate.getY()-cons.getGate_rectangle_height()/2);
         }
-        if(Objects.equals(gate.getTypee().getName(),"triangle")){
+        if(Objects.equals(gate.getTypee().getShapeName(),"triangle")){
             gate.poly.getPoints().clear();
             for (int i=0 ; i<3;i++) {
                 gate.poly.getPoints().addAll(gate.getX()-cons.getGate_triangle_radius()*sin(i*2*pi/3), gate.getY() - cons.getGate_triangle_radius()*cos(i*2*pi/3));

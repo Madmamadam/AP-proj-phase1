@@ -1,7 +1,8 @@
 package model;
 
 public class Typee {
-    private String name;
+    private String shapeName;
+    private String rollName;
     private int id;
 
 
@@ -10,10 +11,10 @@ public class Typee {
     public Typee(int id) {
         this.id = id;
         if(id==1){
-            this.name = "rectangle";
+            this.shapeName = "rectangle";
         }
         else if(id==2){
-            this.name = "triangle";
+            this.shapeName = "triangle";
         }
     }
 
@@ -21,7 +22,7 @@ public class Typee {
         return id;
     }
 
-    public String getName() {
-        return name;
+    public String getShapeName() {
+        return shapeName;
     }
 }
