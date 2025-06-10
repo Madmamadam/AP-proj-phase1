@@ -64,7 +64,6 @@ public class MainGame {
 
             gameTimer.setStopping(false);
             Paintt.HUD_signal_run_update();
-            Add_level.add_source_signals();
             signal_run_frame_counter++;
         }
         else {

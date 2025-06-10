@@ -1,11 +1,10 @@
 package mains;
 
 import javafx.scene.paint.Color;
-import javafx.scene.shape.Polygon;
 
 public class Configg {
     private int bank_capacity=5;
-    private double delta_wire_length=1;
+    private double default_delta_wire_length =1;
 
     private double virtual_frequency=60*200;
 
@@ -67,8 +66,8 @@ public class Configg {
         return bank_capacity;
     }
 
-    public double getDelta_wire_length() {
-        return delta_wire_length;
+    public double getDefault_delta_wire_length() {
+        return default_delta_wire_length;
     }
 
     public Color getSysbox_color() {

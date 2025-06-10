@@ -9,6 +9,8 @@ public class Inital_Load {
     public static void GateAssign(Sysbox sysbox){
         Configg cons = Configg.getInstance();
         int amount=sysbox.inner_gates.size();
+        if(amount==1){amount=2;}
+
         for (int i = 0; i < sysbox.inner_gates.size(); i++){
             sysbox.inner_gates.get(i).setSysbox(sysbox);
 //            sysbox.inner_gates.get(i).setX(sysbox.getRectangle().getX()+sysbox.getRectangle().getWidth()/2);
@@ -19,7 +21,7 @@ public class Inital_Load {
         }
 
         amount=sysbox.outer_gates.size();
-        if(amount==0){amount=1;}
+        if(amount==1){amount=2;}
 
         for (int i = 0; i < sysbox.outer_gates.size(); i++){
             sysbox.outer_gates.get(i).setSysbox(sysbox);

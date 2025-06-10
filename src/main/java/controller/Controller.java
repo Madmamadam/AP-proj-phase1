@@ -83,7 +83,10 @@ public class Controller {
                 if(signal.getLinked_wire()==null){
                     System.out.println("signal.getLinked_wire() is null ---");
                 }
-                signal.setLength_on_wire(signal.getLength_on_wire()+cons.getDelta_wire_length());
+                //speed adjusst
+                signal_one_step_on_wire(signal);
+                signal.setLength_on_wire(signal.getLength_on_wire()+cons.getDefault_delta_wire_length());
+                //
                 if(signal.getLength_on_wire()>signal.getLinked_wire().getLength()){
                     signal_go_to_bank(signal);
                 }
@@ -98,6 +101,34 @@ public class Controller {
 
         }
         System.out.println("/// end-  Signals_Update()");
+
+    }
+
+    private static void signal_one_step_on_wire(Signal signal) {
+        Configg cons = Configg.getInstance();
+        if(signal.getTypee().getName()=="rectangle")
+            //first gate and end gate have same type
+            if(signal.getLinked_wire().getFirstgate().getTypee().getName()=="rectangle") {
+                signal.setLength_on_wire(signal.getLength_on_wire() + cons.getDefault_delta_wire_length());
+            }
+            if(signal.getLinked_wire().getFirstgate().getTypee().getName()=="triangle"){
+                signal.setLength_on_wire(signal.getLength_on_wire() + cons.getDefault_delta_wire_length()/2);
+            }
+            else {
+                System.out.println("+++++type not found error");
+            }
+        if(signal.getTypee().getName()=="triangle"){
+            if(signal.getLinked_wire().getFirstgate().getTypee().getName()=="rectangle") {
+                double ratio = signal.getLength_on_wire()/signal.getLinked_wire().getLength();
+                signal.setLength_on_wire(signal.getLength_on_wire() + (1+2*ratio)*cons.getDefault_delta_wire_length());
+            }
+            if(signal.getLinked_wire().getFirstgate().getTypee().getName()=="triangle"){
+                signal.setLength_on_wire(signal.getLength_on_wire() + cons.getDefault_delta_wire_length());
+            }
+            else {
+                System.out.println("+++++type not found error");
+            }
+        }
 
     }
 
