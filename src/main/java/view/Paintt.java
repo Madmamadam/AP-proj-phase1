@@ -56,16 +56,16 @@ public class Paintt {
         Configg cons = Configg.getInstance();
         double ratio=1 - level_stack.getLevel_wires_length()/level_stack.constraintss.getMaximum_length();
 
-        showline.setEndX(500+ratio*cons.getHealth_bar_back_length());
+        showline.setEndX(700+ratio*cons.getHealth_bar_back_length());
     }
 
     public static void add_ratio_to_ending_pane() {
-        Label scoreLabelWin = new Label("dead ratio: " + "445");
+        Label scoreLabelWin = new Label("dead ratio: " + (double) dead_count/level_stack.constraintss.getMaximum_dead_ratio());
         scoreLabelWin.setStyle("-fx-font-size: 24px; -fx-text-fill: darkgreen;");
         scoreLabelWin.setLayoutX(350);
         scoreLabelWin.setLayoutY(180);
 
-        Label scoreLabelLose = new Label("dead ratio: " + "445");
+        Label scoreLabelLose = new Label("dead ratio: " + (double) dead_count/level_stack.constraintss.getMaximum_dead_ratio());
         scoreLabelLose.setStyle("-fx-font-size: 24px; -fx-text-fill: white;");
         scoreLabelLose.setLayoutX(350);
         scoreLabelLose.setLayoutY(180);
@@ -169,14 +169,14 @@ public class Paintt {
 
         coins.setStyle("-fx-font-size: 18px;");
 
-        Button shieldBtn = new Button("🛡 Shield (200)");
-//        shieldBtn.setOnAction(e -> applyTemporaryShield());
+        Button shieldBtn = new Button("O' Atar (3)");
+        shieldBtn.setOnAction(e -> Controller.OAtar_clicked());
 
-        Button healthBtn = new Button("❤️ Health (150)");
-//        healthBtn.setOnAction(e -> restoreHealth());
+        Button healthBtn = new Button("O’ Airyaman (4)");
+        healthBtn.setOnAction(e -> Controller.OAiryman_clicked());
 
-        Button speedBtn = new Button("⚡ Speed (100)");
-//        speedBtn.setOnAction(e -> boostSpeedTemporarily());
+        Button speedBtn = new Button("O' Anahita (5)");
+        speedBtn.setOnAction(e -> Controller.OAnahita_clicked());
 
         Button closeBtn = new Button("✖");
         closeBtn.setOnAction(e -> shop.setVisible(false));

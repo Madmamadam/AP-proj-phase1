@@ -3,13 +3,10 @@ package controller;
 import javafx.animation.KeyFrame;
 import javafx.animation.PauseTransition;
 import javafx.animation.Timeline;
-import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseButton;
-import javafx.scene.layout.Pane;
-import javafx.scene.layout.StackPane;
 import javafx.scene.shape.Line;
 import javafx.scene.shape.Polygon;
 import javafx.stage.Stage;
@@ -25,13 +22,12 @@ import java.util.Objects;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicReference;
 
-import static javafx.scene.input.KeyCode.U;
 import static mains.Filee.level_stack;
 import static mains.Filee.level_stack_start;
 import static mains.MainGame.*;
 import static mains.Start_menu.static_market_pane;
+import static view.Paintt.coins;
 import static view.Paintt.gameTimer;
-import static view.Paintt.win_ending_pane;
 
 public class Controller {
 
@@ -563,7 +559,7 @@ public class Controller {
     }
 
     private static void in_radius_impulse_wave(Signal signal, Coordinate coordinate) {
-        if(level_stack.Oatar){return;}
+        if(level_stack.Oatar ){return;}
 
         Configg cons=Configg.getInstance();
         double dx=signal.getX()-coordinate.getX();
@@ -653,6 +649,8 @@ public class Controller {
 
     private static void level_ended() {
         System.out.println("******************** LEVEL ENDED *******************");
+
+
         //Check
         System.out.println("level_stack.signals.size() "+level_stack.signals.size());
         for (Signal signal : level_stack.signals) {
@@ -660,15 +658,16 @@ public class Controller {
         }
 
         //end of Check
+
+
         stop_wiring=false;
-        Paintt.add_ratio_to_ending_pane();
         MainGame.show_ending_stage();
 
     }
 
-    public static boolean is_winner() {
+    public static boolean is_winner_and_update_dead_count() {
         //counter dead
-        int dead_count=0;;
+        dead_count=0;
         for (Signal signal : level_stack.signals) {
             if(signal.getState()=="dead") {
                 dead_count++;
@@ -729,9 +728,48 @@ public class Controller {
 
     public static void marketButtonClicked() {
         if(stop_wiring){
-            //for safety
-            Paintt.marketPaneupdate();
             static_market_pane.setVisible(true);
+        }
+    }
+
+
+
+    //if ran virtual_run so magic going reset
+    public static void OAtar_clicked() {
+        if(level_stack.getSekke() > 3) {
+            level_stack.setSekke(level_stack.getSekke() - 3);
+            level_stack.Oatar = true;
+
+            PauseTransition pause = new PauseTransition(Duration.seconds(10));
+            pause.setOnFinished(e -> level_stack.Oatar = false);
+            pause.play();
+        }
+    }
+
+    public static void OAiryman_clicked() {
+        if (level_stack.getSekke() > 4) {
+            level_stack.setSekke(level_stack.getSekke() - 4);
+            level_stack.Oairyaman = true;
+
+            PauseTransition pause = new PauseTransition(Duration.seconds(5));
+            pause.setOnFinished(e -> level_stack.Oairyaman = false);
+            pause.play();
+        }
+    }
+
+    public static void OAnahita_clicked() {
+        if(level_stack.getSekke() > 5){
+            level_stack.setSekke(level_stack.getSekke()-5);
+
+            reset_all_noise();
+
+
+        }
+    }
+
+    private static void reset_all_noise() {
+        for (Signal signal : level_stack.signals) {
+            signal.setNoise(0);
         }
     }
 }

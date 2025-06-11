@@ -30,6 +30,7 @@ public class MainGame {
     public static boolean user_changing=true;
     public static boolean virtual_run = false;
     public static int signal_run_frame_counter = 0;
+    public static int dead_count = 0;
     private static boolean first_time = true;
     public static Stage primaryStage_static;
     public static Timeline signals_virtual_run = new Timeline(new KeyFrame(Duration.millis(1000/cons.getVirtual_frequency()), event -> {
@@ -147,7 +148,7 @@ public class MainGame {
     public static void show_ending_stage() {
         Pane show_ending_pane;
 
-        if(Controller.is_winner()){
+        if(Controller.is_winner_and_update_dead_count()){
             show_ending_pane = win_ending_pane;
         }
         else {
@@ -157,7 +158,7 @@ public class MainGame {
             show_ending_pane.getScene().setRoot(new Pane());
         }
 
-
+        Paintt.add_ratio_to_ending_pane();
         end_stage_scene.setRoot(show_ending_pane);
         primaryStage_static.setScene(end_stage_scene);
         primaryStage_static.setFullScreen(true);

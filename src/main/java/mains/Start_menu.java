@@ -31,6 +31,7 @@ public class Start_menu extends Application {
     }
 
     public static void show_menu() {
+        primaryStage_static.setScene(static_menu_scene);
 
 
     }
