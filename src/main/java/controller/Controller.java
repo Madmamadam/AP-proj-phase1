@@ -669,8 +669,9 @@ public class Controller {
         //counter dead
         dead_count=0;
         for (Signal signal : level_stack.signals) {
-            if(signal.getState()=="dead") {
+            if(signal.getState()!="ended") {
                 dead_count++;
+                //really dead or just not ended
             }
         }
         double dead_ratio = (double)dead_count/(double)level_stack.signals.size();

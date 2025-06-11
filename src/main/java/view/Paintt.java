@@ -60,12 +60,12 @@ public class Paintt {
     }
 
     public static void add_ratio_to_ending_pane() {
-        Label scoreLabelWin = new Label("dead ratio: " + (double) dead_count/level_stack.constraintss.getMaximum_dead_ratio());
+        Label scoreLabelWin = new Label("dead ratio: " + (double) dead_count/level_stack.signals.size());
         scoreLabelWin.setStyle("-fx-font-size: 24px; -fx-text-fill: darkgreen;");
         scoreLabelWin.setLayoutX(350);
         scoreLabelWin.setLayoutY(180);
 
-        Label scoreLabelLose = new Label("dead ratio: " + (double) dead_count/level_stack.constraintss.getMaximum_dead_ratio());
+        Label scoreLabelLose = new Label("dead ratio: " + (double) dead_count/level_stack.signals.size());
         scoreLabelLose.setStyle("-fx-font-size: 24px; -fx-text-fill: white;");
         scoreLabelLose.setLayoutX(350);
         scoreLabelLose.setLayoutY(180);
