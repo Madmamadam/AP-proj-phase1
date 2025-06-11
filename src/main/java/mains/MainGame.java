@@ -16,10 +16,12 @@ import view.Paintt;
 
 import static mains.Filee.level_stack;
 import static mains.Filee.level_stack_start;
+import static mains.Start_menu.static_market_pane;
 import static view.Paintt.*;
 
 public class MainGame {
-    public static Pane show_ending_pane = new Pane();
+    public static int level;
+
     static Configg cons = Configg.getInstance();
     public static Pane just_game_pane = new Pane();
     public static Boolean stop_wiring = false;
@@ -64,6 +66,7 @@ public class MainGame {
 
 
             gameTimer.setStopping(false);
+            Paintt.marketPaneupdate();
             Paintt.HUD_signal_run_update();
             signal_run_frame_counter++;
         }
@@ -82,7 +85,9 @@ public class MainGame {
 //        -------------------------------------
 //    }
 
-    public static void start(Stage primaryStage) throws Exception {
+    public static void start(Stage primaryStage ,int l) throws Exception {
+
+        level =l;
         primaryStage_static = primaryStage;
         Paintt paintt = new Paintt();
         Configg cons = Configg.getInstance();
@@ -101,7 +106,7 @@ public class MainGame {
 
 
 
-
+        Add_level.start(level);
         paintt.initial_UI(primaryStage);
         Scene main_game_scene = new Scene(main_game_root);
         primaryStage.setScene(main_game_scene);
@@ -110,16 +115,16 @@ public class MainGame {
         primaryStage.setScene(main_game_scene);
         primaryStage.show();
         Controller.signal_log_enable(main_game_scene);
-        Add_level.start(1);
         paintt.addtopane_sysboxsandindicators();
         paintt.addtopane_gates();
-
 
 //        paintt.addtopane_signals();
 
 
 //       wiring mode
         Controller.wiring();
+
+        just_game_pane.getChildren().add(static_market_pane);
 
         Timeline timeline_wiring = new Timeline(new KeyFrame(Duration.millis(17*6), event -> {
             if (!stop_wiring) {
@@ -138,8 +143,9 @@ public class MainGame {
 //
 //        }));
     }
-
+//this is MainGame.java:144
     public static void show_ending_stage() {
+        Pane show_ending_pane;
 
         if(Controller.is_winner()){
             show_ending_pane = win_ending_pane;
@@ -147,7 +153,14 @@ public class MainGame {
         else {
             show_ending_pane = lose_ending_pane;
         }
+        if(show_ending_pane.getScene()!=null) {
+            show_ending_pane.getScene().setRoot(new Pane());
+        }
+
+
         end_stage_scene.setRoot(show_ending_pane);
         primaryStage_static.setScene(end_stage_scene);
+        primaryStage_static.setFullScreen(true);
     }
+//this is MainGame.java:156
 }

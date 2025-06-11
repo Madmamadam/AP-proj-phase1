@@ -2,17 +2,16 @@ package view;
 
 import controller.Controller;
 import controller.GameTimer;
+import javafx.application.Platform;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.scene.control.ProgressBar;
 import javafx.scene.control.Slider;
 import javafx.scene.input.KeyCode;
-import javafx.scene.layout.HBox;
-import javafx.scene.layout.Pane;
-import javafx.scene.layout.Region;
-import javafx.scene.layout.StackPane;
+import javafx.scene.layout.*;
 import javafx.scene.shape.Line;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
@@ -27,6 +26,7 @@ import static java.lang.Math.cos;
 import static java.lang.Math.sin;
 import static mains.Filee.level_stack;
 import static mains.MainGame.*;
+import static mains.Start_menu.static_market_pane;
 
 
 public class Paintt {
@@ -34,9 +34,11 @@ public class Paintt {
     private static Text timetext = new Text("");
     public static GameTimer gameTimer = new GameTimer();
     static Line showline = new Line();
-        public static Pane win_ending_pane=new Pane();
-        public static Pane lose_ending_pane=new Pane();
+    public static Pane win_ending_pane=new Pane();
+    public static Pane lose_ending_pane=new Pane();
     public static Scene end_stage_scene ;
+    public static Label coins = new Label("💰 1277");
+
 
     public static void HUD_signal_run_update() {
 
@@ -71,6 +73,10 @@ public class Paintt {
         win_ending_pane.getChildren().add(scoreLabelWin);
         lose_ending_pane.getChildren().add(scoreLabelLose);
 
+    }
+
+    public static void marketPaneupdate() {
+        coins.setText("💰 " + level_stack.getSekke());
     }
 
     public void addtopane_signals() {
@@ -123,6 +129,7 @@ public class Paintt {
         setupHUD(primaryStage);
 
         setup_ending_panes();
+        setup_market_pane();
 
 
         main_game_root.setOnKeyPressed(event -> {
@@ -130,14 +137,57 @@ public class Paintt {
                 Controller.exit();
             }
         });
-        show_ending_pane = lose_ending_pane;
-        end_stage_scene = new Scene(show_ending_pane);
+        Pane trash_pane = new Pane();
+        end_stage_scene = new Scene(trash_pane);
 
 
 
 
 
     }
+
+    private void setup_market_pane() {
+        static_market_pane =buildShopPane();
+        //مکث برای رندر کردن
+        Platform.runLater(() -> {
+            double w = static_market_pane.getPrefWidth();
+            double h = static_market_pane.getPrefHeight();
+            static_market_pane.setLayoutX((just_game_pane.getWidth() - w) / 2);
+            static_market_pane.setLayoutY((just_game_pane.getHeight() - h) / 2);
+        });
+        }
+    private VBox buildShopPane() {
+        VBox shop = new VBox(15);
+        shop.setAlignment(Pos.CENTER);
+        shop.setStyle("-fx-background-color: #4e4e46; -fx-padding: 30; -fx-background-radius: 20;");
+        shop.setPrefWidth(200);
+        shop.setPrefHeight(300);
+
+        Label title = new Label("SHOP");
+        title.setStyle("-fx-font-size: 24px; -fx-font-weight: bold;");
+
+
+        coins.setStyle("-fx-font-size: 18px;");
+
+        Button shieldBtn = new Button("🛡 Shield (200)");
+//        shieldBtn.setOnAction(e -> applyTemporaryShield());
+
+        Button healthBtn = new Button("❤️ Health (150)");
+//        healthBtn.setOnAction(e -> restoreHealth());
+
+        Button speedBtn = new Button("⚡ Speed (100)");
+//        speedBtn.setOnAction(e -> boostSpeedTemporarily());
+
+        Button closeBtn = new Button("✖");
+        closeBtn.setOnAction(e -> shop.setVisible(false));
+
+        shop.getChildren().addAll(title, coins, shieldBtn, healthBtn, speedBtn, closeBtn);
+
+        shop.setVisible(false);
+
+        return shop;
+    }
+
 
     private void setup_ending_panes() {
         // ---------- Lose Ending Pane ----------
@@ -159,7 +209,13 @@ public class Paintt {
         restartBtn.setLayoutX(350);
         restartBtn.setLayoutY(300);
         restartBtn.setOnAction(event ->
-                Controller.restartBtn_clicked());
+        {
+            try {
+                Controller.restartBtn_clicked();
+            } catch (Exception e) {
+                throw new RuntimeException(e);
+            }
+        });
 
         lose_ending_pane.getChildren().addAll(loseLabel, menuBtnLose, restartBtn);
 
@@ -210,14 +266,14 @@ public class Paintt {
         //نوار طول سیم
         Configg cons = Configg.getInstance();
 
-        Line backline = new Line(500,25,500+cons.getHealth_bar_back_length(),25);
+        Line backline = new Line(700,25,700+cons.getHealth_bar_back_length(),25);
         backline.setStrokeWidth(cons.getHealth_bar_width());
         backline.setStroke(cons.getHealth_bar_back_color());
 
 
-        showline.setStartX(500);
+        showline.setStartX(700);
         showline.setStartY(25);
-        showline.setEndX(500+cons.getHealth_bar_back_length());
+        showline.setEndX(700+cons.getHealth_bar_back_length());
         showline.setEndY(25);
         showline.setStrokeWidth(cons.getHealth_bar_width());
         showline.setStroke(cons.getHealth_bar_show_color());
@@ -239,16 +295,28 @@ public class Paintt {
         });
 
         double time = gameTimer.getTime_sec();
-        timetext.setText(String.format("Title: %.1fs", time));
+        timetext.setText(String.format("max Time: %.1fs",  level_stack.constraintss.getMaximum_time_sec()));
 
+
+
+        //market button
+        Button marketButton = new Button("Market");
+        marketButton.setOnAction(event -> {
+            //خرید در realtime انجام میشود
+            try {
+                Controller.marketButtonClicked();
+            } catch (Exception e) {
+                throw new RuntimeException(e);
+            }
+        });
 
 
 
         // HBox برای چیدن عناصر کنار هم
-        HBox hudControls = new HBox(20); // فاصله بین اجزا
+        HBox hudControls = new HBox(10); // فاصله بین اجزا
         hudControls.setPadding(new Insets(10));
         hudControls.setAlignment(Pos.TOP_LEFT);
-        hudControls.getChildren().addAll(runStopButton, volumeLabel, virtualTimeSlider, timetext);
+        hudControls.getChildren().addAll(runStopButton, volumeLabel, virtualTimeSlider, timetext , marketButton);
 
         // اضافه کردن به HUDpane
         HUDpane.getChildren().add(hudControls);

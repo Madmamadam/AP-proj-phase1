@@ -3,16 +3,20 @@ package controller;
 import javafx.animation.KeyFrame;
 import javafx.animation.PauseTransition;
 import javafx.animation.Timeline;
+import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseButton;
+import javafx.scene.layout.Pane;
+import javafx.scene.layout.StackPane;
 import javafx.scene.shape.Line;
 import javafx.scene.shape.Polygon;
 import javafx.stage.Stage;
 import javafx.util.Duration;
 import mains.Configg;
 import mains.MainGame;
+import mains.Start_menu;
 import model.*;
 import org.locationtech.jts.geom.Coordinate;
 import view.Paintt;
@@ -25,7 +29,9 @@ import static javafx.scene.input.KeyCode.U;
 import static mains.Filee.level_stack;
 import static mains.Filee.level_stack_start;
 import static mains.MainGame.*;
+import static mains.Start_menu.static_market_pane;
 import static view.Paintt.gameTimer;
+import static view.Paintt.win_ending_pane;
 
 public class Controller {
 
@@ -403,7 +409,7 @@ public class Controller {
     private static void time_to_restart(Stage primaryStage) throws Exception {
         stop_wiring=false;
         primaryStage.hide();
-        MainGame.start(primaryStage);
+        MainGame.start(primaryStage,level);
 
     }
 
@@ -656,6 +662,7 @@ public class Controller {
         stop_wiring=false;
         Paintt.add_ratio_to_ending_pane();
         MainGame.show_ending_stage();
+
     }
 
     public static boolean is_winner() {
@@ -677,12 +684,19 @@ public class Controller {
     }
 
     public static void menuBtn_clicked() {
+        Start_menu.show_menu();
     }
 
-    public static void restartBtn_clicked() {
+    public static void restartBtn_clicked() throws Exception {
+        time_to_restart(primaryStage_static);
     }
 
     public static void nextLevelBtn_clicked() {
+        try {
+            MainGame.start(primaryStage_static,2);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
     }
     public static void signal_log_enable(Scene scene) {
         scene.setOnKeyPressed((KeyEvent event) -> {
@@ -710,5 +724,13 @@ public class Controller {
             System.out.println("sysbox number "+i +"    sysbox.signal_bank.size() "+sysbox.signal_bank.size() );
         }
         System.out.println("-----------------------------------------------");
+    }
+
+    public static void marketButtonClicked() {
+        if(stop_wiring){
+            //for safety
+            Paintt.marketPaneupdate();
+            static_market_pane.setVisible(true);
+        }
     }
 }

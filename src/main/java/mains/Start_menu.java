@@ -8,9 +8,12 @@ import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.Slider;
+import javafx.scene.layout.Pane;
 import javafx.scene.media.MediaPlayer;
 import javafx.stage.Stage;
 import javafx.scene.layout.VBox;
+
+import static mains.MainGame.just_game_pane;
 
 
 public class Start_menu extends Application {
@@ -18,14 +21,26 @@ public class Start_menu extends Application {
     private boolean save = true;
     private MediaPlayer mediaPlayer;
 
+    public static Stage primaryStage_static;
+    public static Scene static_menu_scene;
+    public static Pane static_market_pane = new Pane();
+
 
     public static void main() {
         launch();
     }
 
+    public static void show_menu() {
+
+
+    }
+
 
     public void start(Stage primaryStage) throws Exception {
+
+        primaryStage_static = primaryStage;
         System.out.println("hello");
+
 
 //        filee.read();
 
@@ -102,6 +117,7 @@ public class Start_menu extends Application {
         menuLayout.getChildren().addAll(gameNameLabel, newGameButton, settingsButton, exitButton);
 
         Scene menuscene = new Scene(menuLayout);
+        static_menu_scene=menuscene;
         primaryStage.setScene(menuscene);
         primaryStage.show();
         double height=menuLayout.getHeight();
@@ -168,7 +184,7 @@ public class Start_menu extends Application {
         newGameButton.setOnAction(event ->{
             try {
                 MainGame mainGame = new MainGame();
-                mainGame.start(primaryStage);
+                mainGame.start(primaryStage,1);
             } catch (Exception e) {
                 throw new RuntimeException(e);
             }
