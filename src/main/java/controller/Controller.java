@@ -115,17 +115,18 @@ public class Controller {
 
     private static void signal_one_step_on_wire(Signal signal) {
         Configg cons = Configg.getInstance();
-        if(signal.getTypee().getName()=="rectangle")
+        if (signal.getTypee().getName() == "rectangle"){
             //first gate and end gate have same type
-            if(signal.getLinked_wire().getFirstgate().getTypee().getName()=="rectangle") {
+            if (signal.getLinked_wire().getFirstgate().getTypee().getName() == "rectangle") {
                 signal.setLength_on_wire(signal.getLength_on_wire() + cons.getDefault_delta_wire_length());
             }
-            if(signal.getLinked_wire().getFirstgate().getTypee().getName()=="triangle"){
-                signal.setLength_on_wire(signal.getLength_on_wire() + cons.getDefault_delta_wire_length()/2);
+            if (signal.getLinked_wire().getFirstgate().getTypee().getName() == "triangle") {
+                signal.setLength_on_wire(signal.getLength_on_wire() + cons.getDefault_delta_wire_length() / 2);
             }
             else {
                 System.out.println("+++++type not found error");
             }
+        }
         if(signal.getTypee().getName()=="triangle"){
             if(signal.getLinked_wire().getFirstgate().getTypee().getName()=="rectangle") {
                 double ratio = signal.getLength_on_wire()/signal.getLinked_wire().getLength();
