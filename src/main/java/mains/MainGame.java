@@ -19,6 +19,7 @@ import static mains.Filee.level_stack_start;
 import static view.Paintt.*;
 
 public class MainGame {
+    public static Pane show_ending_pane = new Pane();
     static Configg cons = Configg.getInstance();
     public static Pane just_game_pane = new Pane();
     public static Boolean stop_wiring = false;
@@ -139,14 +140,14 @@ public class MainGame {
     }
 
     public static void show_ending_stage() {
-        Pane show_pane = new Pane();
+
         if(Controller.is_winner()){
-            show_pane = win_ending_pane;
+            show_ending_pane = win_ending_pane;
         }
         else {
-            show_pane= lose_ending_pane;
+            show_ending_pane = lose_ending_pane;
         }
-        Scene end_stage_scene = new Scene(show_pane);
+        end_stage_scene.setRoot(show_ending_pane);
         primaryStage_static.setScene(end_stage_scene);
     }
 }

@@ -4,6 +4,7 @@ import controller.Controller;
 import controller.GameTimer;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
+import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.Slider;
@@ -35,6 +36,7 @@ public class Paintt {
     static Line showline = new Line();
         public static Pane win_ending_pane=new Pane();
         public static Pane lose_ending_pane=new Pane();
+    public static Scene end_stage_scene ;
 
     public static void HUD_signal_run_update() {
 
@@ -128,6 +130,10 @@ public class Paintt {
                 Controller.exit();
             }
         });
+        show_ending_pane = lose_ending_pane;
+        end_stage_scene = new Scene(show_ending_pane);
+
+
 
 
 
@@ -179,6 +185,7 @@ public class Paintt {
                 Controller.nextLevelBtn_clicked());
 
         win_ending_pane.getChildren().addAll(winLabel, menuBtnWin, nextLevelBtn);
+
     }
 
     public void setupHUD(Stage primaryStage) {
