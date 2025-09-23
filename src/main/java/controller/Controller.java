@@ -338,16 +338,23 @@ public class Controller {
     }
 
     private static void add_corrected_wire(Wire wire) {
-        Configg configg = Configg.getInstance();
+        corrected_wire_add_to_model(wire);
+        corrected_wire_add_to_view(wire);
+    }
 
+    private static void corrected_wire_add_to_view(Wire wire) {
+        //paint it forever
+        just_game_pane.getChildren().add(wire.getLine());
+    }
+
+    private static void corrected_wire_add_to_model(Wire wire) {
         wire.getFirstgate().setWire(wire);
         wire.getSecondgate().setWire(wire);
         level_stack.wires.add(wire);
 //        System.out.println("number of wires:"+level_stack.wires.size());
         level_stack.setLevel_wires_length(level_stack.getLevel_wires_length() + wire.getLength());
-        //paint it forever
-        just_game_pane.getChildren().add(wire.getLine());
     }
+
     public static void add_wrong_wire(Wire wire) {
         Configg cons = Configg.getInstance();
 
@@ -772,5 +779,9 @@ public class Controller {
         for (Signal signal : level_stack.signals) {
             signal.setNoise(0);
         }
+    }
+
+    public static void edit_wires() {
+
     }
 }

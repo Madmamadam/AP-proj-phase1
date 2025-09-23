@@ -122,8 +122,11 @@ public class MainGame {
 //        paintt.addtopane_signals();
 
 
-//       wiring mode
+//       wiring mode (run some listener)
         Controller.wiring();
+        Controller.edit_wires();
+
+
 
         just_game_pane.getChildren().add(static_market_pane);
 
