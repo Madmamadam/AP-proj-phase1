@@ -22,11 +22,10 @@ import java.util.Objects;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicReference;
 
-import static mains.Filee.level_stack;
-import static mains.Filee.level_stack_start;
+import static mains.Filee.level_gamemodel;
+import static mains.Filee.level_gamemodel_start;
 import static mains.MainGame.*;
 import static mains.Start_menu.static_market_pane;
-import static view.Paintt.coins;
 import static view.Paintt.gameTimer;
 
 public class Controller {
@@ -39,7 +38,7 @@ public class Controller {
 
 
         //zero: add signals to start Sysbox
-        for(After_Frame_And_Signal_start d_signal :level_stack.After_signals){
+        for(After_Frame_And_Signal_start d_signal : level_gamemodel.After_signals){
             if(!d_signal.added && d_signal.adding_frame<signal_run_frame_counter){
                 d_signal.added = true;
                 signal_add_to_start(d_signal.signal);
@@ -49,12 +48,12 @@ public class Controller {
 
 
         //first: update signals that on sysbox  (Assign wire)
-        for (Sysbox sysbox : level_stack.sysboxes) {
+        for (Sysbox sysbox : level_gamemodel.sysboxes) {
             System.out.println("sysbox.signal_bank.size() "+sysbox.signal_bank.size());
             for (int i=0;i<sysbox.signal_bank.size() && !sysbox.signal_bank.isEmpty();){
                 Signal signal=sysbox.signal_bank.get(i);
                 signal.setIs_updated(true);
-                System.out.println("nice1  sysbox_index: "+level_stack.sysboxes.indexOf(sysbox));
+                System.out.println("nice1  sysbox_index: "+ level_gamemodel.sysboxes.indexOf(sysbox));
                 //just check outer_gates
                 System.out.println("just check outer_gates");
                 for (Gate gate:sysbox.outer_gates){
@@ -79,7 +78,7 @@ public class Controller {
             }
         }
         //second: update signals that on wire (move on wire or add them to a sysbox)
-        for(Signal signal : level_stack.signals){
+        for(Signal signal : level_gamemodel.signals){
             check_noise(signal);
             check_signal_wire_distance(signal);
             System.out.println("signal.isIs_updated() "+signal.isIs_updated());
@@ -140,8 +139,8 @@ public class Controller {
 
     private static void signal_add_to_start(Signal signal) {
         System.out.println("********* signal_add_to_start  frame counter ="+signal_run_frame_counter);
-        level_stack.signals.add(signal);
-        level_stack.sysboxes.getFirst().signal_bank.add(signal);
+        level_gamemodel.signals.add(signal);
+        level_gamemodel.sysboxes.getFirst().signal_bank.add(signal);
     }
 
     private static void check_signal_wire_distance(Signal signal) {
@@ -176,10 +175,10 @@ public class Controller {
 
         sysbox.signal_bank.add(signal);
         if(signal.getTypee().getId()==1) {
-            level_stack.setSekke(level_stack.getSekke() + cons.getRectangle_signal_sekke_added());
+            level_gamemodel.setSekke(level_gamemodel.getSekke() + cons.getRectangle_signal_sekke_added());
         }
         if(signal.getTypee().getId()==2) {
-            level_stack.setSekke(level_stack.getSekke() + cons.getTraiangle_signal_sekke_added());
+            level_gamemodel.setSekke(level_gamemodel.getSekke() + cons.getTraiangle_signal_sekke_added());
         }
         just_game_pane.getChildren().remove(signal.poly);
         signal.getLinked_wire().getFirstgate().setIn_use(false);
@@ -212,7 +211,7 @@ public class Controller {
         AtomicReference<Wire> decoy_wire = new AtomicReference<>();
         AtomicBoolean isStartedinGate = new AtomicBoolean();
         //-----------------------------first selection
-        for (Sysbox sysbox : level_stack.sysboxes) {
+        for (Sysbox sysbox : level_gamemodel.sysboxes) {
             for(Gate gate:sysbox.inner_gates){
                 gate.poly.setOnMousePressed(e -> {
                     if(stop_wiring) return;
@@ -247,7 +246,7 @@ public class Controller {
 
                 AtomicBoolean isEndedinGate = new AtomicBoolean(false);
 
-                for (Sysbox sysbox : level_stack.sysboxes) {
+                for (Sysbox sysbox : level_gamemodel.sysboxes) {
                     for (Gate gate : sysbox.inner_gates) {
                         Polygon poly = gate.poly;
                         if (nodeUnderMouse == poly || poly.equals(nodeUnderMouse) || poly.isHover()) {
@@ -282,7 +281,7 @@ public class Controller {
 
             Node nodeUnderMouse = event.getPickResult().getIntersectedNode();
 
-            for(Wire wire: level_stack.wires){
+            for(Wire wire: level_gamemodel.wires){
                 Line poly =wire.getLine();
 //                System.out.println("right before if");
                 if(nodeUnderMouse == poly || poly.equals(nodeUnderMouse) || poly.isHover()){
@@ -292,8 +291,8 @@ public class Controller {
                 }
             }
         });
-//        System.out.println("number of wire right before for:"+level_stack.wires.size());
-//        for(Wire wire: level_stack.wires){
+//        System.out.println("number of wire right before for:"+level_gamemodel.wires.size());
+//        for(Wire wire: level_gamemodel.wires){
 //            System.out.println("wire");
 //            wire.getLine().setOnMouseClicked(e2 -> {
 //                if(stop_wiring) return;
@@ -311,8 +310,8 @@ public class Controller {
         just_game_pane.getChildren().remove(wire.getLine());
         wire.getFirstgate().setWire(null);
         wire.getSecondgate().setWire(null);
-        level_stack.wires.remove(wire);
-        level_stack.setLevel_wires_length(level_stack.getLevel_wires_length() - wire.getLength());
+        level_gamemodel.wires.remove(wire);
+        level_gamemodel.setLevel_wires_length(level_gamemodel.getLevel_wires_length() - wire.getLength());
 
     }
 
@@ -328,7 +327,7 @@ public class Controller {
                 || Objects.equals(wire.getFirstgate().getSysbox(),wire.getSecondgate().getSysbox())
                 || !wire.getFirstgate().isIs_outer()
                 || wire.getSecondgate().isIs_outer()
-                || level_stack.getLevel_wires_length() + wire.getLength() > level_stack.constraintss.getMaximum_length())
+                || level_gamemodel.getLevel_wires_length() + wire.getLength() > level_gamemodel.constraintss.getMaximum_length())
             {
             Controller.add_wrong_wire(wire);
         }
@@ -350,9 +349,9 @@ public class Controller {
     private static void corrected_wire_add_to_model(Wire wire) {
         wire.getFirstgate().setWire(wire);
         wire.getSecondgate().setWire(wire);
-        level_stack.wires.add(wire);
-//        System.out.println("number of wires:"+level_stack.wires.size());
-        level_stack.setLevel_wires_length(level_stack.getLevel_wires_length() + wire.getLength());
+        level_gamemodel.wires.add(wire);
+//        System.out.println("number of wires:"+level_gamemodel.wires.size());
+        level_gamemodel.setLevel_wires_length(level_gamemodel.getLevel_wires_length() + wire.getLength());
     }
 
     public static void add_wrong_wire(Wire wire) {
@@ -381,7 +380,7 @@ public class Controller {
         }
         else {
             boolean access=true;
-            for(Sysbox sysbox: level_stack.sysboxes) {
+            for(Sysbox sysbox: level_gamemodel.sysboxes) {
                 if(!sysbox.isIndicator_on_state()){
                     access=false;
                     break;
@@ -426,7 +425,7 @@ public class Controller {
 
 
     public static void indicator_update() {
-        for(Sysbox sysbox : level_stack.sysboxes) {
+        for(Sysbox sysbox : level_gamemodel.sysboxes) {
             if(sysbox.isStarter()){
                 sysbox.setIndicator_on_state(true);
             }
@@ -451,13 +450,13 @@ public class Controller {
 
     public static void check_and_do_collision() {
         Methods methods = new Methods();
-        if(!level_stack.Oairyaman) {
+        if(!level_gamemodel.Oairyaman) {
 
-            for(int i=0;i<level_stack.signals.size();i++) {
-                Signal signal1 = level_stack.signals.get(i);
+            for(int i = 0; i< level_gamemodel.signals.size(); i++) {
+                Signal signal1 = level_gamemodel.signals.get(i);
                 for (int j = 0; j < i; j++) {
 
-                    Signal signal2 = level_stack.signals.get(j);
+                    Signal signal2 = level_gamemodel.signals.get(j);
                     if (null != Methods.checkCollisionAndGetPoint(signal1.poly, signal2.poly)) {
                         if (!Methods.found_in_pairs(signal1, signal2)) {
                             just_collapse_noise(signal1,signal2);
@@ -476,7 +475,7 @@ public class Controller {
 
     private static void check_noise(Signal signal) {
         Configg cons = Configg.getInstance();
-        if(signal.getNoise()>level_stack.constraintss.getMaximum_noise()){
+        if(signal.getNoise()> level_gamemodel.constraintss.getMaximum_noise()){
             go_to_dead(signal);
         }
     }
@@ -504,9 +503,9 @@ public class Controller {
         Configg cons= Configg.getInstance();
         long long_current_time = System.currentTimeMillis();
         double current_time = long_current_time/1000000000.0;
-        for(Pairs pair :level_stack.collapsedPairs){
+        for(Pairs pair : level_gamemodel.collapsedPairs){
             if(current_time-pair.adding_time > cons.getImpulse_resttime()){
-                level_stack.collapsedPairs.remove(pair);
+                level_gamemodel.collapsedPairs.remove(pair);
             }
         }
     }
@@ -522,7 +521,7 @@ public class Controller {
 //        impulse_circle.setCenterY(coordinate.y);
 //        impulse_circle.setFill(cons.getImpulse_color());
 //
-//        level_stack.impulse_circles.add(impulse_circle);
+//        level_gamemodel.impulse_circles.add(impulse_circle);
 //        just_game_pane.getChildren().add(impulse_circle);
 //
 //        int maxcyclecount =(int) (cons.getImpulse_show_time() / 0.017);
@@ -545,8 +544,8 @@ public class Controller {
 
 
 //        control
-        level_stack.collapsedPairs.add(new Pairs(signal1,signal2));
-        for(Signal signal: level_stack.signals) {
+        level_gamemodel.collapsedPairs.add(new Pairs(signal1,signal2));
+        for(Signal signal: level_gamemodel.signals) {
             if(signal.getState()=="on_wire"){
                 //central of signal is matter
                 if(methods.calculate_distance(signal.getX(),signal.getY(),coordinate.getX(),coordinate.getY())< cons.getImpulse_radius()){
@@ -566,7 +565,7 @@ public class Controller {
     }
 
     private static void in_radius_impulse_wave(Signal signal, Coordinate coordinate) {
-        if(level_stack.Oatar ){return;}
+        if(level_gamemodel.Oatar ){return;}
 
         Configg cons=Configg.getInstance();
         double dx=signal.getX()-coordinate.getX();
@@ -584,7 +583,7 @@ public class Controller {
     }
 
     public static void virtual_time_clicked(double virtual_ratio) {
-        double max_t=level_stack.constraintss.getMaximum_time_sec();
+        double max_t= level_gamemodel.constraintss.getMaximum_time_sec();
         double go_to_time_sec = virtual_ratio*max_t;
         half_restart(go_to_time_sec);
 
@@ -606,28 +605,28 @@ public class Controller {
     }
 
     private static void restart_level_signals() {
-        for (Signal signal : level_stack.signals) {
+        for (Signal signal : level_gamemodel.signals) {
             just_game_pane.getChildren().remove(signal.poly);
         }
-//        for (Circle circle: level_stack.impulse_circles){
+//        for (Circle circle: level_gamemodel.impulse_circles){
 //            just_game_pane.getChildren().remove(circle);
 //        }
 
-        level_stack = level_stack_start.getClone();
+        level_gamemodel = level_gamemodel_start.getClone();
 
-        System.out.println("signals size now: " + level_stack.signals.size());
+        System.out.println("signals size now: " + level_gamemodel.signals.size());
 
-        for (Signal signal : level_stack.signals) {
+        for (Signal signal : level_gamemodel.signals) {
             System.out.println("signal_state: "+signal.getState());
         }
 
-        System.out.println("level_stack.sysboxes.getFirst().signal_bank.size() "+level_stack.sysboxes.getFirst().signal_bank.size());
+        System.out.println("level_gamemodel.sysboxes.getFirst().signal_bank.size() "+ level_gamemodel.sysboxes.getFirst().signal_bank.size());
 
 //        update_gate_from_wires();
     }
 
     private static void update_gate_from_wires() {
-        for (Wire wire: level_stack.wires) {
+        for (Wire wire: level_gamemodel.wires) {
             wire.getFirstgate().setWire(wire);
             wire.getSecondgate().setWire(wire);
         }
@@ -635,11 +634,11 @@ public class Controller {
 
     public static boolean ending_check() {
         boolean is_ended=true;
-        if(gameTimer.getTime_sec()>=level_stack.constraintss.getMaximum_time_sec()){
+        if(gameTimer.getTime_sec()>= level_gamemodel.constraintss.getMaximum_time_sec()){
 //            is_ended=true;
         }
         else {
-            for (Signal signal : level_stack.signals) {
+            for (Signal signal : level_gamemodel.signals) {
                 if(signal.getState()==null){
                     is_ended=false;
                 }
@@ -659,8 +658,8 @@ public class Controller {
 
 
         //Check
-        System.out.println("level_stack.signals.size() "+level_stack.signals.size());
-        for (Signal signal : level_stack.signals) {
+        System.out.println("level_gamemodel.signals.size() "+ level_gamemodel.signals.size());
+        for (Signal signal : level_gamemodel.signals) {
             System.out.println("signal_state: "+signal.getState());
         }
 
@@ -675,15 +674,15 @@ public class Controller {
     public static boolean is_winner_and_update_dead_count() {
         //counter dead
         dead_count=0;
-        for (Signal signal : level_stack.signals) {
+        for (Signal signal : level_gamemodel.signals) {
             if(signal.getState()!="ended") {
                 dead_count++;
                 //really dead or just not ended
             }
         }
-        double dead_ratio = (double)dead_count/(double)level_stack.signals.size();
+        double dead_ratio = (double)dead_count/(double) level_gamemodel.signals.size();
 
-        if(dead_ratio>level_stack.constraintss.getMaximum_dead_ratio()) {
+        if(dead_ratio> level_gamemodel.constraintss.getMaximum_dead_ratio()) {
             return false;
         }
         else {
@@ -718,17 +717,17 @@ public class Controller {
 
     private static void print_signal_log() {
         System.out.println("------------singnal and sysbox log-------------");
-        System.out.println("level_stack.signals.size() "+level_stack.signals.size());
-        for (Signal signal : level_stack.signals) {
+        System.out.println("level_gamemodel.signals.size() "+ level_gamemodel.signals.size());
+        for (Signal signal : level_gamemodel.signals) {
             System.out.println("signal.getState() "+signal.getState());
             System.out.println("signal.getLinked_wire()" +signal.getLinked_wire());
             if(signal.getLinked_wire()!=null) {
-                System.out.println("level_stack.sysboxes.indexOf(signal.getLinked_wire().getFirstgate().getSysbox()) " +level_stack.sysboxes.indexOf(signal.getLinked_wire().getFirstgate().getSysbox()));
+                System.out.println("level_gamemodel.sysboxes.indexOf(signal.getLinked_wire().getFirstgate().getSysbox()) " + level_gamemodel.sysboxes.indexOf(signal.getLinked_wire().getFirstgate().getSysbox()));
             }
         }
 
-        for (int i = 0; i < level_stack.sysboxes.size(); i++) {
-            Sysbox sysbox = level_stack.sysboxes.get(i);
+        for (int i = 0; i < level_gamemodel.sysboxes.size(); i++) {
+            Sysbox sysbox = level_gamemodel.sysboxes.get(i);
             System.out.println("sysbox number "+i +"    sysbox.signal_bank.size() "+sysbox.signal_bank.size() );
         }
         System.out.println("-----------------------------------------------");
@@ -744,30 +743,30 @@ public class Controller {
 
     //if ran virtual_run so magic going reset
     public static void OAtar_clicked() {
-        if(level_stack.getSekke() > 3) {
-            level_stack.setSekke(level_stack.getSekke() - 3);
-            level_stack.Oatar = true;
+        if(level_gamemodel.getSekke() > 3) {
+            level_gamemodel.setSekke(level_gamemodel.getSekke() - 3);
+            level_gamemodel.Oatar = true;
 
             PauseTransition pause = new PauseTransition(Duration.seconds(10));
-            pause.setOnFinished(e -> level_stack.Oatar = false);
+            pause.setOnFinished(e -> level_gamemodel.Oatar = false);
             pause.play();
         }
     }
 
     public static void OAiryman_clicked() {
-        if (level_stack.getSekke() > 4) {
-            level_stack.setSekke(level_stack.getSekke() - 4);
-            level_stack.Oairyaman = true;
+        if (level_gamemodel.getSekke() > 4) {
+            level_gamemodel.setSekke(level_gamemodel.getSekke() - 4);
+            level_gamemodel.Oairyaman = true;
 
             PauseTransition pause = new PauseTransition(Duration.seconds(5));
-            pause.setOnFinished(e -> level_stack.Oairyaman = false);
+            pause.setOnFinished(e -> level_gamemodel.Oairyaman = false);
             pause.play();
         }
     }
 
     public static void OAnahita_clicked() {
-        if(level_stack.getSekke() > 5){
-            level_stack.setSekke(level_stack.getSekke()-5);
+        if(level_gamemodel.getSekke() > 5){
+            level_gamemodel.setSekke(level_gamemodel.getSekke()-5);
 
             reset_all_noise();
 
@@ -776,7 +775,7 @@ public class Controller {
     }
 
     private static void reset_all_noise() {
-        for (Signal signal : level_stack.signals) {
+        for (Signal signal : level_gamemodel.signals) {
             signal.setNoise(0);
         }
     }

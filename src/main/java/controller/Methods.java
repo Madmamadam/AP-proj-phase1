@@ -10,13 +10,13 @@ import java.util.Objects;
 
 import static java.lang.Math.cos;
 import static java.lang.Math.sin;
-import static mains.Filee.level_stack;
+import static mains.Filee.level_gamemodel;
 import static mains.MainGame.virtual_run;
 
 
 public class Methods {
     public static boolean found_in_pairs(Signal signal1, Signal signal2) {
-        for(Pairs pair : level_stack.collapsedPairs){
+        for(Pairs pair : level_gamemodel.collapsedPairs){
             if(pair.signal1==signal1 && pair.signal2==signal2 || pair.signal1==signal2 && pair.signal2==signal1){
                 return true;
             }

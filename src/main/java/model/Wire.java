@@ -40,7 +40,7 @@ public class Wire {
         quadCurve.setEndY(secondgate.getY());
         quadCurve.setControlX(firstgate.getX()+1);
         quadCurve.setControlY(firstgate.getY());
-        quadCurve.get
+//        quadCurve.get
 
 
         this.line=new Line(firstgate.getX(),firstgate.getY(),secondgate.getX(),secondgate.getY());

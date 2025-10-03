@@ -8,7 +8,6 @@ import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
-import javafx.scene.control.ProgressBar;
 import javafx.scene.control.Slider;
 import javafx.scene.input.KeyCode;
 import javafx.scene.layout.*;
@@ -24,7 +23,7 @@ import java.util.Objects;
 
 import static java.lang.Math.cos;
 import static java.lang.Math.sin;
-import static mains.Filee.level_stack;
+import static mains.Filee.level_gamemodel;
 import static mains.MainGame.*;
 import static mains.Start_menu.static_market_pane;
 
@@ -43,7 +42,7 @@ public class Paintt {
     public static void HUD_signal_run_update() {
 
             user_changing = false;
-            virtualTimeSlider.setValue(gameTimer.getTime_sec() / level_stack.constraintss.getMaximum_time_sec());
+            virtualTimeSlider.setValue(gameTimer.getTime_sec() / level_gamemodel.constraintss.getMaximum_time_sec());
             user_changing = true;
 
         double time = gameTimer.getTime_sec();
@@ -54,18 +53,18 @@ public class Paintt {
     }
     public static void HUD_wiring_update() {
         Configg cons = Configg.getInstance();
-        double ratio=1 - level_stack.getLevel_wires_length()/level_stack.constraintss.getMaximum_length();
+        double ratio=1 - level_gamemodel.getLevel_wires_length()/ level_gamemodel.constraintss.getMaximum_length();
 
         showline.setEndX(700+ratio*cons.getHealth_bar_back_length());
     }
 
     public static void add_ratio_to_ending_pane() {
-        Label scoreLabelWin = new Label("dead ratio: " + (double) dead_count/level_stack.signals.size());
+        Label scoreLabelWin = new Label("dead ratio: " + (double) dead_count/ level_gamemodel.signals.size());
         scoreLabelWin.setStyle("-fx-font-size: 24px; -fx-text-fill: darkgreen;");
         scoreLabelWin.setLayoutX(350);
         scoreLabelWin.setLayoutY(180);
 
-        Label scoreLabelLose = new Label("dead ratio: " + (double) dead_count/level_stack.signals.size());
+        Label scoreLabelLose = new Label("dead ratio: " + (double) dead_count/ level_gamemodel.signals.size());
         scoreLabelLose.setStyle("-fx-font-size: 24px; -fx-text-fill: white;");
         scoreLabelLose.setLayoutX(350);
         scoreLabelLose.setLayoutY(180);
@@ -76,22 +75,22 @@ public class Paintt {
     }
 
     public static void marketPaneupdate() {
-        coins.setText("💰 " + level_stack.getSekke());
+        coins.setText("💰 " + level_gamemodel.getSekke());
     }
 
     public void addtopane_signals() {
-        for (Signal signal : level_stack.signals) {
+        for (Signal signal : level_gamemodel.signals) {
             just_game_pane.getChildren().add(signal.poly);
         }
     }
     public void addtopane_sysboxsandindicators(){
-        for (Sysbox sysbox : level_stack.sysboxes) {
+        for (Sysbox sysbox : level_gamemodel.sysboxes) {
             just_game_pane.getChildren().add(sysbox.getRectangle());
             just_game_pane.getChildren().add(sysbox.getIndicator_rectangle());
         }
     }
     public void addtopane_gates(){
-        for (Sysbox sysbox1 : level_stack.sysboxes) {
+        for (Sysbox sysbox1 : level_gamemodel.sysboxes) {
             for (Gate gate :sysbox1.inner_gates){
                 one_gate_update_polygan(gate);
                 just_game_pane.getChildren().add(gate.poly);
@@ -295,7 +294,7 @@ public class Paintt {
         });
 
         double time = gameTimer.getTime_sec();
-        timetext.setText(String.format("max Time: %.1fs",  level_stack.constraintss.getMaximum_time_sec()));
+        timetext.setText(String.format("max Time: %.1fs",  level_gamemodel.constraintss.getMaximum_time_sec()));
 
 
 

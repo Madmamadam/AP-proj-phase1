@@ -2,7 +2,7 @@ package mains;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.type.CollectionType;
-import model.Level_Stack;
+import model.LevelGame_model;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -14,11 +14,11 @@ import java.util.List;
 
 //not used in this version
 public class Filee {
-    public static Level_Stack level_stack = new Level_Stack();
-    public static Level_Stack level_stack_start = new Level_Stack();
+    public static LevelGame_model level_gamemodel = new LevelGame_model();
+    public static LevelGame_model level_gamemodel_start = new LevelGame_model();
     static ObjectMapper objectMapper = new ObjectMapper();
 
-    static File file = new File("level_stack.json");
+    static File file = new File("level_gamemodel.json");
 
     static void read(){
 //        User ali = new User("alij","12345678");
@@ -26,8 +26,8 @@ public class Filee {
         ObjectMapper mapper = new ObjectMapper();
         if (file.exists()) {
             try (InputStream input = new FileInputStream(file)) {
-                CollectionType listType = mapper.getTypeFactory().constructCollectionType(List.class, Level_Stack.class);
-                level_stack = mapper.readValue(input, listType);
+                CollectionType listType = mapper.getTypeFactory().constructCollectionType(List.class, LevelGame_model.class);
+                level_gamemodel = mapper.readValue(input, listType);
                 //System.out.println("Users loaded: " + loadedUsers);
 
             }
@@ -38,7 +38,7 @@ public class Filee {
     }
     static void save(){
         try {
-            objectMapper.writeValue(file,level_stack);
+            objectMapper.writeValue(file, level_gamemodel);
         }
         catch (IOException e) {
             e.printStackTrace();

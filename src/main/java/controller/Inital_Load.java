@@ -32,7 +32,7 @@ public class Inital_Load {
 
 
     public void Load_and_initial_Signal_Stack(){
-        for (Sysbox sysbox :Filee.level_stack.sysboxes){
+        for (Sysbox sysbox :Filee.level_gamemodel.sysboxes){
             for (Signal signal : sysbox.signal_bank){
 
             }

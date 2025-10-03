@@ -10,12 +10,12 @@ import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
 import javafx.util.Duration;
-import model.Level_Stack;
+import model.LevelGame_model;
 import model.Sysbox;
 import view.Paintt;
 
-import static mains.Filee.level_stack;
-import static mains.Filee.level_stack_start;
+import static mains.Filee.level_gamemodel;
+import static mains.Filee.level_gamemodel_start;
 import static mains.Start_menu.static_market_pane;
 import static view.Paintt.*;
 
@@ -48,12 +48,12 @@ public class MainGame {
     public static Timeline signals_run =new Timeline(new KeyFrame(Duration.millis(17), event -> {
         if (stop_wiring && !virtual_run) {
             if(first_time){
-                for (Sysbox sysbox:level_stack.sysboxes){
+                for (Sysbox sysbox: level_gamemodel.sysboxes){
                     System.out.println("before clone sysbox.signal_bank.size() "+sysbox.signal_bank.size());
                 }
-                level_stack_start=level_stack.getClone();
+                level_gamemodel_start = level_gamemodel.getClone();
 
-                for (Sysbox sysbox:level_stack.sysboxes){
+                for (Sysbox sysbox: level_gamemodel.sysboxes){
                     System.out.println("before wiring sysbox.signal_bank.size() "+sysbox.signal_bank.size());
                 }
                 first_time=false;
@@ -99,7 +99,7 @@ public class MainGame {
         stop_wiring = false;
         HUDpane = new Pane();
         main_game_root = new StackPane(just_game_pane, HUDpane);
-        level_stack=new Level_Stack();
+        level_gamemodel =new LevelGame_model();
         gameTimer.restart();
         signal_run_frame_counter = 0;
         Paintt.HUD_signal_run_update();
