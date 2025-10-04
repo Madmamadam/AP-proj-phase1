@@ -10,17 +10,15 @@ import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
 import javafx.util.Duration;
-import model.LevelGame_model;
+import model.LevelGame_StaticDataModel;
 import model.Sysbox;
 import view.Paintt;
-
-import static mains.Filee.level_gamemodel;
 import static mains.Filee.level_gamemodel_start;
 import static mains.Start_menu.static_market_pane;
-import static model.LevelGame_model.stop_wiring;
 import static view.Paintt.*;
 
 public class MainGame_ViewAndModelAndController {
+    public LevelGame_StaticDataModel staticDataModel = new LevelGame_StaticDataModel();
     Paintt veiw;
     public Controller controller;
 
@@ -36,11 +34,11 @@ public class MainGame_ViewAndModelAndController {
     public static int dead_count = 0;
     private boolean first_time = true;
     public static Stage primaryStage_static;
-    public static Timeline signals_virtual_run = new Timeline(new KeyFrame(Duration.millis(1000/cons.getVirtual_frequency()), event -> {
-        if (stop_wiring) {
+    public Timeline signals_virtual_run = new Timeline(new KeyFrame(Duration.millis(1000/cons.getVirtual_frequency()), event -> {
+        if (staticDataModel.stop_wiring) {
             System.out.println("//////////in virtual run");
-            Controller.Signals_Update();
-            Controller.check_and_do_collision();
+            controller.Signals_Update();
+            controller.check_and_do_collision();
             signal_run_frame_counter++;
         }
 //            if(gameTimer.getTime_sec()>goToTime_sec){
@@ -49,7 +47,7 @@ public class MainGame_ViewAndModelAndController {
     }));
 
     public Timeline signals_run =new Timeline(new KeyFrame(Duration.millis(17), event -> {
-        if (stop_wiring && !virtual_run) {
+        if (staticDataModel.stop_wiring && !virtual_run) {
             if(first_time){
                 for (Sysbox sysbox: level_gamemodel.sysboxes){
                     System.out.println("before clone sysbox.signal_bank.size() "+sysbox.signal_bank.size());
@@ -64,9 +62,9 @@ public class MainGame_ViewAndModelAndController {
             System.out.println("////////////// in real run");
 
 
-            Controller.Signals_Update();
-            Controller.check_and_do_collision();
-            Controller.ending_check();
+            controller.Signals_Update();
+            controller.check_and_do_collision();
+            controller.ending_check();
 
 
             gameTimer.setStopping(false);
@@ -100,10 +98,10 @@ public class MainGame_ViewAndModelAndController {
 
 
         just_game_pane = new Pane();
-        stop_wiring = false;
+        staticDataModel.stop_wiring = false;
         HUDpane = new Pane();
         main_game_root = new StackPane(just_game_pane, HUDpane);
-        level_gamemodel =new LevelGame_model();
+        staticDataModel =new LevelGame_StaticDataModel();
         gameTimer.restart();
         signal_run_frame_counter = 0;
         Paintt.HUD_signal_run_update();
@@ -111,7 +109,7 @@ public class MainGame_ViewAndModelAndController {
 
 
 
-        Add_level.start(level);
+        Add_level.start(level,staticDataModel);
         veiw.initial_UI(primaryStage);
         Scene main_game_scene = new Scene(main_game_root);
         primaryStage.setScene(main_game_scene);
@@ -119,7 +117,7 @@ public class MainGame_ViewAndModelAndController {
         primaryStage.setFullScreen(true);
         primaryStage.setScene(main_game_scene);
         primaryStage.show();
-        Controller.signal_log_enable(main_game_scene);
+        controller.signal_log_enable(main_game_scene);
         veiw.addtopane_sysboxsandindicators();
         veiw.addtopane_gates();
 
@@ -127,16 +125,16 @@ public class MainGame_ViewAndModelAndController {
 
 
 //       wiring mode (run some listener)
-        Controller.wiring();
-        Controller.edit_wires();
+        controller.wiring();
+        controller.edit_wires();
 
 
 
         just_game_pane.getChildren().add(static_market_pane);
 
         Timeline timeline_wiring = new Timeline(new KeyFrame(Duration.millis(17*6), event -> {
-            if (!stop_wiring) {
-                Controller.indicator_update();
+            if (!staticDataModel.stop_wiring) {
+                controller.indicator_update();
             }
         }));
 
@@ -152,10 +150,10 @@ public class MainGame_ViewAndModelAndController {
 //        }));
     }
 //this is MainGame_ViewAndModelAndController.java:144
-    public static void show_ending_stage() {
+    public void show_ending_stage() {
         Pane show_ending_pane;
 
-        if(Controller.is_winner_and_update_dead_count()){
+        if(controller.is_winner_and_update_dead_count()){
             show_ending_pane = win_ending_pane;
         }
         else {

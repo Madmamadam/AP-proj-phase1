@@ -6,8 +6,8 @@ import java.util.ArrayList;
 
 import static view.Paintt.HUD_wiring_update;
 
-public class LevelGame_model {
-    public static Boolean stop_wiring = false;
+public class LevelGame_StaticDataModel {
+    public Boolean stop_wiring = false;
     public ArrayList<Sysbox> sysboxes = new ArrayList<>();
     public ArrayList<After_Frame_And_Signal_start> After_signals = new ArrayList<>();
     public ArrayList<Circle> impulse_circles = new ArrayList<>();
@@ -22,7 +22,7 @@ public class LevelGame_model {
 
     private double sekke;
 
-    public LevelGame_model() {
+    public LevelGame_StaticDataModel() {
         this.level_wires_length=0;
     }
 
@@ -43,8 +43,8 @@ public class LevelGame_model {
         this.sekke = sekke;
     }
 
-    public LevelGame_model getClone() {
-        LevelGame_model clone_stack = new LevelGame_model();
+    public LevelGame_StaticDataModel getClone() {
+        LevelGame_StaticDataModel clone_stack = new LevelGame_StaticDataModel();
         clone_stack.signals = new ArrayList<Signal>();
         clone_stack.sysboxes = new ArrayList<Sysbox>();
         clone_stack.level_wires_length = this.level_wires_length;
@@ -110,8 +110,5 @@ public class LevelGame_model {
 
         return clone_stack;
     }
-
-
-
 
 }

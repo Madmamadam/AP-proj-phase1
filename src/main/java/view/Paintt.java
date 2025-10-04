@@ -26,7 +26,6 @@ import static java.lang.Math.sin;
 import static mains.Filee.level_gamemodel;
 import static mains.MainGame_ViewAndModelAndController.*;
 import static mains.Start_menu.static_market_pane;
-import static model.LevelGame_model.stop_wiring;
 
 
 public class Paintt {
@@ -172,13 +171,13 @@ public class Paintt {
         coins.setStyle("-fx-font-size: 18px;");
 
         Button shieldBtn = new Button("O' Atar (3)");
-        shieldBtn.setOnAction(e -> Controller.OAtar_clicked());
+        shieldBtn.setOnAction(e -> controller.OAtar_clicked());
 
         Button healthBtn = new Button("O’ Airyaman (4)");
-        healthBtn.setOnAction(e -> Controller.OAiryman_clicked());
+        healthBtn.setOnAction(e -> controller.OAiryman_clicked());
 
         Button speedBtn = new Button("O' Anahita (5)");
-        speedBtn.setOnAction(e -> Controller.OAnahita_clicked());
+        speedBtn.setOnAction(e -> controller.OAnahita_clicked());
 
         Button closeBtn = new Button("✖");
         closeBtn.setOnAction(e -> shop.setVisible(false));
@@ -205,7 +204,7 @@ public class Paintt {
         menuBtnLose.setLayoutX(350);
         menuBtnLose.setLayoutY(250);
         menuBtnLose.setOnAction(event ->
-            Controller.menuBtn_clicked());
+            controller.menuBtn_clicked());
 
         Button restartBtn = new Button("Restart");
         restartBtn.setLayoutX(350);
@@ -234,7 +233,7 @@ public class Paintt {
         menuBtnWin.setLayoutX(350);
         menuBtnWin.setLayoutY(250);
         menuBtnWin.setOnAction(event ->
-                Controller.menuBtn_clicked());
+                controller.menuBtn_clicked());
 
         Button nextLevelBtn = new Button("Next Level");
         nextLevelBtn.setLayoutX(350);
@@ -260,7 +259,7 @@ public class Paintt {
         virtualTimeSlider.setPrefWidth(200);
         virtualTimeSlider.valueProperty().addListener((obs, oldVal, newVal) -> {
             if(user_changing) {
-                Controller.virtual_time_clicked(newVal.doubleValue());
+                controller.virtual_time_clicked(newVal.doubleValue());
             }
         });
 
@@ -293,7 +292,7 @@ public class Paintt {
             } catch (Exception e) {
                 throw new RuntimeException(e);
             }
-            runStopButton.setText(stop_wiring ? "wiring" : "Run");
+            runStopButton.setText(controller.mainGameViewAndModel.staticDataModel.stop_wiring ? "wiring" : "Run");
         });
 
         double time = gameTimer.getTime_sec();
@@ -306,7 +305,7 @@ public class Paintt {
         marketButton.setOnAction(event -> {
             //خرید در realtime انجام میشود
             try {
-                Controller.marketButtonClicked();
+                controller.marketButtonClicked();
             } catch (Exception e) {
                 throw new RuntimeException(e);
             }

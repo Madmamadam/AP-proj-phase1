@@ -5,10 +5,9 @@ import model.*;
 
 import java.util.Arrays;
 
-import static mains.Filee.level_gamemodel;
 
 public class Add_level {
-    public static void start(int level) {
+    public static void start(int level , LevelGame_StaticDataModel level_gamemodel) {
         Configg cons =Configg.getInstance();
         if (level == 1) {
             //level constraint
@@ -130,6 +129,5 @@ public class Add_level {
             level_gamemodel.After_signals.add(new After_Frame_And_Signal_start(triSignal.cloneSignal(), 60 * 5));
             level_gamemodel.After_signals.add(new After_Frame_And_Signal_start(recSignal.cloneSignal(), 60 * 20));
         }
-
     }
 }
