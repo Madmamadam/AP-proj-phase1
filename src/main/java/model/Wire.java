@@ -1,7 +1,6 @@
 package model;
 
 import controller.Methods;
-import javafx.scene.shape.CubicCurve;
 import javafx.scene.shape.Line;
 import javafx.scene.shape.QuadCurve;
 import mains.Configg;
@@ -28,7 +27,6 @@ public class Wire {
     }
     public Wire(Gate firstgate, Gate secondgate) {
         Configg cons = Configg.getInstance();
-        Methods methods = new Methods();
         //first is outer. maybe...
         this.firstgate = firstgate;
         this.secondgate = secondgate;
@@ -45,7 +43,7 @@ public class Wire {
 
         this.line=new Line(firstgate.getX(),firstgate.getY(),secondgate.getX(),secondgate.getY());
 
-        length= methods.calculate_wire_length(this);
+        length= Methods.calculate_wire_length(this);
         line.setStrokeWidth(cons.getLine_width());
         line.setStroke(cons.getLine_color());
     }

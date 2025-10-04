@@ -18,20 +18,18 @@ import static mains.Start_menu.static_market_pane;
 import static view.Paintt.*;
 
 public class MainGame_ViewAndModelAndController {
-    public LevelGame_StaticDataModel staticDataModel = new LevelGame_StaticDataModel();
-    Paintt veiw;
+    public LevelGame_StaticDataModel staticDataModel=new LevelGame_StaticDataModel();
+    public Paintt view;
     public Controller controller;
 
     public static int level;
 
     static Configg cons = Configg.getInstance();
-    public static Pane just_game_pane = new Pane();
-    public static Pane HUDpane = new Pane();
-    public static StackPane main_game_root = new StackPane(just_game_pane, HUDpane);
-    public static boolean user_changing=true;
-    public static boolean virtual_run = false;
-    public static int signal_run_frame_counter = 0;
-    public static int dead_count = 0;
+
+    public boolean user_changing=true;
+    public boolean virtual_run = false;
+    public int signal_run_frame_counter = 0;
+    public int dead_count = 0;
     private boolean first_time = true;
     public static Stage primaryStage_static;
     public Timeline signals_virtual_run = new Timeline(new KeyFrame(Duration.millis(1000/cons.getVirtual_frequency()), event -> {
@@ -49,12 +47,12 @@ public class MainGame_ViewAndModelAndController {
     public Timeline signals_run =new Timeline(new KeyFrame(Duration.millis(17), event -> {
         if (staticDataModel.stop_wiring && !virtual_run) {
             if(first_time){
-                for (Sysbox sysbox: level_gamemodel.sysboxes){
+                for (Sysbox sysbox: staticDataModel.sysboxes){
                     System.out.println("before clone sysbox.signal_bank.size() "+sysbox.signal_bank.size());
                 }
-                level_gamemodel_start = level_gamemodel.getClone();
+                level_gamemodel_start = staticDataModel.getClone();
 
-                for (Sysbox sysbox: level_gamemodel.sysboxes){
+                for (Sysbox sysbox: staticDataModel.sysboxes){
                     System.out.println("before wiring sysbox.signal_bank.size() "+sysbox.signal_bank.size());
                 }
                 first_time=false;
@@ -68,8 +66,8 @@ public class MainGame_ViewAndModelAndController {
 
 
             gameTimer.setStopping(false);
-            Paintt.marketPaneupdate();
-            Paintt.HUD_signal_run_update();
+            view.marketPaneupdate();
+            view.HUD_signal_run_update();
             signal_run_frame_counter++;
         }
         else {
@@ -91,35 +89,21 @@ public class MainGame_ViewAndModelAndController {
 
         level =l;
         primaryStage_static = primaryStage;
-        veiw = new Paintt(controller);
-
         Configg cons = Configg.getInstance();
 
 
 
-        just_game_pane = new Pane();
         staticDataModel.stop_wiring = false;
-        HUDpane = new Pane();
-        main_game_root = new StackPane(just_game_pane, HUDpane);
-        staticDataModel =new LevelGame_StaticDataModel();
         gameTimer.restart();
         signal_run_frame_counter = 0;
-        Paintt.HUD_signal_run_update();
+        view.HUD_signal_run_update();
 
 
 
 
         Add_level.start(level,staticDataModel);
-        veiw.initial_UI(primaryStage);
-        Scene main_game_scene = new Scene(main_game_root);
-        primaryStage.setScene(main_game_scene);
-        primaryStage.setFullScreenExitKeyCombination(KeyCombination.NO_MATCH); // غیرفعال‌سازی ESC
-        primaryStage.setFullScreen(true);
-        primaryStage.setScene(main_game_scene);
-        primaryStage.show();
-        controller.signal_log_enable(main_game_scene);
-        veiw.addtopane_sysboxsandindicators();
-        veiw.addtopane_gates();
+        view.initial_UI(primaryStage);
+
 
 //        paintt.addtopane_signals();
 
@@ -163,7 +147,7 @@ public class MainGame_ViewAndModelAndController {
             show_ending_pane.getScene().setRoot(new Pane());
         }
 
-        Paintt.add_ratio_to_ending_pane();
+        view.add_ratio_to_ending_pane();
         end_stage_scene.setRoot(show_ending_pane);
         primaryStage_static.setScene(end_stage_scene);
         primaryStage_static.setFullScreen(true);

@@ -2,6 +2,7 @@ package controller;
 
 import javafx.scene.shape.Polygon;
 import mains.Configg;
+import mains.MainGame_ViewAndModelAndController;
 import model.*;
 import org.locationtech.jts.geom.*;
 
@@ -10,13 +11,17 @@ import java.util.Objects;
 
 import static java.lang.Math.cos;
 import static java.lang.Math.sin;
-import static mains.Filee.level_gamemodel;
 import static mains.MainGame_ViewAndModelAndController.virtual_run;
 
 
 public class Methods {
-    public static boolean found_in_pairs(Signal signal1, Signal signal2) {
-        for(Pairs pair : level_gamemodel.collapsedPairs){
+    MainGame_ViewAndModelAndController mainGameModel;
+    public Methods(MainGame_ViewAndModelAndController mainGamemodel){
+        mainGameModel = mainGamemodel;
+    }
+
+    public boolean found_in_pairs(Signal signal1, Signal signal2) {
+        for(Pairs pair : mainGameModel.staticDataModel.collapsedPairs){
             if(pair.signal1==signal1 && pair.signal2==signal2 || pair.signal1==signal2 && pair.signal2==signal1){
                 return true;
             }
@@ -81,7 +86,7 @@ public class Methods {
     }
 
 
-    public double calculate_wire_length(Wire wire) {
+    public static double calculate_wire_length(Wire wire) {
         double dx =  wire.getFirstgate().getX() - wire.getSecondgate().getX();
         double dy =  wire.getFirstgate().getY() - wire.getSecondgate().getY();
         return Math.sqrt(dx*dx+dy*dy);

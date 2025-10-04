@@ -10,12 +10,14 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.Slider;
 import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyCombination;
 import javafx.scene.layout.*;
 import javafx.scene.shape.Line;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
 import mains.Configg;
 import model.Gate;
+import model.LevelGame_StaticDataModel;
 import model.Signal;
 import model.Sysbox;
 
@@ -23,12 +25,16 @@ import java.util.Objects;
 
 import static java.lang.Math.cos;
 import static java.lang.Math.sin;
-import static mains.Filee.level_gamemodel;
-import static mains.MainGame_ViewAndModelAndController.*;
 import static mains.Start_menu.static_market_pane;
 
 
 public class Paintt {
+    public Controller controller;
+    public LevelGame_StaticDataModel level_gamemodel;
+
+    public Pane just_game_pane = new Pane();
+    public Pane HUDpane = new Pane();
+    public StackPane main_game_root = new StackPane(just_game_pane, HUDpane);
     static Slider virtualTimeSlider = new Slider(0, 1, 0.0);
     private static Text timetext = new Text("");
     public static GameTimer gameTimer = new GameTimer();
@@ -38,35 +44,34 @@ public class Paintt {
     public static Scene end_stage_scene ;
     public static Label coins = new Label("💰 1277");
 
-    Controller controller;
-
-    public Paintt(Controller controller){
-        this.controller = controller;
+    public void architectureLoad(){
+        this.level_gamemodel=this.controller.mainGameViewAndModel.staticDataModel;
     }
 
-    public static void HUD_signal_run_update() {
 
-            user_changing = false;
-            virtualTimeSlider.setValue(gameTimer.getTime_sec() / level_gamemodel.constraintss.getMaximum_time_sec());
-            user_changing = true;
+    public void HUD_signal_run_update() {
+
+        controller.mainGameViewAndModel.user_changing = false;
+        virtualTimeSlider.setValue(gameTimer.getTime_sec() / level_gamemodel.constraintss.getMaximum_time_sec());
+        controller.mainGameViewAndModel.user_changing = true;
 
         double time = gameTimer.getTime_sec();
         timetext.setText(String.format("Time: %.1fs", time));
     }
-    public static void HUD_wiring_update() {
+    public void HUD_wiring_update() {
         Configg cons = Configg.getInstance();
         double ratio=1 - level_gamemodel.getLevel_wires_length()/ level_gamemodel.constraintss.getMaximum_length();
 
         showline.setEndX(700+ratio*cons.getHealth_bar_back_length());
     }
 
-    public static void add_ratio_to_ending_pane() {
-        Label scoreLabelWin = new Label("dead ratio: " + (double) dead_count/ level_gamemodel.signals.size());
+    public void add_ratio_to_ending_pane() {
+        Label scoreLabelWin = new Label("dead ratio: " + (double) controller.mainGameViewAndModel.dead_count/ level_gamemodel.signals.size());
         scoreLabelWin.setStyle("-fx-font-size: 24px; -fx-text-fill: darkgreen;");
         scoreLabelWin.setLayoutX(350);
         scoreLabelWin.setLayoutY(180);
 
-        Label scoreLabelLose = new Label("dead ratio: " + (double) dead_count/ level_gamemodel.signals.size());
+        Label scoreLabelLose = new Label("dead ratio: " + (double) controller.mainGameViewAndModel.dead_count/ level_gamemodel.signals.size());
         scoreLabelLose.setStyle("-fx-font-size: 24px; -fx-text-fill: white;");
         scoreLabelLose.setLayoutX(350);
         scoreLabelLose.setLayoutY(180);
@@ -76,13 +81,13 @@ public class Paintt {
 
     }
 
-    public static void marketPaneupdate() {
-        coins.setText("💰 " + level_gamemodel.getSekke());
+    public void marketPaneupdate() {
+        coins.setText("💰 " + controller.mainGameViewAndModel.staticDataModel.getSekke());
     }
 
     public void addtopane_signals() {
         for (Signal signal : level_gamemodel.signals) {
-            just_game_pane.getChildren().add(signal.poly);
+            controller.mainGameViewAndModel.just_game_pane.getChildren().add(signal.poly);
         }
     }
     public void addtopane_sysboxsandindicators(){
@@ -142,9 +147,15 @@ public class Paintt {
         end_stage_scene = new Scene(trash_pane);
 
 
-
-
-
+        Scene main_game_scene = new Scene(main_game_root);
+        primaryStage.setScene(main_game_scene);
+        primaryStage.setFullScreenExitKeyCombination(KeyCombination.NO_MATCH); // غیرفعال‌سازی ESC
+        primaryStage.setFullScreen(true);
+        primaryStage.setScene(main_game_scene);
+        primaryStage.show();
+        controller.signal_log_enable(main_game_scene);
+        addtopane_sysboxsandindicators();
+        addtopane_gates();
     }
 
     private void setup_market_pane() {
@@ -258,7 +269,7 @@ public class Paintt {
         virtualTimeSlider.setBlockIncrement(0.1);
         virtualTimeSlider.setPrefWidth(200);
         virtualTimeSlider.valueProperty().addListener((obs, oldVal, newVal) -> {
-            if(user_changing) {
+            if(controller.mainGameViewAndModel.user_changing) {
                 controller.virtual_time_clicked(newVal.doubleValue());
             }
         });
@@ -320,7 +331,7 @@ public class Paintt {
         hudControls.getChildren().addAll(runStopButton, volumeLabel, virtualTimeSlider, timetext , marketButton);
 
         // اضافه کردن به HUDpane
-        HUDpane.getChildren().add(hudControls);
+        controller.mainGameViewAndModel.HUDpane.getChildren().add(hudControls);
         HUDpane.getChildren().add(backline);
         HUDpane.getChildren().add(showline);
     }

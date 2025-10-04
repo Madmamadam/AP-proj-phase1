@@ -16,6 +16,7 @@ import mains.MainGame_ViewAndModelAndController;
 import mains.Start_menu;
 import model.*;
 import org.locationtech.jts.geom.Coordinate;
+import view.Paintt;
 
 import java.util.Objects;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -28,13 +29,10 @@ import static view.Paintt.gameTimer;
 
 public class Controller {
     public MainGame_ViewAndModelAndController mainGameViewAndModel;
-
-    public Controller(MainGame_ViewAndModelAndController mainGameViewAndModel) {
-        this.mainGameViewAndModel = mainGameViewAndModel;
-    }
+    public Paintt view;
+    Methods methods =new Methods(mainGameViewAndModel);
 
     public void Signals_Update(){
-        Methods methods = new Methods();
         Configg cons = Configg.getInstance();
         //it's after load signals stack
         System.out.println("///Signals_Update()");
@@ -183,7 +181,7 @@ public class Controller {
         if(signal.getTypee().getId()==2) {
             mainGameViewAndModel.staticDataModel.setSekke(mainGameViewAndModel.staticDataModel.getSekke() + cons.getTraiangle_signal_sekke_added());
         }
-        just_game_pane.getChildren().remove(signal.poly);
+        view.just_game_pane.getChildren().remove(signal.poly);
         signal.getLinked_wire().getFirstgate().setIn_use(false);
 
         if(sysbox.isStarter()){
@@ -196,7 +194,7 @@ public class Controller {
         }
     }
 
-    private static void signal_go_to_wire(Signal signal, Gate recom_gate) {
+    private void signal_go_to_wire(Signal signal, Gate recom_gate) {
         signal.setLinked_wire(recom_gate.getWire());
         signal.setLength_on_wire(0.0);
         System.out.println("recom_gate.getSysbox().signal_bank.size() "+recom_gate.getSysbox().signal_bank.size());
@@ -204,7 +202,7 @@ public class Controller {
         signal.setState("on_wire");
 //        System.out.println("go to on wire ");
         recom_gate.setIn_use(true);
-        just_game_pane.getChildren().add(signal.poly);
+        view.just_game_pane.getChildren().add(signal.poly);
     }
 
 
@@ -242,7 +240,7 @@ public class Controller {
 
         //----------------------------second selection
         boolean ended_correctly = false;
-        just_game_pane.setOnMouseReleased(event -> { if(mainGameViewAndModel.staticDataModel.stop_wiring) return;
+        view.just_game_pane.setOnMouseReleased(event -> { if(mainGameViewAndModel.staticDataModel.stop_wiring) return;
             if(isStartedinGate.get()) {
                 isStartedinGate.set(false);
                 Node nodeUnderMouse = event.getPickResult().getIntersectedNode();
@@ -278,7 +276,7 @@ public class Controller {
 
         //wire removing
 
-        just_game_pane.setOnMouseClicked(event ->{
+        view.just_game_pane.setOnMouseClicked(event ->{
             if(mainGameViewAndModel.staticDataModel.stop_wiring) return;
             if(event.getButton() != MouseButton.SECONDARY) return;
 
@@ -310,7 +308,7 @@ public class Controller {
     }
 
     private void time_to_remove_wire(Wire wire) {
-        just_game_pane.getChildren().remove(wire.getLine());
+        view.just_game_pane.getChildren().remove(wire.getLine());
         wire.getFirstgate().setWire(null);
         wire.getSecondgate().setWire(null);
         mainGameViewAndModel.staticDataModel.wires.remove(wire);
@@ -319,9 +317,7 @@ public class Controller {
     }
 
     private void wire_check_to_add(Wire wire) {
-        Methods methods = new Methods();
         wire.setLength(methods.calculate_wire_length(wire));
-
         if(   wire.getFirstgate().getWire()!=null
             ||wire.getSecondgate().getWire()!=null){
         }
@@ -331,10 +327,10 @@ public class Controller {
                 || wire.getSecondgate().isIs_outer()
                 || mainGameViewAndModel.staticDataModel.getLevel_wires_length() + wire.getLength() > mainGameViewAndModel.staticDataModel.constraintss.getMaximum_length())
             {
-            Controller.add_wrong_wire(wire);
+            add_wrong_wire(wire);
         }
         else {
-            Controller.add_corrected_wire(wire);
+            add_corrected_wire(wire);
         }
     }
 
@@ -345,7 +341,7 @@ public class Controller {
 
     private void corrected_wire_add_to_view(Wire wire) {
         //paint it forever
-        just_game_pane.getChildren().add(wire.getLine());
+        view.just_game_pane.getChildren().add(wire.getLine());
     }
 
     private void corrected_wire_add_to_model(Wire wire) {
@@ -356,16 +352,16 @@ public class Controller {
         mainGameViewAndModel.staticDataModel.setLevel_wires_length(mainGameViewAndModel.staticDataModel.getLevel_wires_length() + wire.getLength());
     }
 
-    public static void add_wrong_wire(Wire wire) {
+    public void add_wrong_wire(Wire wire) {
         Configg cons = Configg.getInstance();
 
 
         wire.getLine().setStroke(cons.getWrong_line_color());
 
-        just_game_pane.getChildren().add(wire.getLine());
+        view.just_game_pane.getChildren().add(wire.getLine());
         PauseTransition pause = new PauseTransition(Duration.seconds(cons.getSeeing_wrong_line_duration()));
         pause.setOnFinished(event -> {
-            just_game_pane.getChildren().remove(wire.getLine());
+            view.just_game_pane.getChildren().remove(wire.getLine());
             wire.getFirstgate().setWire(null);
             wire.getSecondgate().setWire(null);
         });
@@ -451,7 +447,6 @@ public class Controller {
     }
 
     public void check_and_do_collision() {
-        Methods methods = new Methods();
         if(!mainGameViewAndModel.staticDataModel.Oairyaman) {
 
             for(int i = 0; i< mainGameViewAndModel.staticDataModel.signals.size(); i++) {
@@ -459,8 +454,8 @@ public class Controller {
                 for (int j = 0; j < i; j++) {
 
                     Signal signal2 = mainGameViewAndModel.staticDataModel.signals.get(j);
-                    if (null != Methods.checkCollisionAndGetPoint(signal1.poly, signal2.poly)) {
-                        if (!Methods.found_in_pairs(signal1, signal2)) {
+                    if (null != methods.checkCollisionAndGetPoint(signal1.poly, signal2.poly)) {
+                        if (!methods.found_in_pairs(signal1, signal2)) {
                             just_collapse_noise(signal1,signal2);
 
                             collapse_happen_in_a_location((Coordinate) Methods.checkCollisionAndGetPoint(signal1.poly, signal2.poly) ,signal1,signal2 );
@@ -492,7 +487,7 @@ public class Controller {
             signal.getLinked_wire().getSecondgate().setIn_use(false);
         }
         signal.setState("lost");
-        just_game_pane.getChildren().remove(signal.poly);
+        view.just_game_pane.getChildren().remove(signal.poly);
     }
 
     private void just_collapse_noise(Signal signal1, Signal signal2) {
@@ -514,8 +509,6 @@ public class Controller {
 
     private void  collapse_happen_in_a_location(Coordinate coordinate,Signal signal1,Signal signal2) {
 //        if(virtual_run) return;
-
-        Methods methods = new Methods();
         Configg cons = Configg.getInstance();
 ////      just show
 //        Circle impulse_circle = new Circle();
@@ -596,19 +589,19 @@ public class Controller {
         Configg cons = Configg.getInstance();
         double cyclecount=goToTime_sec*60;
         restart_level_signals();
-        virtual_run=true;
+        mainGameViewAndModel.virtual_run=true;
 
         if(cyclecount<3){cyclecount=3;}
         mainGameViewAndModel.signals_virtual_run.setCycleCount((int) (cyclecount));
         mainGameViewAndModel.signals_virtual_run.play();
         mainGameViewAndModel.signals_virtual_run.setOnFinished(event2 -> {
-            virtual_run=false;
+            mainGameViewAndModel.virtual_run=false;
         });
     }
 
     private void restart_level_signals() {
         for (Signal signal : mainGameViewAndModel.staticDataModel.signals) {
-            just_game_pane.getChildren().remove(signal.poly);
+            view.just_game_pane.getChildren().remove(signal.poly);
         }
 //        for (Circle circle: level_gamemodel.impulse_circles){
 //            just_game_pane.getChildren().remove(circle);

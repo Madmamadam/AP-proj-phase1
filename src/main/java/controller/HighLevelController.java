@@ -1,6 +1,7 @@
 package controller;
 
 import mains.MainGame_ViewAndModelAndController;
+import view.Paintt;
 
 import static mains.Start_menu.primaryStage_static;
 
@@ -10,9 +11,25 @@ public class HighLevelController {
     public void startTheGameFromFirstLevel() throws Exception {
 
         mainGameViewAndModelAndController = new MainGame_ViewAndModelAndController();
-        controller = new Controller(mainGameViewAndModelAndController);
+        controller = new Controller();
+        Paintt view=new Paintt();
+        architevtureLoad(mainGameViewAndModelAndController, controller, view);
+
         mainGameViewAndModelAndController.controller = controller;
         mainGameViewAndModelAndController.start(primaryStage_static,1);
+    }
+    private void architevtureLoad(MainGame_ViewAndModelAndController mainGameViewAndModelAndController, Controller controller , Paintt view){
+        mainGameViewAndModelAndController.controller = controller;
+        mainGameViewAndModelAndController.view=view;
+        mainGameViewAndModelAndController.staticDataModel.view=view;
+        controller.mainGameViewAndModel=mainGameViewAndModelAndController;
+        controller.view=view;
+        view.controller=controller;
+
+        view.architectureLoad();
+
+
+
     }
 
 }

@@ -1,17 +1,19 @@
 package model;
 
 import javafx.scene.shape.Circle;
+import view.Paintt;
 
 import java.util.ArrayList;
 
-import static view.Paintt.HUD_wiring_update;
-
 public class LevelGame_StaticDataModel {
+    public Paintt view;
+
+
     public Boolean stop_wiring = false;
     public ArrayList<Sysbox> sysboxes = new ArrayList<>();
     public ArrayList<After_Frame_And_Signal_start> After_signals = new ArrayList<>();
     public ArrayList<Circle> impulse_circles = new ArrayList<>();
-    private double level_wires_length ;
+    private double level_wires_length =0 ;
     public ArrayList<Signal> signals = new ArrayList<>();
     public ArrayList<Wire> wires = new ArrayList<>();
     public Constraintss constraintss = new Constraintss(); ;
@@ -19,12 +21,11 @@ public class LevelGame_StaticDataModel {
     public Boolean Oairyaman = false;
     public boolean Oatar = false;
     public boolean OAnahita =false;
-
     private double sekke;
 
     public LevelGame_StaticDataModel() {
-        this.level_wires_length=0;
     }
+
 
     public double getLevel_wires_length() {
         return level_wires_length;
@@ -32,7 +33,7 @@ public class LevelGame_StaticDataModel {
 
     public void setLevel_wires_length(double level_wires_length) {
         this.level_wires_length = level_wires_length;
-        HUD_wiring_update();
+        view.HUD_wiring_update();
     }
 
     public double getSekke() {
