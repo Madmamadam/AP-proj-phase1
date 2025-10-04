@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import static view.Paintt.HUD_wiring_update;
 
 public class LevelGame_model {
+    public static Boolean stop_wiring = false;
     public ArrayList<Sysbox> sysboxes = new ArrayList<>();
     public ArrayList<After_Frame_And_Signal_start> After_signals = new ArrayList<>();
     public ArrayList<Circle> impulse_circles = new ArrayList<>();

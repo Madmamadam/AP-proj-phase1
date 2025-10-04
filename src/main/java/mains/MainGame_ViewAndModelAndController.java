@@ -17,21 +17,24 @@ import view.Paintt;
 import static mains.Filee.level_gamemodel;
 import static mains.Filee.level_gamemodel_start;
 import static mains.Start_menu.static_market_pane;
+import static model.LevelGame_model.stop_wiring;
 import static view.Paintt.*;
 
-public class MainGame {
+public class MainGame_ViewAndModelAndController {
+    Paintt veiw;
+    public Controller controller;
+
     public static int level;
 
     static Configg cons = Configg.getInstance();
     public static Pane just_game_pane = new Pane();
-    public static Boolean stop_wiring = false;
     public static Pane HUDpane = new Pane();
     public static StackPane main_game_root = new StackPane(just_game_pane, HUDpane);
     public static boolean user_changing=true;
     public static boolean virtual_run = false;
     public static int signal_run_frame_counter = 0;
     public static int dead_count = 0;
-    private static boolean first_time = true;
+    private boolean first_time = true;
     public static Stage primaryStage_static;
     public static Timeline signals_virtual_run = new Timeline(new KeyFrame(Duration.millis(1000/cons.getVirtual_frequency()), event -> {
         if (stop_wiring) {
@@ -45,7 +48,7 @@ public class MainGame {
 //            }
     }));
 
-    public static Timeline signals_run =new Timeline(new KeyFrame(Duration.millis(17), event -> {
+    public Timeline signals_run =new Timeline(new KeyFrame(Duration.millis(17), event -> {
         if (stop_wiring && !virtual_run) {
             if(first_time){
                 for (Sysbox sysbox: level_gamemodel.sysboxes){
@@ -86,11 +89,12 @@ public class MainGame {
 //        -------------------------------------
 //    }
 
-    public static void start(Stage primaryStage ,int l) throws Exception {
+    public void start(Stage primaryStage, int l) throws Exception {
 
         level =l;
         primaryStage_static = primaryStage;
-        Paintt paintt = new Paintt();
+        veiw = new Paintt(controller);
+
         Configg cons = Configg.getInstance();
 
 
@@ -108,7 +112,7 @@ public class MainGame {
 
 
         Add_level.start(level);
-        paintt.initial_UI(primaryStage);
+        veiw.initial_UI(primaryStage);
         Scene main_game_scene = new Scene(main_game_root);
         primaryStage.setScene(main_game_scene);
         primaryStage.setFullScreenExitKeyCombination(KeyCombination.NO_MATCH); // غیرفعال‌سازی ESC
@@ -116,8 +120,8 @@ public class MainGame {
         primaryStage.setScene(main_game_scene);
         primaryStage.show();
         Controller.signal_log_enable(main_game_scene);
-        paintt.addtopane_sysboxsandindicators();
-        paintt.addtopane_gates();
+        veiw.addtopane_sysboxsandindicators();
+        veiw.addtopane_gates();
 
 //        paintt.addtopane_signals();
 
@@ -147,7 +151,7 @@ public class MainGame {
 //
 //        }));
     }
-//this is MainGame.java:144
+//this is MainGame_ViewAndModelAndController.java:144
     public static void show_ending_stage() {
         Pane show_ending_pane;
 
@@ -166,5 +170,5 @@ public class MainGame {
         primaryStage_static.setScene(end_stage_scene);
         primaryStage_static.setFullScreen(true);
     }
-//this is MainGame.java:156
+//this is MainGame_ViewAndModelAndController.java:156
 }

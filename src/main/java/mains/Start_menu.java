@@ -1,7 +1,7 @@
 package mains;
 
+import controller.MainMenuController;
 import javafx.application.Application;
-import javafx.application.Platform;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
@@ -12,8 +12,6 @@ import javafx.scene.layout.Pane;
 import javafx.scene.media.MediaPlayer;
 import javafx.stage.Stage;
 import javafx.scene.layout.VBox;
-
-import static mains.MainGame.just_game_pane;
 
 
 public class Start_menu extends Application {
@@ -184,8 +182,8 @@ public class Start_menu extends Application {
 
         newGameButton.setOnAction(event ->{
             try {
-                MainGame mainGame = new MainGame();
-                mainGame.start(primaryStage,1);
+                MainMenuController.newGamebutton_Clicked();
+
             } catch (Exception e) {
                 throw new RuntimeException(e);
             }

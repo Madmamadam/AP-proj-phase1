@@ -12,11 +12,10 @@ import javafx.scene.shape.Polygon;
 import javafx.stage.Stage;
 import javafx.util.Duration;
 import mains.Configg;
-import mains.MainGame;
+import mains.MainGame_ViewAndModelAndController;
 import mains.Start_menu;
 import model.*;
 import org.locationtech.jts.geom.Coordinate;
-import view.Paintt;
 
 import java.util.Objects;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -24,11 +23,17 @@ import java.util.concurrent.atomic.AtomicReference;
 
 import static mains.Filee.level_gamemodel;
 import static mains.Filee.level_gamemodel_start;
-import static mains.MainGame.*;
+import static mains.MainGame_ViewAndModelAndController.*;
 import static mains.Start_menu.static_market_pane;
+import static model.LevelGame_model.stop_wiring;
 import static view.Paintt.gameTimer;
 
 public class Controller {
+    MainGame_ViewAndModelAndController mainGameViewAndModel;
+
+    public Controller(MainGame_ViewAndModelAndController mainGameViewAndModel) {
+        this.mainGameViewAndModel = mainGameViewAndModel;
+    }
 
     public static void Signals_Update(){
         Methods methods = new Methods();
@@ -316,7 +321,6 @@ public class Controller {
     }
 
     private static void wire_check_to_add(Wire wire) {
-        Paintt paintt = new Paintt();
         Methods methods = new Methods();
         wire.setLength(methods.calculate_wire_length(wire));
 
@@ -374,31 +378,31 @@ public class Controller {
         System.exit(1);
     }
 
-    public static void run_stop_button_pressed(Stage primaryStage) throws Exception {
+    public void run_stop_button_pressed(Stage primaryStage) throws Exception {
         if(stop_wiring){
             time_to_restart(primaryStage);
         }
         else {
-            boolean access=true;
+            boolean accesss =true;
             for(Sysbox sysbox: level_gamemodel.sysboxes) {
                 if(!sysbox.isIndicator_on_state()){
-                    access=false;
+                    accesss =false;
                     break;
                 }
                 for(Gate gate: sysbox.inner_gates) {
                     if (gate.getWire() == null) {
-                        access = false;
+                        accesss = false;
                         break;
                     }
                 }
                 for(Gate gate: sysbox.outer_gates) {
                     if (gate.getWire() == null) {
-                        access = false;
+                        accesss = false;
                         break;
                     }
                 }
             }
-            if(access){
+            if(accesss){
                 time_to_stop_wiring();
             }
             else {
@@ -409,10 +413,10 @@ public class Controller {
 
     }
 
-    private static void time_to_restart(Stage primaryStage) throws Exception {
+    private void time_to_restart(Stage primaryStage) throws Exception {
         stop_wiring=false;
         primaryStage.hide();
-        MainGame.start(primaryStage,level);
+        this.mainGameViewAndModel.start(primaryStage,level);
 
     }
 
@@ -667,7 +671,7 @@ public class Controller {
 
 
         stop_wiring=false;
-        MainGame.show_ending_stage();
+        MainGame_ViewAndModelAndController.show_ending_stage();
 
     }
 
@@ -694,13 +698,13 @@ public class Controller {
         Start_menu.show_menu();
     }
 
-    public static void restartBtn_clicked() throws Exception {
+    public void restartBtn_clicked() throws Exception {
         time_to_restart(primaryStage_static);
     }
 
-    public static void nextLevelBtn_clicked() {
+    public void nextLevelBtn_clicked() {
         try {
-            MainGame.start(primaryStage_static,2);
+            this.mainGameViewAndModel.start(primaryStage_static,2);
         } catch (Exception e) {
             throw new RuntimeException(e);
         }

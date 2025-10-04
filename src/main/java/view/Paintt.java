@@ -24,8 +24,9 @@ import java.util.Objects;
 import static java.lang.Math.cos;
 import static java.lang.Math.sin;
 import static mains.Filee.level_gamemodel;
-import static mains.MainGame.*;
+import static mains.MainGame_ViewAndModelAndController.*;
 import static mains.Start_menu.static_market_pane;
+import static model.LevelGame_model.stop_wiring;
 
 
 public class Paintt {
@@ -38,6 +39,11 @@ public class Paintt {
     public static Scene end_stage_scene ;
     public static Label coins = new Label("💰 1277");
 
+    Controller controller;
+
+    public Paintt(Controller controller){
+        this.controller = controller;
+    }
 
     public static void HUD_signal_run_update() {
 
@@ -47,9 +53,6 @@ public class Paintt {
 
         double time = gameTimer.getTime_sec();
         timetext.setText(String.format("Time: %.1fs", time));
-
-
-
     }
     public static void HUD_wiring_update() {
         Configg cons = Configg.getInstance();
@@ -210,7 +213,7 @@ public class Paintt {
         restartBtn.setOnAction(event ->
         {
             try {
-                Controller.restartBtn_clicked();
+                controller.restartBtn_clicked();
             } catch (Exception e) {
                 throw new RuntimeException(e);
             }
@@ -237,7 +240,7 @@ public class Paintt {
         nextLevelBtn.setLayoutX(350);
         nextLevelBtn.setLayoutY(300);
         nextLevelBtn.setOnAction(event ->
-                Controller.nextLevelBtn_clicked());
+                controller.nextLevelBtn_clicked());
 
         win_ending_pane.getChildren().addAll(winLabel, menuBtnWin, nextLevelBtn);
 
@@ -286,7 +289,7 @@ public class Paintt {
         Button runStopButton = new Button("Run");
         runStopButton.setOnAction(event -> {
             try {
-                Controller.run_stop_button_pressed(primaryStage);
+                controller.run_stop_button_pressed(primaryStage);
             } catch (Exception e) {
                 throw new RuntimeException(e);
             }

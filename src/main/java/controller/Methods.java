@@ -11,7 +11,7 @@ import java.util.Objects;
 import static java.lang.Math.cos;
 import static java.lang.Math.sin;
 import static mains.Filee.level_gamemodel;
-import static mains.MainGame.virtual_run;
+import static mains.MainGame_ViewAndModelAndController.virtual_run;
 
 
 public class Methods {
