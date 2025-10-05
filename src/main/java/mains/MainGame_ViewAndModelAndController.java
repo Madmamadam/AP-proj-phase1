@@ -177,12 +177,12 @@ public class MainGame_ViewAndModelAndController {
 
 
         //first: update signals that on sysbox  (Assign wire)
-        for (Sysbox sysbox : mainGameViewAndModel.staticDataModel.sysboxes) {
+        for (Sysbox sysbox : staticDataModel.sysboxes) {
             System.out.println("sysbox.signal_bank.size() "+sysbox.signal_bank.size());
             for (int i=0;i<sysbox.signal_bank.size() && !sysbox.signal_bank.isEmpty();){
                 Signal signal=sysbox.signal_bank.get(i);
                 signal.setIs_updated(true);
-                System.out.println("nice1  sysbox_index: "+ mainGameViewAndModel.staticDataModel.sysboxes.indexOf(sysbox));
+                System.out.println("nice1  sysbox_index: "+ staticDataModel.sysboxes.indexOf(sysbox));
                 //just check outer_gates
                 System.out.println("just check outer_gates");
                 for (Gate gate:sysbox.outer_gates){
@@ -207,7 +207,7 @@ public class MainGame_ViewAndModelAndController {
             }
         }
         //second: update signals that on wire (move on wire or add them to a sysbox)
-        for(Signal signal : mainGameViewAndModel.staticDataModel.signals){
+        for(Signal signal : staticDataModel.signals){
             check_noise(signal);
             check_signal_wire_distance(signal);
             System.out.println("signal.isIs_updated() "+signal.isIs_updated());
@@ -250,7 +250,6 @@ public class MainGame_ViewAndModelAndController {
                             just_collapse_noise(signal1,signal2);
 
                             collapse_happen_in_a_location((Coordinate) Methods.checkCollisionAndGetPoint(signal1.poly, signal2.poly) ,signal1,signal2 );
-
                         }
                     }
                     colapsedpairs_update();
@@ -362,6 +361,161 @@ public class MainGame_ViewAndModelAndController {
         return is_ended;
     }
 
+    private void signal_go_to_bank(Signal signal) {
+        Configg cons = Configg.getInstance();
 
+        Sysbox sysbox =signal.getLinked_wire().getSecondgate().getSysbox();
+
+        if(sysbox.signal_bank.size()>5 && !sysbox.isStarter()){
+            //lost
+            signal.setState("lost");
+            return;
+        }
+
+        sysbox.signal_bank.add(signal);
+        if(signal.getTypee().getId()==1) {
+            staticDataModel.setSekke(staticDataModel.getSekke() + cons.getRectangle_signal_sekke_added());
+        }
+        if(signal.getTypee().getId()==2) {
+            staticDataModel.setSekke(staticDataModel.getSekke() + cons.getTraiangle_signal_sekke_added());
+        }
+        view.just_game_pane.getChildren().remove(signal.poly);
+        signal.getLinked_wire().getFirstgate().setIn_use(false);
+
+        if(sysbox.isStarter()){
+            signal.setState("ended");
+        }
+        else {
+//           did not use method because it's easy
+            signal.setState("on_sysbox");
+
+        }
+    }
+
+    private void signal_go_to_wire(Signal signal, Gate recom_gate) {
+        signal.setLinked_wire(recom_gate.getWire());
+        signal.setLength_on_wire(0.0);
+        System.out.println("recom_gate.getSysbox().signal_bank.size() "+recom_gate.getSysbox().signal_bank.size());
+        recom_gate.getSysbox().signal_bank.remove(signal);
+        signal.setState("on_wire");
+//        System.out.println("go to on wire ");
+        recom_gate.setIn_use(true);
+        view.just_game_pane.getChildren().add(signal.poly);
+    }
+
+    private void signal_one_step_on_wire(Signal signal) {
+        Configg cons = Configg.getInstance();
+        if (signal.getTypee().getName() == "rectangle"){
+            //first gate and end gate have same type
+            if (signal.getLinked_wire().getFirstgate().getTypee().getName() == "rectangle") {
+                signal.setLength_on_wire(signal.getLength_on_wire() + cons.getDefault_delta_wire_length());
+            }
+            if (signal.getLinked_wire().getFirstgate().getTypee().getName() == "triangle") {
+                signal.setLength_on_wire(signal.getLength_on_wire() + cons.getDefault_delta_wire_length() / 2);
+            }
+            else {
+                System.out.println("+++++type not found error");
+            }
+        }
+        if(signal.getTypee().getName()=="triangle"){
+            if(signal.getLinked_wire().getFirstgate().getTypee().getName()=="rectangle") {
+                double ratio = signal.getLength_on_wire()/signal.getLinked_wire().getLength();
+                signal.setLength_on_wire(signal.getLength_on_wire() + (1+2*ratio)*cons.getDefault_delta_wire_length());
+            }
+            if(signal.getLinked_wire().getFirstgate().getTypee().getName()=="triangle"){
+                signal.setLength_on_wire(signal.getLength_on_wire() + cons.getDefault_delta_wire_length());
+            }
+            else {
+                System.out.println("+++++type not found error");
+            }
+        }
+
+    }
+
+    private void signal_add_to_start(Signal signal) {
+        System.out.println("********* signal_add_to_start  frame counter ="+ signal_run_frame_counter);
+        staticDataModel.signals.add(signal);
+        staticDataModel.sysboxes.getFirst().signal_bank.add(signal);
+    }
+
+    private void check_signal_wire_distance(Signal signal) {
+        Configg cons = Configg.getInstance();
+        double x=signal.getX_ekhtelaf();
+        double y=signal.getY_ekhtelaf();
+        double ekhtelaf_r =Math.sqrt(x*x+y*y);
+//        در داک شرط خاصی برای حذف کردن نیامده
+        if(signal.getTypee().getId()==1){
+            if(2*ekhtelaf_r>Math.min(cons.getGate_rectangle_height(),cons.getGate_rectangle_width())){
+                go_to_dead(signal);
+            }
+        }
+        if(signal.getTypee().getId()==2){
+            if(2*ekhtelaf_r>cons.getSignal_triangle_radius()){
+                go_to_dead(signal);
+            }
+        }
+
+    }
+
+    private void go_to_dead(Signal signal) {
+        signal.setIs_updated(true);
+
+        if(signal.getState()=="on_wire")
+        {
+            //خالی کردن اون خط
+            signal.getLinked_wire().getFirstgate().setIn_use(false);
+            signal.getLinked_wire().getSecondgate().setIn_use(false);
+        }
+        signal.setState("lost");
+        view.just_game_pane.getChildren().remove(signal.poly);
+    }
+
+    private void check_noise(Signal signal) {
+        Configg cons = Configg.getInstance();
+        if(signal.getNoise()> staticDataModel.constraintss.getMaximum_noise()){
+            go_to_dead(signal);
+        }
+    }
+
+
+    private void just_collapse_noise(Signal signal1, Signal signal2) {
+        Configg cons = Configg.getInstance();
+        signal1.setNoise(signal1.getNoise()+cons.getNoise_add_every_hit());
+        signal2.setNoise(signal2.getNoise()+cons.getNoise_add_every_hit());
+    }
+
+    private void colapsedpairs_update() {
+        Configg cons= Configg.getInstance();
+        long long_current_time = System.currentTimeMillis();
+        double current_time = long_current_time/1000000000.0;
+        for(Pairs pair : staticDataModel.collapsedPairs){
+            if(current_time-pair.adding_time > cons.getImpulse_resttime()){
+                staticDataModel.collapsedPairs.remove(pair);
+            }
+        }
+    }
+
+
+    private double runratio() {
+        Configg cons = Configg.getInstance();
+        if(mainGameViewAndModel.virtual_run){
+            return (1/(cons.getVirtual_frequency()/60));
+        }
+        else
+            return 1;
+    }
+
+    public void time_to_restart(Stage primaryStage) throws Exception {
+        staticDataModel.stop_wiring=false;
+        primaryStage.hide();
+        this.start(primaryStage,level);
+
+    }
+
+    public void reset_all_noise() {
+        for (Signal signal : staticDataModel.signals) {
+            signal.setNoise(0);
+        }
+    }
 
 }

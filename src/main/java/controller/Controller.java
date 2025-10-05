@@ -33,101 +33,7 @@ public class Controller {
     Methods methods =new Methods(mainGameViewAndModel);
 
 
-    private static void signal_one_step_on_wire(Signal signal) {
-        Configg cons = Configg.getInstance();
-        if (signal.getTypee().getName() == "rectangle"){
-            //first gate and end gate have same type
-            if (signal.getLinked_wire().getFirstgate().getTypee().getName() == "rectangle") {
-                signal.setLength_on_wire(signal.getLength_on_wire() + cons.getDefault_delta_wire_length());
-            }
-            if (signal.getLinked_wire().getFirstgate().getTypee().getName() == "triangle") {
-                signal.setLength_on_wire(signal.getLength_on_wire() + cons.getDefault_delta_wire_length() / 2);
-            }
-            else {
-                System.out.println("+++++type not found error");
-            }
-        }
-        if(signal.getTypee().getName()=="triangle"){
-            if(signal.getLinked_wire().getFirstgate().getTypee().getName()=="rectangle") {
-                double ratio = signal.getLength_on_wire()/signal.getLinked_wire().getLength();
-                signal.setLength_on_wire(signal.getLength_on_wire() + (1+2*ratio)*cons.getDefault_delta_wire_length());
-            }
-            if(signal.getLinked_wire().getFirstgate().getTypee().getName()=="triangle"){
-                signal.setLength_on_wire(signal.getLength_on_wire() + cons.getDefault_delta_wire_length());
-            }
-            else {
-                System.out.println("+++++type not found error");
-            }
-        }
 
-    }
-
-    private void signal_add_to_start(Signal signal) {
-        System.out.println("********* signal_add_to_start  frame counter ="+mainGameViewAndModel.signal_run_frame_counter);
-        mainGameViewAndModel.staticDataModel.signals.add(signal);
-        mainGameViewAndModel.staticDataModel.sysboxes.getFirst().signal_bank.add(signal);
-    }
-
-    private void check_signal_wire_distance(Signal signal) {
-        Configg cons = Configg.getInstance();
-        double x=signal.getX_ekhtelaf();
-        double y=signal.getY_ekhtelaf();
-        double ekhtelaf_r =Math.sqrt(x*x+y*y);
-//        در داک شرط خاصی برای حذف کردن نیامده
-        if(signal.getTypee().getId()==1){
-            if(2*ekhtelaf_r>Math.min(cons.getGate_rectangle_height(),cons.getGate_rectangle_width())){
-                go_to_dead(signal);
-            }
-        }
-        if(signal.getTypee().getId()==2){
-            if(2*ekhtelaf_r>cons.getSignal_triangle_radius()){
-                go_to_dead(signal);
-            }
-        }
-
-    }
-
-    private void signal_go_to_bank(Signal signal) {
-        Configg cons = Configg.getInstance();
-
-        Sysbox sysbox =signal.getLinked_wire().getSecondgate().getSysbox();
-
-        if(sysbox.signal_bank.size()>5 && !sysbox.isStarter()){
-            //lost
-            signal.setState("lost");
-            return;
-        }
-
-        sysbox.signal_bank.add(signal);
-        if(signal.getTypee().getId()==1) {
-            mainGameViewAndModel.staticDataModel.setSekke(mainGameViewAndModel.staticDataModel.getSekke() + cons.getRectangle_signal_sekke_added());
-        }
-        if(signal.getTypee().getId()==2) {
-            mainGameViewAndModel.staticDataModel.setSekke(mainGameViewAndModel.staticDataModel.getSekke() + cons.getTraiangle_signal_sekke_added());
-        }
-        view.just_game_pane.getChildren().remove(signal.poly);
-        signal.getLinked_wire().getFirstgate().setIn_use(false);
-
-        if(sysbox.isStarter()){
-            signal.setState("ended");
-        }
-        else {
-//           did not use method because it's easy
-            signal.setState("on_sysbox");
-
-        }
-    }
-
-    private void signal_go_to_wire(Signal signal, Gate recom_gate) {
-        signal.setLinked_wire(recom_gate.getWire());
-        signal.setLength_on_wire(0.0);
-        System.out.println("recom_gate.getSysbox().signal_bank.size() "+recom_gate.getSysbox().signal_bank.size());
-        recom_gate.getSysbox().signal_bank.remove(signal);
-        signal.setState("on_wire");
-//        System.out.println("go to on wire ");
-        recom_gate.setIn_use(true);
-        view.just_game_pane.getChildren().add(signal.poly);
-    }
 
 
     public void wiring() {
@@ -298,7 +204,7 @@ public class Controller {
 
     public void run_stop_button_pressed(Stage primaryStage) throws Exception {
         if(mainGameViewAndModel.staticDataModel.stop_wiring){
-            time_to_restart(primaryStage);
+            mainGameViewAndModel.time_to_restart(primaryStage);
         }
         else {
             boolean accesss =true;
@@ -331,12 +237,7 @@ public class Controller {
 
     }
 
-    private void time_to_restart(Stage primaryStage) throws Exception {
-        mainGameViewAndModel.staticDataModel.stop_wiring=false;
-        primaryStage.hide();
-        this.mainGameViewAndModel.start(primaryStage,level);
 
-    }
 
     private void false_try_for_stop_wiring() {
     }
@@ -369,55 +270,6 @@ public class Controller {
             }
         }
     }
-
-
-    private void check_noise(Signal signal) {
-        Configg cons = Configg.getInstance();
-        if(signal.getNoise()> mainGameViewAndModel.staticDataModel.constraintss.getMaximum_noise()){
-            go_to_dead(signal);
-        }
-    }
-
-    private void go_to_dead(Signal signal) {
-        signal.setIs_updated(true);
-
-        if(signal.getState()=="on_wire")
-        {
-        //خالی کردن اون خط
-            signal.getLinked_wire().getFirstgate().setIn_use(false);
-            signal.getLinked_wire().getSecondgate().setIn_use(false);
-        }
-        signal.setState("lost");
-        view.just_game_pane.getChildren().remove(signal.poly);
-    }
-
-    private void just_collapse_noise(Signal signal1, Signal signal2) {
-        Configg cons = Configg.getInstance();
-        signal1.setNoise(signal1.getNoise()+cons.getNoise_add_every_hit());
-        signal2.setNoise(signal2.getNoise()+cons.getNoise_add_every_hit());
-    }
-
-    private void colapsedpairs_update() {
-        Configg cons= Configg.getInstance();
-        long long_current_time = System.currentTimeMillis();
-        double current_time = long_current_time/1000000000.0;
-        for(Pairs pair : mainGameViewAndModel.staticDataModel.collapsedPairs){
-            if(current_time-pair.adding_time > cons.getImpulse_resttime()){
-                mainGameViewAndModel.staticDataModel.collapsedPairs.remove(pair);
-            }
-        }
-    }
-
-
-    private double runratio() {
-        Configg cons = Configg.getInstance();
-        if(mainGameViewAndModel.virtual_run){
-            return (1/(cons.getVirtual_frequency()/60));
-        }
-        else
-            return 1;
-    }
-
 
     public void virtual_time_clicked(double virtual_ratio) {
         double max_t= mainGameViewAndModel.staticDataModel.constraintss.getMaximum_time_sec();
@@ -494,7 +346,7 @@ public class Controller {
     }
 
     public void restartBtn_clicked() throws Exception {
-        time_to_restart(primaryStage_static);
+        mainGameViewAndModel.time_to_restart(primaryStage_static);
     }
 
     public void nextLevelBtn_clicked() {
@@ -567,17 +419,13 @@ public class Controller {
         if(mainGameViewAndModel.staticDataModel.getSekke() > 5){
             mainGameViewAndModel.staticDataModel.setSekke(mainGameViewAndModel.staticDataModel.getSekke()-5);
 
-            reset_all_noise();
+            mainGameViewAndModel.reset_all_noise();
 
 
         }
     }
 
-    private void reset_all_noise() {
-        for (Signal signal : mainGameViewAndModel.staticDataModel.signals) {
-            signal.setNoise(0);
-        }
-    }
+
 
     public void edit_wires() {
 
