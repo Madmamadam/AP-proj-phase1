@@ -32,82 +32,6 @@ public class Controller {
     public Paintt view;
     Methods methods =new Methods(mainGameViewAndModel);
 
-    public void Signals_Update(){
-        Configg cons = Configg.getInstance();
-        //it's after load signals stack
-        System.out.println("///Signals_Update()");
-
-
-        //zero: add signals to start Sysbox
-        for(After_Frame_And_Signal_start d_signal : mainGameViewAndModel.staticDataModel.After_signals){
-            if(!d_signal.added && d_signal.adding_frame<signal_run_frame_counter){
-                d_signal.added = true;
-                signal_add_to_start(d_signal.signal);
-            }
-        }
-
-
-
-        //first: update signals that on sysbox  (Assign wire)
-        for (Sysbox sysbox : mainGameViewAndModel.staticDataModel.sysboxes) {
-            System.out.println("sysbox.signal_bank.size() "+sysbox.signal_bank.size());
-            for (int i=0;i<sysbox.signal_bank.size() && !sysbox.signal_bank.isEmpty();){
-                Signal signal=sysbox.signal_bank.get(i);
-                signal.setIs_updated(true);
-                System.out.println("nice1  sysbox_index: "+ mainGameViewAndModel.staticDataModel.sysboxes.indexOf(sysbox));
-                //just check outer_gates
-                System.out.println("just check outer_gates");
-                for (Gate gate:sysbox.outer_gates){
-                    System.out.println("gate.isIn_use() "+gate.isIn_use());
-                    if(gate.getWire()==null){
-                        System.out.println("gate.getWire()==null");
-                    }
-                }
-                System.out.println("end check");
-                //end of checking
-
-                if(methods.recommended_gate(sysbox,signal) != null && signal.getState()=="on_sysbox"){
-                    Gate recom_gate = (Gate) methods.recommended_gate(sysbox,signal);
-                    System.out.println("sysbox.signal_bank.size() "+sysbox.signal_bank.size());
-                    System.out.println("nice2");
-                    signal_go_to_wire(signal,recom_gate);
-                    System.out.println("nice3");
-                }
-                else{
-                    i++;
-                }
-            }
-        }
-        //second: update signals that on wire (move on wire or add them to a sysbox)
-        for(Signal signal : mainGameViewAndModel.staticDataModel.signals){
-            check_noise(signal);
-            check_signal_wire_distance(signal);
-            System.out.println("signal.isIs_updated() "+signal.isIs_updated());
-            System.out.println("signal.getState() "+signal.getState());
-            if((!signal.isIs_updated()) && Objects.equals(signal.getState(),"on_wire")){
-                if(signal.getLinked_wire()==null){
-                    System.out.println("signal.getLinked_wire() is null ---");
-                }
-                //speed adjusst
-                signal_one_step_on_wire(signal);
-                signal.setLength_on_wire(signal.getLength_on_wire()+cons.getDefault_delta_wire_length());
-                //
-                if(signal.getLength_on_wire()>signal.getLinked_wire().getLength()){
-                    signal_go_to_bank(signal);
-                }
-                else {
-                    methods.update_signal_onwire(signal);
-//                    System.out.println("update on wire ");
-                }
-            }
-            else{
-                signal.setIs_updated(false);
-            }
-
-        }
-        System.out.println("/// end-  Signals_Update()");
-
-    }
 
     private static void signal_one_step_on_wire(Signal signal) {
         Configg cons = Configg.getInstance();
@@ -139,7 +63,7 @@ public class Controller {
     }
 
     private void signal_add_to_start(Signal signal) {
-        System.out.println("********* signal_add_to_start  frame counter ="+signal_run_frame_counter);
+        System.out.println("********* signal_add_to_start  frame counter ="+mainGameViewAndModel.signal_run_frame_counter);
         mainGameViewAndModel.staticDataModel.signals.add(signal);
         mainGameViewAndModel.staticDataModel.sysboxes.getFirst().signal_bank.add(signal);
     }
@@ -414,7 +338,7 @@ public class Controller {
 
     }
 
-    private static void false_try_for_stop_wiring() {
+    private void false_try_for_stop_wiring() {
     }
 
     private void time_to_stop_wiring() {
@@ -446,29 +370,6 @@ public class Controller {
         }
     }
 
-    public void check_and_do_collision() {
-        if(!mainGameViewAndModel.staticDataModel.Oairyaman) {
-
-            for(int i = 0; i< mainGameViewAndModel.staticDataModel.signals.size(); i++) {
-                Signal signal1 = mainGameViewAndModel.staticDataModel.signals.get(i);
-                for (int j = 0; j < i; j++) {
-
-                    Signal signal2 = mainGameViewAndModel.staticDataModel.signals.get(j);
-                    if (null != methods.checkCollisionAndGetPoint(signal1.poly, signal2.poly)) {
-                        if (!methods.found_in_pairs(signal1, signal2)) {
-                            just_collapse_noise(signal1,signal2);
-
-                            collapse_happen_in_a_location((Coordinate) Methods.checkCollisionAndGetPoint(signal1.poly, signal2.poly) ,signal1,signal2 );
-
-                        }
-                    }
-                    colapsedpairs_update();
-                }
-//                check_noise(signal1);
-            }
-        }
-
-    }
 
     private void check_noise(Signal signal) {
         Configg cons = Configg.getInstance();
@@ -507,75 +408,16 @@ public class Controller {
         }
     }
 
-    private void  collapse_happen_in_a_location(Coordinate coordinate,Signal signal1,Signal signal2) {
-//        if(virtual_run) return;
-        Configg cons = Configg.getInstance();
-////      just show
-//        Circle impulse_circle = new Circle();
-//        impulse_circle.setCenterX(coordinate.x);
-//        impulse_circle.setCenterY(coordinate.y);
-//        impulse_circle.setFill(cons.getImpulse_color());
-//
-//        level_gamemodel.impulse_circles.add(impulse_circle);
-//        just_game_pane.getChildren().add(impulse_circle);
-//
-//        int maxcyclecount =(int) (cons.getImpulse_show_time() / 0.017);
-//        AtomicInteger cyclecount= new AtomicInteger();
-//        cyclecount.set(0);
-//        Timeline timeline_signals_run = new Timeline(new KeyFrame(Duration.millis(17), event -> {
-//
-//            cyclecount.set(cyclecount.get()+1);
-//            double ratio=(double) cyclecount.get()/maxcyclecount;
-////            System.out.println("collapse ratio: "+ratio+" maxcyclecount: "+maxcyclecount);
-//
-//            impulse_circle.setRadius(cons.getImpulse_radius()*ratio);
-//
-//        }));
-//        timeline_signals_run.setCycleCount(maxcyclecount);
-//        timeline_signals_run.play();
-//        timeline_signals_run.setOnFinished(event -> {
-//            just_game_pane.getChildren().remove(impulse_circle);
-//        });
-
-
-//        control
-        mainGameViewAndModel.staticDataModel.collapsedPairs.add(new Pairs(signal1,signal2));
-        for(Signal signal: mainGameViewAndModel.staticDataModel.signals) {
-            if(signal.getState()=="on_wire"){
-                //central of signal is matter
-                if(methods.calculate_distance(signal.getX(),signal.getY(),coordinate.getX(),coordinate.getY())< cons.getImpulse_radius()){
-                    in_radius_impulse_wave(signal,coordinate);
-                }
-            }
-        }
-    }
 
     private double runratio() {
         Configg cons = Configg.getInstance();
-        if(virtual_run){
+        if(mainGameViewAndModel.virtual_run){
             return (1/(cons.getVirtual_frequency()/60));
         }
         else
             return 1;
     }
 
-    private void in_radius_impulse_wave(Signal signal, Coordinate coordinate) {
-        if(mainGameViewAndModel.staticDataModel.Oatar ){return;}
-
-        Configg cons=Configg.getInstance();
-        double dx=signal.getX()-coordinate.getX();
-        double dy=signal.getY()-coordinate.getY();
-        double r=Math.sqrt(dx*dx+dy*dy);
-        double step = (double) 1/ (int)(cons.getImpulse_move_time()/0.017);
-        Timeline signal_shouting = new Timeline(new KeyFrame(Duration.millis(17), event -> {
-
-            signal.setX_ekhtelaf(signal.getX_ekhtelaf()+(dx/r)*step*cons.getImpulse_delta_r());
-            signal.setY_ekhtelaf(signal.getY_ekhtelaf()+(dy/r)*step*cons.getImpulse_delta_r());
-
-        }));
-        signal_shouting.setCycleCount((int) (cons.getImpulse_move_time()/0.017));
-        signal_shouting.play();
-    }
 
     public void virtual_time_clicked(double virtual_ratio) {
         double max_t= mainGameViewAndModel.staticDataModel.constraintss.getMaximum_time_sec();
@@ -627,26 +469,6 @@ public class Controller {
         }
     }
 
-    public boolean ending_check() {
-        boolean is_ended=true;
-        if(gameTimer.getTime_sec()>= mainGameViewAndModel.staticDataModel.constraintss.getMaximum_time_sec()){
-//            is_ended=true;
-        }
-        else {
-            for (Signal signal : mainGameViewAndModel.staticDataModel.signals) {
-                if(signal.getState()==null){
-                    is_ended=false;
-                }
-                if (!(signal.getState() == "lost" || signal.getState() == "ended")) {
-                    is_ended = false;
-                }
-            }
-        }
-        if(is_ended) {
-            level_ended();
-        }
-        return is_ended;
-    }
 
     private void level_ended() {
         System.out.println("******************** LEVEL ENDED *******************");
@@ -666,24 +488,6 @@ public class Controller {
 
     }
 
-    public boolean is_winner_and_update_dead_count() {
-        //counter dead
-        dead_count=0;
-        for (Signal signal : mainGameViewAndModel.staticDataModel.signals) {
-            if(signal.getState()!="ended") {
-                dead_count++;
-                //really dead or just not ended
-            }
-        }
-        double dead_ratio = (double)dead_count/(double) mainGameViewAndModel.staticDataModel.signals.size();
-
-        if(dead_ratio> mainGameViewAndModel.staticDataModel.constraintss.getMaximum_dead_ratio()) {
-            return false;
-        }
-        else {
-            return true;
-        }
-    }
 
     public void menuBtn_clicked() {
         Start_menu.show_menu();

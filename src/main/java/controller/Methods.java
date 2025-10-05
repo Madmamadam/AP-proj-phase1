@@ -11,7 +11,6 @@ import java.util.Objects;
 
 import static java.lang.Math.cos;
 import static java.lang.Math.sin;
-import static mains.MainGame_ViewAndModelAndController.virtual_run;
 
 
 public class Methods {
@@ -64,7 +63,7 @@ public class Methods {
         Polygon poly =signal.poly;
         poly.getPoints().clear();
         //just for debugging
-        if(virtual_run){
+        if(mainGameModel.virtual_run){
             System.out.println("virtual run polygon");
         }
         if(Objects.equals(signal.getTypee().getName(),"rectangle")){

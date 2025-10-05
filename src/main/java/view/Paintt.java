@@ -87,7 +87,7 @@ public class Paintt {
 
     public void addtopane_signals() {
         for (Signal signal : level_gamemodel.signals) {
-            controller.mainGameViewAndModel.just_game_pane.getChildren().add(signal.poly);
+            just_game_pane.getChildren().add(signal.poly);
         }
     }
     public void addtopane_sysboxsandindicators(){
@@ -331,7 +331,7 @@ public class Paintt {
         hudControls.getChildren().addAll(runStopButton, volumeLabel, virtualTimeSlider, timetext , marketButton);
 
         // اضافه کردن به HUDpane
-        controller.mainGameViewAndModel.HUDpane.getChildren().add(hudControls);
+        HUDpane.getChildren().add(hudControls);
         HUDpane.getChildren().add(backline);
         HUDpane.getChildren().add(showline);
     }
