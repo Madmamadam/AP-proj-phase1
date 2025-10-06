@@ -25,6 +25,7 @@ import java.util.Objects;
 
 import static java.lang.Math.cos;
 import static java.lang.Math.sin;
+import static mains.Start_menu.primaryStage_static;
 import static mains.Start_menu.static_market_pane;
 
 
@@ -36,13 +37,13 @@ public class Paintt {
     public Pane HUDpane = new Pane();
     public StackPane main_game_root = new StackPane(just_game_pane, HUDpane);
     static Slider virtualTimeSlider = new Slider(0, 1, 0.0);
-    private static Text timetext = new Text("");
-    public static GameTimer gameTimer = new GameTimer();
+    private Text timetext = new Text("");
+    public GameTimer gameTimer = new GameTimer();
     static Line showline = new Line();
-    public static Pane win_ending_pane=new Pane();
-    public static Pane lose_ending_pane=new Pane();
-    public static Scene end_stage_scene ;
-    public static Label coins = new Label("💰 1277");
+    public Pane win_ending_pane=new Pane();
+    public Pane lose_ending_pane=new Pane();
+    public Scene end_stage_scene ;
+    public Label coins = new Label("💰 1277");
 
     public void architectureLoad(){
         this.level_gamemodel=this.controller.mainGameViewAndModel.staticDataModel;
@@ -335,6 +336,26 @@ public class Paintt {
         HUDpane.getChildren().add(backline);
         HUDpane.getChildren().add(showline);
     }
+
+    public void show_ending_stage() {
+        Pane show_ending_pane;
+
+        if(controller.mainGameViewAndModel.is_winner_and_update_dead_count()){
+            show_ending_pane = win_ending_pane;
+        }
+        else {
+            show_ending_pane = lose_ending_pane;
+        }
+        if(show_ending_pane.getScene()!=null) {
+            show_ending_pane.getScene().setRoot(new Pane());
+        }
+
+        add_ratio_to_ending_pane();
+        end_stage_scene.setRoot(show_ending_pane);
+        primaryStage_static.setScene(end_stage_scene);
+        primaryStage_static.setFullScreen(true);
+    }
+
 
 
 

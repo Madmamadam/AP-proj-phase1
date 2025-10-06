@@ -15,17 +15,10 @@ import mains.Configg;
 import mains.MainGame_ViewAndModelAndController;
 import mains.Start_menu;
 import model.*;
-import org.locationtech.jts.geom.Coordinate;
 import view.Paintt;
 
-import java.util.Objects;
-import java.util.concurrent.atomic.AtomicBoolean;
-import java.util.concurrent.atomic.AtomicReference;
-
-import static mains.Filee.level_gamemodel_start;
-import static mains.MainGame_ViewAndModelAndController.*;
+import static mains.Start_menu.primaryStage_static;
 import static mains.Start_menu.static_market_pane;
-import static view.Paintt.gameTimer;
 
 public class Controller {
     public MainGame_ViewAndModelAndController mainGameViewAndModel;
@@ -86,29 +79,6 @@ public class Controller {
 
 
 
-    public void indicator_update() {
-        for(Sysbox sysbox : mainGameViewAndModel.staticDataModel.sysboxes) {
-            if(sysbox.isStarter()){
-                sysbox.setIndicator_on_state(true);
-            }
-            else {
-                boolean found = false;
-    //            System.out.println("sysbox.isStarter()"+sysbox.isStarter());
-                for (Gate gate : sysbox.inner_gates) {
-                    if(gate.getWire()!=null){
-                        if(gate.getWire().getFirstgate().getSysbox().isIndicator_on_state()){
-                            sysbox.setIndicator_on_state(true);
-                            found = true;
-                            break;
-                        }
-                    }
-                }
-                if(!found){
-                    sysbox.setIndicator_on_state(false);
-                }
-            }
-        }
-    }
 
     public void virtual_time_clicked(double virtual_ratio) {
         double max_t= mainGameViewAndModel.staticDataModel.constraintss.getMaximum_time_sec();

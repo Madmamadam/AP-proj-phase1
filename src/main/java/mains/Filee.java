@@ -16,7 +16,6 @@ import java.util.List;
 //not used in this version
 public class Filee {
 //    public static LevelGame_StaticDataModel level_gamemodelll = new LevelGame_StaticDataModel();
-    public static LevelGame_StaticDataModel level_gamemodel_start ;
     static ObjectMapper objectMapper = new ObjectMapper();
 
     static File file = new File("level_gamemodel.json");

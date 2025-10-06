@@ -7,11 +7,8 @@ import javafx.animation.KeyFrame;
 import javafx.animation.PauseTransition;
 import javafx.animation.Timeline;
 import javafx.scene.Node;
-import javafx.scene.Scene;
-import javafx.scene.input.KeyCombination;
 import javafx.scene.input.MouseButton;
 import javafx.scene.layout.Pane;
-import javafx.scene.layout.StackPane;
 import javafx.scene.shape.Line;
 import javafx.scene.shape.Polygon;
 import javafx.stage.Stage;
@@ -24,14 +21,15 @@ import java.util.Objects;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicReference;
 
-import static mains.Filee.level_gamemodel_start;
 import static mains.Start_menu.static_market_pane;
-import static view.Paintt.*;
+
 
 public class MainGame_ViewAndModelAndController {
     public LevelGame_StaticDataModel staticDataModel=new LevelGame_StaticDataModel();
     public Paintt view;
     public Controller controller;
+
+    public LevelGame_StaticDataModel level_gamemodel_start ;
     private Methods methods = new Methods(this);
 
     public static int level;
@@ -77,13 +75,13 @@ public class MainGame_ViewAndModelAndController {
             ending_check();
 
 
-            gameTimer.setStopping(false);
+            view.gameTimer.setStopping(false);
             view.marketPaneupdate();
             view.HUD_signal_run_update();
             signal_run_frame_counter++;
         }
         else {
-            gameTimer.setStopping(true);
+            view.gameTimer.setStopping(true);
         }
     }));
 
@@ -106,7 +104,7 @@ public class MainGame_ViewAndModelAndController {
 
 
         staticDataModel.stop_wiring = false;
-        gameTimer.restart();
+        view.gameTimer.restart();
         signal_run_frame_counter = 0;
         view.HUD_signal_run_update();
 
@@ -130,7 +128,7 @@ public class MainGame_ViewAndModelAndController {
 
         Timeline timeline_wiring = new Timeline(new KeyFrame(Duration.millis(17*6), event -> {
             if (!staticDataModel.stop_wiring) {
-                controller.indicator_update();
+                indicator_update();
             }
         }));
 
@@ -146,24 +144,6 @@ public class MainGame_ViewAndModelAndController {
 //        }));
     }
 //this is MainGame_ViewAndModelAndController.java:144
-    public void show_ending_stage() {
-        Pane show_ending_pane;
-
-        if(is_winner_and_update_dead_count()){
-            show_ending_pane = win_ending_pane;
-        }
-        else {
-            show_ending_pane = lose_ending_pane;
-        }
-        if(show_ending_pane.getScene()!=null) {
-            show_ending_pane.getScene().setRoot(new Pane());
-        }
-
-        view.add_ratio_to_ending_pane();
-        end_stage_scene.setRoot(show_ending_pane);
-        primaryStage_static.setScene(end_stage_scene);
-        primaryStage_static.setFullScreen(true);
-    }
 //this is MainGame_ViewAndModelAndController.java:156
 
 
@@ -349,7 +329,7 @@ public class MainGame_ViewAndModelAndController {
 
     public boolean ending_check() {
         boolean is_ended=true;
-        if(gameTimer.getTime_sec()>= staticDataModel.constraintss.getMaximum_time_sec()){
+        if(view.gameTimer.getTime_sec()>= staticDataModel.constraintss.getMaximum_time_sec()){
 //            is_ended=true;
         }
         else {
@@ -705,12 +685,12 @@ public class MainGame_ViewAndModelAndController {
 
 
         staticDataModel.stop_wiring=false;
-        show_ending_stage();
+        view.show_ending_stage();
 
     }
 
     public void half_restart(double goToTime_sec) {
-        gameTimer.setTime_sec(goToTime_sec);
+        view.gameTimer.setTime_sec(goToTime_sec);
         Configg cons = Configg.getInstance();
         double cyclecount=goToTime_sec*60;
         restart_level_signals();
@@ -749,6 +729,30 @@ public class MainGame_ViewAndModelAndController {
         for (Wire wire:staticDataModel.wires) {
             wire.getFirstgate().setWire(wire);
             wire.getSecondgate().setWire(wire);
+        }
+    }
+
+    public void indicator_update() {
+        for(Sysbox sysbox : staticDataModel.sysboxes) {
+            if(sysbox.isStarter()){
+                sysbox.setIndicator_on_state(true);
+            }
+            else {
+                boolean found = false;
+                //            System.out.println("sysbox.isStarter()"+sysbox.isStarter());
+                for (Gate gate : sysbox.inner_gates) {
+                    if(gate.getWire()!=null){
+                        if(gate.getWire().getFirstgate().getSysbox().isIndicator_on_state()){
+                            sysbox.setIndicator_on_state(true);
+                            found = true;
+                            break;
+                        }
+                    }
+                }
+                if(!found){
+                    sysbox.setIndicator_on_state(false);
+                }
+            }
         }
     }
 
