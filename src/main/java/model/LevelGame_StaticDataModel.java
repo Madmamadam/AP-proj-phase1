@@ -44,7 +44,8 @@ public class LevelGame_StaticDataModel {
         this.sekke = sekke;
     }
 
-    public LevelGame_StaticDataModel getClone() {
+    //i think must be used at safe state to work correctly
+    public LevelGame_StaticDataModel getClone_inMainModel() {
         LevelGame_StaticDataModel clone_stack = new LevelGame_StaticDataModel();
         clone_stack.signals = new ArrayList<Signal>();
         clone_stack.sysboxes = new ArrayList<Sysbox>();
@@ -59,7 +60,7 @@ public class LevelGame_StaticDataModel {
 
         // anything in sysbox but signal_bank and gate state
         for(Sysbox sysbox : this.sysboxes) {
-            clone_stack.sysboxes.add(sysbox.getclone());
+            clone_stack.sysboxes.add(sysbox.getClone());
         }
 
         for(After_Frame_And_Signal_start d_signal : this.After_signals) {
@@ -100,12 +101,10 @@ public class LevelGame_StaticDataModel {
             else {
                 System.out.println("index is ok");
             }
-
-
-
             clone_stack.wires.add(wire);
-
         }
+
+        clone_stack.view=this.view;
 
 
 

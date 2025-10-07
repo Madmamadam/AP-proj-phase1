@@ -5,8 +5,6 @@ import mains.Configg;
 
 import java.util.ArrayList;
 
-import static javafx.scene.input.KeyCode.W;
-
 public class Sysbox {
     private Rectangle rectangle;
     private boolean indicator_on_state;
@@ -87,7 +85,7 @@ public class Sysbox {
         this.signal_bank=new ArrayList<>();
     }
 
-    public Sysbox getclone(){
+    public Sysbox getClone(){
         Sysbox clone = new Sysbox();
         for (Signal signal : signal_bank) {
             clone.signal_bank.add(signal.cloneSignal());

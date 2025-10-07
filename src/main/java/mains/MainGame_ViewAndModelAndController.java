@@ -3,14 +3,10 @@ package mains;
 import controller.Add_level;
 import controller.Controller;
 import controller.Methods;
+import controller.Wiring;
 import javafx.animation.KeyFrame;
 import javafx.animation.PauseTransition;
 import javafx.animation.Timeline;
-import javafx.scene.Node;
-import javafx.scene.input.MouseButton;
-import javafx.scene.layout.Pane;
-import javafx.scene.shape.Line;
-import javafx.scene.shape.Polygon;
 import javafx.stage.Stage;
 import javafx.util.Duration;
 import model.*;
@@ -18,8 +14,6 @@ import org.locationtech.jts.geom.Coordinate;
 import view.Paintt;
 
 import java.util.Objects;
-import java.util.concurrent.atomic.AtomicBoolean;
-import java.util.concurrent.atomic.AtomicReference;
 
 import static mains.Start_menu.static_market_pane;
 
@@ -31,8 +25,9 @@ public class MainGame_ViewAndModelAndController {
 
     public LevelGame_StaticDataModel level_gamemodel_start ;
     private Methods methods = new Methods(this);
+    public Wiring wiring = new Wiring(this);
 
-    public static int level;
+    public int level;
 
     static Configg cons = Configg.getInstance();
 
@@ -57,15 +52,7 @@ public class MainGame_ViewAndModelAndController {
     public Timeline signals_run =new Timeline(new KeyFrame(Duration.millis(17), event -> {
         if (staticDataModel.stop_wiring && !virtual_run) {
             if(first_time){
-                for (Sysbox sysbox: staticDataModel.sysboxes){
-                    System.out.println("before clone sysbox.signal_bank.size() "+sysbox.signal_bank.size());
-                }
-                level_gamemodel_start = staticDataModel.getClone();
-
-                for (Sysbox sysbox: staticDataModel.sysboxes){
-                    System.out.println("before wiring sysbox.signal_bank.size() "+sysbox.signal_bank.size());
-                }
-                first_time=false;
+                signal_run_firstTime_exclusive_works();
             }
             System.out.println("////////////// in real run");
 
@@ -75,15 +62,32 @@ public class MainGame_ViewAndModelAndController {
             ending_check();
 
 
-            view.gameTimer.setStopping(false);
-            view.marketPaneupdate();
-            view.HUD_signal_run_update();
+            signal_run_viewUpdate();
+
             signal_run_frame_counter++;
         }
         else {
             view.gameTimer.setStopping(true);
         }
     }));
+
+    private void signal_run_viewUpdate() {
+        view.gameTimer.setStopping(false);
+        view.marketPaneupdate();
+        view.HUD_signal_run_update();
+    }
+
+    private void signal_run_firstTime_exclusive_works() {
+        for (Sysbox sysbox: staticDataModel.sysboxes){
+            System.out.println("before clone sysbox.signal_bank.size() "+sysbox.signal_bank.size());
+        }
+        level_gamemodel_start = staticDataModel.getClone_inMainModel();
+
+        for (Sysbox sysbox: staticDataModel.sysboxes){
+            System.out.println("before wiring sysbox.signal_bank.size() "+sysbox.signal_bank.size());
+        }
+        first_time=false;
+    }
 
 
 //    public static void main(String[] args) {
@@ -99,8 +103,6 @@ public class MainGame_ViewAndModelAndController {
 
         level =l;
         primaryStage_static = primaryStage;
-        Configg cons = Configg.getInstance();
-
 
 
         staticDataModel.stop_wiring = false;
@@ -119,7 +121,7 @@ public class MainGame_ViewAndModelAndController {
 
 
 //       wiring mode (run some listener)
-        wiring();
+        wiring.run_listeners();
         controller.edit_wires();
 
 
@@ -505,108 +507,9 @@ public class MainGame_ViewAndModelAndController {
         }
     }
 
-    public void wiring() {
-        //running till signal_play butten pressed
-//        System.out.println("in wiring");
-        AtomicReference<Wire> decoy_wire = new AtomicReference<>();
-        AtomicBoolean isStartedinGate = new AtomicBoolean();
-        //-----------------------------first selection
-        for (Sysbox sysbox : staticDataModel.sysboxes) {
-            for(Gate gate:sysbox.inner_gates){
-                gate.poly.setOnMousePressed(e -> {
-                    if(staticDataModel.stop_wiring) return;
-                    if (e.getButton() != MouseButton.PRIMARY) {return;}
-                    Wire candidate_wire = new Wire();
-                    candidate_wire.setFirstgate(gate);
-                    decoy_wire.set(candidate_wire);
-                    isStartedinGate.set(true);
-
-                });
-            }
-            for(Gate gate:sysbox.outer_gates){
-                gate.poly.setOnMousePressed(e -> {
-                    if(staticDataModel.stop_wiring) return;
-                    if (e.getButton() != MouseButton.PRIMARY) {return;}
-                    Wire candidate_wire = new Wire();
-                    candidate_wire.setFirstgate(gate);
-                    decoy_wire.set(candidate_wire);
-                    isStartedinGate.set(true);
-
-                });
-            }
-        }
 
 
-        //----------------------------second selection
-        boolean ended_correctly = false;
-        view.just_game_pane.setOnMouseReleased(event -> { if(staticDataModel.stop_wiring) return;
-            if(isStartedinGate.get()) {
-                isStartedinGate.set(false);
-                Node nodeUnderMouse = event.getPickResult().getIntersectedNode();
-
-                AtomicBoolean isEndedinGate = new AtomicBoolean(false);
-
-                for (Sysbox sysbox : staticDataModel.sysboxes) {
-                    for (Gate gate : sysbox.inner_gates) {
-                        Polygon poly = gate.poly;
-                        if (nodeUnderMouse == poly || poly.equals(nodeUnderMouse) || poly.isHover()) {
-                            Wire candidate_wire = decoy_wire.get();
-                            candidate_wire.setSecondgate(gate);
-                            decoy_wire.set(candidate_wire);
-                            isEndedinGate.set(true);
-                            wire_check_to_add(candidate_wire.cloneWire());
-                        }
-                    }
-                    for (Gate gate : sysbox.outer_gates) {
-                        Polygon poly = gate.poly;
-                        if (nodeUnderMouse == poly || poly.equals(nodeUnderMouse) || poly.isHover()) {
-                            Wire candidate_wire = decoy_wire.get();
-                            candidate_wire.setSecondgate(gate);
-                            decoy_wire.set(candidate_wire);
-                            isEndedinGate.set(true);
-                            wire_check_to_add(candidate_wire.cloneWire());
-                        }
-                    }
-                }
-
-            }
-        });
-
-
-        //wire removing
-
-        view.just_game_pane.setOnMouseClicked(event ->{
-            if(staticDataModel.stop_wiring) return;
-            if(event.getButton() != MouseButton.SECONDARY) return;
-
-            Node nodeUnderMouse = event.getPickResult().getIntersectedNode();
-
-            for(Wire wire: staticDataModel.wires){
-                Line poly =wire.getLine();
-//                System.out.println("right before if");
-                if(nodeUnderMouse == poly || poly.equals(nodeUnderMouse) || poly.isHover()){
-//                    System.out.println("right after if");
-                    time_to_remove_wire(wire);
-                    return;
-                }
-            }
-        });
-//        System.out.println("number of wire right before for:"+level_gamemodel.wires.size());
-//        for(Wire wire: level_gamemodel.wires){
-//            System.out.println("wire");
-//            wire.getLine().setOnMouseClicked(e2 -> {
-//                if(stop_wiring) return;
-//                System.out.println("time to check mouse input");
-//
-//                if(e2.getButton() != MouseButton.SECONDARY) return;
-//                System.out.println("time ho remove wire");
-//                time_to_remove_wire(wire);
-//            });
-//        }
-
-    }
-
-    private void time_to_remove_wire(Wire wire) {
+    public void time_to_remove_wire(Wire wire) {
         view.just_game_pane.getChildren().remove(wire.getLine());
         wire.getFirstgate().setWire(null);
         wire.getSecondgate().setWire(null);
@@ -615,7 +518,7 @@ public class MainGame_ViewAndModelAndController {
 
     }
 
-    private void wire_check_to_add(Wire wire) {
+    public void wire_check_to_add(Wire wire) {
         wire.setLength(methods.calculate_wire_length(wire));
         if(   wire.getFirstgate().getWire()!=null
                 ||wire.getSecondgate().getWire()!=null){
@@ -702,6 +605,7 @@ public class MainGame_ViewAndModelAndController {
         signals_virtual_run.setOnFinished(event2 -> {
            virtual_run=false;
         });
+        System.out.println("******************** HALF RESTART ENDED ******************");
     }
 
     private void restart_level_signals() {
@@ -712,7 +616,7 @@ public class MainGame_ViewAndModelAndController {
 //            just_game_pane.getChildren().remove(circle);
 //        }
 
-        staticDataModel = level_gamemodel_start.getClone();
+        staticDataModel = level_gamemodel_start.getClone_inMainModel();
 
         System.out.println("signals size now: " + staticDataModel.signals.size());
 

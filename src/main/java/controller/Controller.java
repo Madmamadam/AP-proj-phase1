@@ -1,17 +1,11 @@
 package controller;
 
-import javafx.animation.KeyFrame;
 import javafx.animation.PauseTransition;
-import javafx.animation.Timeline;
-import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.input.KeyEvent;
-import javafx.scene.input.MouseButton;
-import javafx.scene.shape.Line;
-import javafx.scene.shape.Polygon;
+
 import javafx.stage.Stage;
 import javafx.util.Duration;
-import mains.Configg;
 import mains.MainGame_ViewAndModelAndController;
 import mains.Start_menu;
 import model.*;
@@ -24,13 +18,6 @@ public class Controller {
     public MainGame_ViewAndModelAndController mainGameViewAndModel;
     public Paintt view;
     Methods methods =new Methods(mainGameViewAndModel);
-
-
-
-
-
-
-
 
 
     public static void exit() {
@@ -83,6 +70,7 @@ public class Controller {
     public void virtual_time_clicked(double virtual_ratio) {
         double max_t= mainGameViewAndModel.staticDataModel.constraintss.getMaximum_time_sec();
         double go_to_time_sec = virtual_ratio*max_t;
+        System.out.println("in controller virtual_time_clicked");
         mainGameViewAndModel.half_restart(go_to_time_sec);
 
     }
