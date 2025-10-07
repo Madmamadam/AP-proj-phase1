@@ -127,6 +127,7 @@ public class Paintt {
             }
         }
     }
+    //have bug for restart(see usage)
     public void initial_UI(Stage primaryStage){
         StackPane.setAlignment(HUDpane, Pos.TOP_LEFT); // مکان کل HUDpane
         HUDpane.setStyle("-fx-background-color: rgba(92,82,82,0.5);");

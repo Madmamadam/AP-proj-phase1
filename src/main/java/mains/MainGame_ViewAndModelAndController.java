@@ -13,6 +13,8 @@ import model.*;
 import org.locationtech.jts.geom.Coordinate;
 import view.Paintt;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Objects;
 
 import static mains.Start_menu.static_market_pane;
@@ -205,7 +207,7 @@ public class MainGame_ViewAndModelAndController {
                 if(signal.getLinked_wire()==null){
                     System.out.println("signal.getLinked_wire() is null ---");
                 }
-                //speed adjusst
+                //speed adjust
                 signal_one_step_on_wire(signal);
                 signal.setLength_on_wire(signal.getLength_on_wire()+cons.getDefault_delta_wire_length());
                 //
@@ -241,7 +243,7 @@ public class MainGame_ViewAndModelAndController {
                             collapse_happen_in_a_location((Coordinate) Methods.checkCollisionAndGetPoint(signal1.poly, signal2.poly) ,signal1,signal2 );
                         }
                     }
-                    colapsedpairs_update();
+                    collapsedPairs_ArrayUpdate();
                 }
 //                check_noise(signal1);
             }
@@ -399,11 +401,12 @@ public class MainGame_ViewAndModelAndController {
             if (signal.getLinked_wire().getFirstgate().getTypee().getName() == "rectangle") {
                 signal.setLength_on_wire(signal.getLength_on_wire() + cons.getDefault_delta_wire_length());
             }
-            if (signal.getLinked_wire().getFirstgate().getTypee().getName() == "triangle") {
+            else if (signal.getLinked_wire().getFirstgate().getTypee().getName() == "triangle") {
                 signal.setLength_on_wire(signal.getLength_on_wire() + cons.getDefault_delta_wire_length() / 2);
             }
             else {
-                System.out.println("+++++type not found error");
+                System.out.println("+++++type not found error firstgateName:"+signal.getLinked_wire().getFirstgate().getTypee().getName());
+                System.out.println("signal.Name :" + signal.getTypee().getName());
             }
         }
         if(signal.getTypee().getName()=="triangle"){
@@ -411,7 +414,7 @@ public class MainGame_ViewAndModelAndController {
                 double ratio = signal.getLength_on_wire()/signal.getLinked_wire().getLength();
                 signal.setLength_on_wire(signal.getLength_on_wire() + (1+2*ratio)*cons.getDefault_delta_wire_length());
             }
-            if(signal.getLinked_wire().getFirstgate().getTypee().getName()=="triangle"){
+            else if(signal.getLinked_wire().getFirstgate().getTypee().getName()=="triangle"){
                 signal.setLength_on_wire(signal.getLength_on_wire() + cons.getDefault_delta_wire_length());
             }
             else {
@@ -473,14 +476,18 @@ public class MainGame_ViewAndModelAndController {
         signal2.setNoise(signal2.getNoise()+cons.getNoise_add_every_hit());
     }
 
-    private void colapsedpairs_update() {
+    private void collapsedPairs_ArrayUpdate() {
         Configg cons= Configg.getInstance();
+        ArrayList<Pairs> mostBeRemoved = new ArrayList<>();
         long long_current_time = System.currentTimeMillis();
         double current_time = long_current_time/1000000000.0;
         for(Pairs pair : staticDataModel.collapsedPairs){
             if(current_time-pair.adding_time > cons.getImpulse_resttime()){
-                staticDataModel.collapsedPairs.remove(pair);
+                mostBeRemoved.add(pair);
             }
+        }
+        for(Pairs pair : mostBeRemoved){
+            staticDataModel.collapsedPairs.remove(pair);
         }
     }
 
@@ -596,10 +603,12 @@ public class MainGame_ViewAndModelAndController {
         view.gameTimer.setTime_sec(goToTime_sec);
         Configg cons = Configg.getInstance();
         double cyclecount=goToTime_sec*60;
-        restart_level_signals();
-        virtual_run=true;
-
         if(cyclecount<3){cyclecount=3;}
+
+
+        virtual_run=true;
+        restart_level_signals();
+
         signals_virtual_run.setCycleCount((int) (cyclecount));
         signals_virtual_run.play();
         signals_virtual_run.setOnFinished(event2 -> {
