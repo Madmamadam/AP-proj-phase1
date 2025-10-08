@@ -70,6 +70,7 @@ public class MainGame_ViewAndModelAndController {
         }
         else {
             view.gameTimer.setStopping(true);
+            System.out.println("signal update is short circled (virual_run:"+virtual_run+") & (stop_wiring:"+staticDataModel.stop_wiring+")");
         }
     }));
 
@@ -107,7 +108,7 @@ public class MainGame_ViewAndModelAndController {
         primaryStage_static = primaryStage;
 
 
-        staticDataModel.stop_wiring = false;
+//        staticDataModel.stop_wiring = false;
         view.gameTimer.restart();
         signal_run_frame_counter = 0;
         view.HUD_signal_run_update();
@@ -502,6 +503,7 @@ public class MainGame_ViewAndModelAndController {
     }
 
     public void time_to_restart(Stage primaryStage) throws Exception {
+        System.out.println("stop_wiring=false command");
         staticDataModel.stop_wiring=false;
         primaryStage.hide();
         this.start(primaryStage,level);
@@ -605,7 +607,7 @@ public class MainGame_ViewAndModelAndController {
         double cyclecount=goToTime_sec*60;
         if(cyclecount<3){cyclecount=3;}
 
-
+        System.out.println("staticDataModel.stop_wiring:"+staticDataModel.stop_wiring );
         virtual_run=true;
         restart_level_signals();
 
@@ -613,6 +615,7 @@ public class MainGame_ViewAndModelAndController {
         signals_virtual_run.play();
         signals_virtual_run.setOnFinished(event2 -> {
            virtual_run=false;
+           System.out.println("virtual run ended");
         });
         System.out.println("******************** HALF RESTART ENDED ******************");
     }
@@ -626,6 +629,7 @@ public class MainGame_ViewAndModelAndController {
 //        }
 
         staticDataModel = level_gamemodel_start.getClone_inMainModel();
+        staticDataModel.stop_wiring=true;
 
         System.out.println("signals size now: " + staticDataModel.signals.size());
 

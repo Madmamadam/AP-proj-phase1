@@ -58,6 +58,8 @@ public class LevelGame_StaticDataModel {
         clone_stack.Oatar = this.Oatar;
         clone_stack.OAnahita=this.OAnahita;
 
+        clone_stack.stop_wiring=this.stop_wiring;
+
         // anything in sysbox but signal_bank and gate state
         for(Sysbox sysbox : this.sysboxes) {
             clone_stack.sysboxes.add(sysbox.getClone());

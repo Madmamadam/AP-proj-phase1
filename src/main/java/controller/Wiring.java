@@ -16,7 +16,9 @@ import java.util.concurrent.atomic.AtomicReference;
 public class Wiring {
     public MainGame_ViewAndModelAndController mainModel;
     AtomicReference<Wire> decoy_wire = new AtomicReference<>();
-    AtomicBoolean isStartedinGate = new AtomicBoolean();
+    AtomicBoolean isStartedInGate = new AtomicBoolean();
+    AtomicBoolean isEndedInGate = new AtomicBoolean(false);
+
 
 
     public Wiring(MainGame_ViewAndModelAndController MainModel) {
@@ -32,51 +34,36 @@ public class Wiring {
         for (Sysbox sysbox : mainModel.staticDataModel.sysboxes) {
             for(Gate gate:sysbox.inner_gates){
                 gate.poly.setOnMousePressed(e -> {
-                    ClickedOnA_InnerGate(gate , e);
+                    FirstClickedOnA_InnerGate(gate , e);
                 });
             }
             for(Gate gate:sysbox.outer_gates){
                 gate.poly.setOnMousePressed(e -> {
-                    if(mainModel.staticDataModel.stop_wiring) return;
-                    if (e.getButton() != MouseButton.PRIMARY) {return;}
-                    Wire candidate_wire = new Wire();
-                    candidate_wire.setFirstgate(gate);
-                    decoy_wire.set(candidate_wire);
-                    isStartedinGate.set(true);
-
+                    FirstClickedOnA_OuterGate(gate,e);
                 });
             }
         }
 
 
         //----------------------------second selection
-        boolean ended_correctly = false;
+//        boolean ended_correctly = false;
         mainModel.view.just_game_pane.setOnMouseReleased(event -> { if(mainModel.staticDataModel.stop_wiring) return;
-            if(isStartedinGate.get()) {
-                isStartedinGate.set(false);
+            if(isStartedInGate.get()) {
+                isStartedInGate.set(false);
                 Node nodeUnderMouse = event.getPickResult().getIntersectedNode();
 
-                AtomicBoolean isEndedinGate = new AtomicBoolean(false);
 
                 for (Sysbox sysbox : mainModel.staticDataModel.sysboxes) {
                     for (Gate gate : sysbox.inner_gates) {
                         Polygon poly = gate.poly;
                         if (nodeUnderMouse == poly || poly.equals(nodeUnderMouse) || poly.isHover()) {
-                            Wire candidate_wire = decoy_wire.get();
-                            candidate_wire.setSecondgate(gate);
-                            decoy_wire.set(candidate_wire);
-                            isEndedinGate.set(true);
-                            mainModel.wire_check_to_add(candidate_wire.cloneWire());
+                            SecondClickedOnA_InnerGate(gate);
                         }
                     }
                     for (Gate gate : sysbox.outer_gates) {
                         Polygon poly = gate.poly;
                         if (nodeUnderMouse == poly || poly.equals(nodeUnderMouse) || poly.isHover()) {
-                            Wire candidate_wire = decoy_wire.get();
-                            candidate_wire.setSecondgate(gate);
-                            decoy_wire.set(candidate_wire);
-                            isEndedinGate.set(true);
-                            mainModel.wire_check_to_add(candidate_wire.cloneWire());
+                            SecondClickedOnA_OuterGate(gate);
                         }
                     }
                 }
@@ -119,13 +106,38 @@ public class Wiring {
 
     }
 
-    private void ClickedOnA_InnerGate(Gate gate, MouseEvent e) {
+    private void SecondClickedOnA_OuterGate(Gate gate) {
+        Wire candidate_wire = decoy_wire.get();
+        candidate_wire.setSecondgate(gate);
+        decoy_wire.set(candidate_wire);
+        isEndedInGate.set(true);
+        mainModel.wire_check_to_add(candidate_wire.cloneWire());
+    }
+
+    private void SecondClickedOnA_InnerGate(Gate gate) {
+        Wire candidate_wire = decoy_wire.get();
+        candidate_wire.setSecondgate(gate);
+        decoy_wire.set(candidate_wire);
+        isEndedInGate.set(true);
+        mainModel.wire_check_to_add(candidate_wire.cloneWire());
+    }
+
+    private void FirstClickedOnA_OuterGate(Gate gate, MouseEvent e) {
         if(mainModel.staticDataModel.stop_wiring) return;
         if (e.getButton() != MouseButton.PRIMARY) {return;}
         Wire candidate_wire = new Wire();
         candidate_wire.setFirstgate(gate);
         decoy_wire.set(candidate_wire);
-        isStartedinGate.set(true);
+        isStartedInGate.set(true);
+    }
+
+    private void FirstClickedOnA_InnerGate(Gate gate, MouseEvent e) {
+        if(mainModel.staticDataModel.stop_wiring) return;
+        if (e.getButton() != MouseButton.PRIMARY) {return;}
+        Wire candidate_wire = new Wire();
+        candidate_wire.setFirstgate(gate);
+        decoy_wire.set(candidate_wire);
+        isStartedInGate.set(true);
     }
 
 }
