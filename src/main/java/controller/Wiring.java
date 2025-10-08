@@ -5,7 +5,7 @@ import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.shape.Line;
 import javafx.scene.shape.Polygon;
-import mains.MainGame_ViewAndModelAndController;
+import mains.MainGame_Logics;
 import model.Gate;
 import model.Sysbox;
 import model.Wire;
@@ -14,14 +14,14 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicReference;
 
 public class Wiring {
-    public MainGame_ViewAndModelAndController mainModel;
+    public MainGame_Logics mainModel;
     AtomicReference<Wire> decoy_wire = new AtomicReference<>();
     AtomicBoolean isStartedInGate = new AtomicBoolean();
     AtomicBoolean isEndedInGate = new AtomicBoolean(false);
 
 
 
-    public Wiring(MainGame_ViewAndModelAndController MainModel) {
+    public Wiring(MainGame_Logics MainModel) {
         this.mainModel = MainModel;
     }
 

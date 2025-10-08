@@ -67,12 +67,12 @@ public class Paintt {
     }
 
     public void add_ratio_to_ending_pane() {
-        Label scoreLabelWin = new Label("dead ratio: " + (double) controller.mainGameViewAndModel.dead_count/ level_gamemodel.signals.size());
+        Label scoreLabelWin = new Label("dead ratio: " + (double) controller.mainGameViewAndModel.staticDataModel.dead_count/ level_gamemodel.signals.size());
         scoreLabelWin.setStyle("-fx-font-size: 24px; -fx-text-fill: darkgreen;");
         scoreLabelWin.setLayoutX(350);
         scoreLabelWin.setLayoutY(180);
 
-        Label scoreLabelLose = new Label("dead ratio: " + (double) controller.mainGameViewAndModel.dead_count/ level_gamemodel.signals.size());
+        Label scoreLabelLose = new Label("dead ratio: " + (double) controller.mainGameViewAndModel.staticDataModel.dead_count/ level_gamemodel.signals.size());
         scoreLabelLose.setStyle("-fx-font-size: 24px; -fx-text-fill: white;");
         scoreLabelLose.setLayoutX(350);
         scoreLabelLose.setLayoutY(180);
@@ -272,6 +272,7 @@ public class Paintt {
         virtualTimeSlider.setPrefWidth(200);
         virtualTimeSlider.valueProperty().addListener((obs, oldVal, newVal) -> {
             if(controller.mainGameViewAndModel.user_changing) {
+                System.out.println("in view virtual slide clicked");
                 controller.virtual_time_clicked(newVal.doubleValue());
             }
         });

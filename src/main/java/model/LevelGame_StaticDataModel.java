@@ -22,6 +22,9 @@ public class LevelGame_StaticDataModel {
     public boolean Oatar = false;
     public boolean OAnahita =false;
     private double sekke;
+    public int signal_run_frame_counter = 0;
+    public int dead_count = 0;
+
 
     public LevelGame_StaticDataModel() {
     }

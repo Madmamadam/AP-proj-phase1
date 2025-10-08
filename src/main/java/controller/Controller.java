@@ -6,7 +6,7 @@ import javafx.scene.input.KeyEvent;
 
 import javafx.stage.Stage;
 import javafx.util.Duration;
-import mains.MainGame_ViewAndModelAndController;
+import mains.MainGame_Logics;
 import mains.Start_menu;
 import model.*;
 import view.Paintt;
@@ -15,7 +15,7 @@ import static mains.Start_menu.primaryStage_static;
 import static mains.Start_menu.static_market_pane;
 
 public class Controller {
-    public MainGame_ViewAndModelAndController mainGameViewAndModel;
+    public MainGame_Logics mainGameViewAndModel;
     public Paintt view;
     Methods methods =new Methods(mainGameViewAndModel);
 

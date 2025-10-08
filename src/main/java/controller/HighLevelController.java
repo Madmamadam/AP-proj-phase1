@@ -1,16 +1,16 @@
 package controller;
 
-import mains.MainGame_ViewAndModelAndController;
+import mains.MainGame_Logics;
 import view.Paintt;
 
 import static mains.Start_menu.primaryStage_static;
 
 public class HighLevelController {
-    MainGame_ViewAndModelAndController mainGameViewAndModelAndController;
+    MainGame_Logics mainGameViewAndModelAndController;
     Controller controller;
     public void startTheGameFromFirstLevel() throws Exception {
 
-        mainGameViewAndModelAndController = new MainGame_ViewAndModelAndController();
+        mainGameViewAndModelAndController = new MainGame_Logics();
         controller = new Controller();
         Paintt view=new Paintt();
         architevtureLoad(mainGameViewAndModelAndController, controller, view);
@@ -18,7 +18,7 @@ public class HighLevelController {
         mainGameViewAndModelAndController.controller = controller;
         mainGameViewAndModelAndController.start(primaryStage_static,1);
     }
-    private void architevtureLoad(MainGame_ViewAndModelAndController mainGameViewAndModelAndController, Controller controller , Paintt view){
+    private void architevtureLoad(MainGame_Logics mainGameViewAndModelAndController, Controller controller , Paintt view){
         mainGameViewAndModelAndController.controller = controller;
         mainGameViewAndModelAndController.view=view;
         mainGameViewAndModelAndController.staticDataModel.view=view;

@@ -2,7 +2,7 @@ package controller;
 
 import javafx.scene.shape.Polygon;
 import mains.Configg;
-import mains.MainGame_ViewAndModelAndController;
+import mains.MainGame_Logics;
 import model.*;
 import org.locationtech.jts.geom.*;
 
@@ -14,8 +14,8 @@ import static java.lang.Math.sin;
 
 
 public class Methods {
-    MainGame_ViewAndModelAndController mainGameModel;
-    public Methods(MainGame_ViewAndModelAndController mainGamemodel){
+    MainGame_Logics mainGameModel;
+    public Methods(MainGame_Logics mainGamemodel){
         mainGameModel = mainGamemodel;
     }
 

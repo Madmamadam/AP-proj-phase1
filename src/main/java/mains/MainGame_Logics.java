@@ -14,13 +14,12 @@ import org.locationtech.jts.geom.Coordinate;
 import view.Paintt;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Objects;
 
 import static mains.Start_menu.static_market_pane;
 
 
-public class MainGame_ViewAndModelAndController {
+public class MainGame_Logics {
     public LevelGame_StaticDataModel staticDataModel=new LevelGame_StaticDataModel();
     public Paintt view;
     public Controller controller;
@@ -33,18 +32,19 @@ public class MainGame_ViewAndModelAndController {
 
     static Configg cons = Configg.getInstance();
 
+    //some of the data store here because in restart and half start we make a new static_data_model
     public boolean user_changing=true;
     public boolean virtual_run = false;
-    public int signal_run_frame_counter = 0;
-    public int dead_count = 0;
     private boolean first_time = true;
     public static Stage primaryStage_static;
+
+
     public Timeline signals_virtual_run = new Timeline(new KeyFrame(Duration.millis(1000/cons.getVirtual_frequency()), event -> {
         if (staticDataModel.stop_wiring) {
             System.out.println("//////////in virtual run");
             Signals_Update();
             check_and_do_collision();
-            signal_run_frame_counter++;
+            staticDataModel.signal_run_frame_counter++;
         }
 //            if(gameTimer.getTime_sec()>goToTime_sec){
 //                signals_virtual_run.stop();
@@ -66,7 +66,7 @@ public class MainGame_ViewAndModelAndController {
 
             signal_run_viewUpdate();
 
-            signal_run_frame_counter++;
+            staticDataModel.signal_run_frame_counter++;
         }
         else {
             view.gameTimer.setStopping(true);
@@ -110,7 +110,7 @@ public class MainGame_ViewAndModelAndController {
 
 //        staticDataModel.stop_wiring = false;
         view.gameTimer.restart();
-        signal_run_frame_counter = 0;
+        staticDataModel.signal_run_frame_counter = 0;
         view.HUD_signal_run_update();
 
 
@@ -148,8 +148,8 @@ public class MainGame_ViewAndModelAndController {
 //
 //        }));
     }
-//this is MainGame_ViewAndModelAndController.java:144
-//this is MainGame_ViewAndModelAndController.java:156
+//this is MainGame_Logics.java:144
+//this is MainGame_Logics.java:156
 
 
     public void Signals_Update(){
@@ -160,7 +160,7 @@ public class MainGame_ViewAndModelAndController {
 
         //zero: add signals to start Sysbox
         for(After_Frame_And_Signal_start d_signal : staticDataModel.After_signals){
-            if(!d_signal.added && d_signal.adding_frame<signal_run_frame_counter){
+            if(!d_signal.added && d_signal.adding_frame<staticDataModel.signal_run_frame_counter){
                 d_signal.added = true;
                 signal_add_to_start(d_signal.signal);
             }
@@ -238,6 +238,8 @@ public class MainGame_ViewAndModelAndController {
 
                     Signal signal2 = staticDataModel.signals.get(j);
                     if (null != methods.checkCollisionAndGetPoint(signal1.poly, signal2.poly)) {
+
+                        //check to not consider a collapse twice
                         if (!methods.found_in_pairs(signal1, signal2)) {
                             just_collapse_noise(signal1,signal2);
 
@@ -254,14 +256,15 @@ public class MainGame_ViewAndModelAndController {
 
     public boolean is_winner_and_update_dead_count() {
         //counter dead
-        dead_count=0;
+        staticDataModel.dead_count=0;
         for (Signal signal :staticDataModel.signals) {
             if(signal.getState()!="ended") {
-                dead_count++;
+                staticDataModel.dead_count++;
                 //really dead or just not ended
             }
         }
-        double dead_ratio = (double)dead_count/(double) staticDataModel.signals.size();
+        double dead_ratio = (double)staticDataModel.dead_count/(double) staticDataModel.signals.size();
+        System.out.println("dead_ratio: "+dead_ratio + "dead_count: "+staticDataModel.dead_count +"signal.size()"+staticDataModel.signals.size());
 
         if(dead_ratio> staticDataModel.constraintss.getMaximum_dead_ratio()) {
             return false;
@@ -303,7 +306,7 @@ public class MainGame_ViewAndModelAndController {
 
 
 //        control
-        staticDataModel.collapsedPairs.add(new Pairs(signal1,signal2));
+        staticDataModel.collapsedPairs.add(new Pairs(signal1,signal2,staticDataModel.signal_run_frame_counter));
         for(Signal signal: staticDataModel.signals) {
             if(signal.getState()=="on_wire"){
                 //central of signal is matter
@@ -426,7 +429,7 @@ public class MainGame_ViewAndModelAndController {
     }
 
     private void signal_add_to_start(Signal signal) {
-        System.out.println("********* signal_add_to_start  frame counter ="+ signal_run_frame_counter);
+        System.out.println("********* signal_add_to_start  frame counter ="+ staticDataModel.signal_run_frame_counter);
         staticDataModel.signals.add(signal);
         staticDataModel.sysboxes.getFirst().signal_bank.add(signal);
     }
@@ -480,10 +483,9 @@ public class MainGame_ViewAndModelAndController {
     private void collapsedPairs_ArrayUpdate() {
         Configg cons= Configg.getInstance();
         ArrayList<Pairs> mostBeRemoved = new ArrayList<>();
-        long long_current_time = System.currentTimeMillis();
-        double current_time = long_current_time/1000000000.0;
+
         for(Pairs pair : staticDataModel.collapsedPairs){
-            if(current_time-pair.adding_time > cons.getImpulse_resttime()){
+            if(staticDataModel.signal_run_frame_counter-pair.adding_frame > cons.getImpulse_resttime()*60){
                 mostBeRemoved.add(pair);
             }
         }
@@ -595,7 +597,7 @@ public class MainGame_ViewAndModelAndController {
 
         //end of Check
 
-
+        signals_run.pause();
         staticDataModel.stop_wiring=false;
         view.show_ending_stage();
 
@@ -612,10 +614,11 @@ public class MainGame_ViewAndModelAndController {
         restart_level_signals();
 
         signals_virtual_run.setCycleCount((int) (cyclecount));
+        System.out.println("new virtual run");
         signals_virtual_run.play();
         signals_virtual_run.setOnFinished(event2 -> {
            virtual_run=false;
-           System.out.println("virtual run ended");
+           System.out.println("virtual run timeline ended");
         });
         System.out.println("******************** HALF RESTART ENDED ******************");
     }
