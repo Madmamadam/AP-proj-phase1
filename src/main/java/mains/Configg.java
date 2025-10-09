@@ -17,7 +17,7 @@ public class Configg {
     private double impulse_resttime=0.5;
 
     private double impulse_delta_r=5;
-    private double impulse_move_time=1.0;
+    private double impulse_move_time=0.3;
 
 
 

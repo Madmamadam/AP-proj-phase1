@@ -26,7 +26,7 @@ public class HighLevelController {
         controller.view=view;
         view.controller=controller;
 
-        view.architectureLoad();
+//        view.architectureLoad();
 
 
 

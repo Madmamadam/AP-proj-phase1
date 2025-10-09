@@ -37,6 +37,7 @@ public class MainGame_Logics {
     public boolean virtual_run = false;
     private boolean first_time = true;
     public static Stage primaryStage_static;
+    public boolean dynamic_isRunning=true;
 
 
     public Timeline signals_virtual_run = new Timeline(new KeyFrame(Duration.millis(1000/cons.getVirtual_frequency()), event -> {
@@ -52,7 +53,7 @@ public class MainGame_Logics {
     }));
 
     public Timeline signals_run =new Timeline(new KeyFrame(Duration.millis(17), event -> {
-        if (staticDataModel.stop_wiring && !virtual_run) {
+        if (staticDataModel.stop_wiring && !virtual_run & dynamic_isRunning) {
             if(first_time){
                 signal_run_firstTime_exclusive_works();
             }
@@ -234,21 +235,23 @@ public class MainGame_Logics {
 
             for(int i = 0; i< staticDataModel.signals.size(); i++) {
                 Signal signal1 = staticDataModel.signals.get(i);
-                for (int j = 0; j < i; j++) {
+                if(signal1.getState() =="on_wire") {
+                    for (int j = 0; j < i; j++) {
+                        Signal signal2 = staticDataModel.signals.get(j);
+                        if (signal2.getState() == "on_wire") {
+                            if (null != methods.checkCollisionAndGetPoint(signal1.poly, signal2.poly)) {
 
-                    Signal signal2 = staticDataModel.signals.get(j);
-                    if (null != methods.checkCollisionAndGetPoint(signal1.poly, signal2.poly)) {
-
-                        //check to not consider a collapse twice
-                        if (!methods.found_in_pairs(signal1, signal2)) {
-                            just_collapse_noise(signal1,signal2);
-
-                            collapse_happen_in_a_location((Coordinate) Methods.checkCollisionAndGetPoint(signal1.poly, signal2.poly) ,signal1,signal2 );
+                                //check to not consider a collapse twice
+                                if (!methods.found_in_pairs(signal1, signal2)) {
+                                    just_collapse_noise(signal1, signal2);
+                                    collapse_happen_in_a_location((Coordinate) Methods.checkCollisionAndGetPoint(signal1.poly, signal2.poly), signal1, signal2);
+                                }
+                            }
+                            collapsedPairs_ArrayUpdate();
                         }
                     }
-                    collapsedPairs_ArrayUpdate();
-                }
 //                check_noise(signal1);
+                }
             }
         }
 
@@ -319,16 +322,20 @@ public class MainGame_Logics {
 
     private void in_radius_impulse_wave(Signal signal, Coordinate coordinate) {
         if(staticDataModel.Oatar ){return;}
-
+        int timelineRate_ratio=1;
         Configg cons=Configg.getInstance();
         double dx=signal.getX()-coordinate.getX();
         double dy=signal.getY()-coordinate.getY();
         double r=Math.sqrt(dx*dx+dy*dy);
-        double step = (double) 1/ (int)(cons.getImpulse_move_time()/0.017);
-        Timeline signal_shouting = new Timeline(new KeyFrame(Duration.millis(17), event -> {
+        double step_per_admit = (double) 1/ (int)(cons.getImpulse_move_time()/0.017);
+        if(virtual_run){
+            timelineRate_ratio= (int) (cons.getVirtual_frequency()/60);
+        }
+        //we have logic bug in concurrency run (we must run it on signal update and its rate whatever is that)
+        Timeline signal_shouting = new Timeline(new KeyFrame(Duration.millis((double) 17 /timelineRate_ratio), event -> {
 
-            signal.setX_ekhtelaf(signal.getX_ekhtelaf()+(dx/r)*step*cons.getImpulse_delta_r());
-            signal.setY_ekhtelaf(signal.getY_ekhtelaf()+(dy/r)*step*cons.getImpulse_delta_r());
+            signal.setX_ekhtelaf(signal.getX_ekhtelaf()+(dx/r)* step_per_admit *cons.getImpulse_delta_r());
+            signal.setY_ekhtelaf(signal.getY_ekhtelaf()+(dy/r)* step_per_admit *cons.getImpulse_delta_r());
 
         }));
         signal_shouting.setCycleCount((int) (cons.getImpulse_move_time()/0.017));
@@ -598,7 +605,7 @@ public class MainGame_Logics {
         //end of Check
 
         signals_run.pause();
-        staticDataModel.stop_wiring=false;
+        dynamic_isRunning=false;
         view.show_ending_stage();
 
     }

@@ -68,10 +68,12 @@ public class Controller {
 
 
     public void virtual_time_clicked(double virtual_ratio) {
-        double max_t= mainGameViewAndModel.staticDataModel.constraintss.getMaximum_time_sec();
-        double go_to_time_sec = virtual_ratio*max_t;
-        System.out.println("in controller virtual_time_clicked");
-        mainGameViewAndModel.half_restart(go_to_time_sec);
+        if(mainGameViewAndModel.dynamic_isRunning) {
+            double max_t = mainGameViewAndModel.staticDataModel.constraintss.getMaximum_time_sec();
+            double go_to_time_sec = virtual_ratio * max_t;
+            System.out.println("in controller virtual_time_clicked");
+            mainGameViewAndModel.half_restart(go_to_time_sec);
+        }
 
     }
 
