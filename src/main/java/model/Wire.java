@@ -3,11 +3,13 @@ package model;
 import controller.AllCurvesMethods;
 import controller.Methods;
 import javafx.scene.Group;
+import javafx.scene.Node;
 import javafx.scene.shape.CubicCurve;
 import javafx.scene.shape.Line;
 import mains.Configg;
 
 import java.util.ArrayList;
+import java.util.Objects;
 
 public class Wire {
     private Gate firstgate;
@@ -15,21 +17,24 @@ public class Wire {
     private double length;
     private Line line ;
     private ArrayList<CubicCurve> cubicCurves= new ArrayList<>();
-    private Group AllOFCurves = new Group();
+    private Group allOFCurves = new Group();
 
 
 
     public Wire(){
         Configg cons = Configg.getInstance();
+        //just make first curve that use for older curve style
 
         CubicCurve firstCurve = new CubicCurve();
-        cubicCurves.add(firstCurve);
-        cubicCurves.getFirst().setStrokeWidth(cons.getLine_width());
-        cubicCurves.getFirst().setStroke(cons.getLine_color());
-        cubicCurves.getFirst().setFill(null);
-//        line=new Line();
-//        line.setStrokeWidth(cons.getLine_width());
-//        line.setStroke(cons.getLine_color());
+
+        firstCurve.setStrokeWidth(cons.getLine_width());
+        firstCurve.setStroke(cons.getLine_color());
+        firstCurve.setFill(null);
+
+        allOFCurves.getChildren().add(firstCurve);
+
+
+
 
 
     }
@@ -39,24 +44,14 @@ public class Wire {
         //first is outer. maybe...
         this.firstgate = firstgate;
         this.secondgate = secondgate;
-        double horizontal_distance = secondgate.getX() - firstgate.getX();
-
-        cubicCurves.getFirst().setStartX(firstgate.getX());
-        cubicCurves.getFirst().setStartY(firstgate.getY());
-        cubicCurves.getFirst().setEndX(secondgate.getX());
-        cubicCurves.getFirst().setEndY(secondgate.getY());
-        cubicCurves.getFirst().setControlX1(firstgate.getX()+horizontal_distance/cons.getControlXConstant());
-        cubicCurves.getFirst().setControlY1(firstgate.getY());
-        cubicCurves.getFirst().setControlX2(secondgate.getX()-horizontal_distance/cons.getControlXConstant());
-        cubicCurves.getFirst().setControlY2(secondgate.getY());
-//        cubicCurves.get
 
 
-        this.line=new Line(firstgate.getX(),firstgate.getY(),secondgate.getX(),secondgate.getY());
+        CubicCurve firstCurve =(CubicCurve) allOFCurves.getChildren().getFirst();
+        AllCurvesMethods.locateACurve(firstCurve,firstgate.getX(),firstgate.getY(),secondgate.getX(),secondgate.getY());
+
 
         length= Methods.calculate_wire_length(this);
-        line.setStrokeWidth(cons.getLine_width());
-        line.setStroke(cons.getLine_color());
+
     }
 
     public Gate getFirstgate() {
@@ -66,6 +61,7 @@ public class Wire {
     public void setFirstgate(Gate firstgate) {
         Configg cons = Configg.getInstance();
         this.firstgate = firstgate;
+
         if(secondgate!= null){
             line=new Line(firstgate.getX(),firstgate.getY(),secondgate.getX(),secondgate.getY());
             line.setStrokeWidth(cons.getLine_width());
@@ -100,13 +96,35 @@ public class Wire {
 
     public void setLine(Line line) { this.line = line;}
 
-    public ArrayList<CubicCurve> getCubicCurvesModels() {
-        return cubicCurves;
-    }
+//    public ArrayList<CubicCurve> getCubicCurvesModels() {
+//        return cubicCurves;
+//    }
 
     public Group getAllOfCurve_Group(){
-        return AllOFCurves;
+//        updateGroup();
+        return allOFCurves;
     }
+
+//    private void updateGroup() {
+//        //maybe affect on performance
+//        boolean changed = false;
+//        for(CubicCurve c1 : cubicCurves){
+//            boolean isNew=true;
+//            for (Node c2:allOFCurves.getChildren()) {
+//                if (Objects.equals(c1,c2)) {
+//                    isNew=false;
+//                }
+//            }
+//            if(isNew){
+//                allOFCurves.getChildren().add(c1);
+//                changed=true;
+//            }
+//        }
+//        if(changed){
+//            CubicCurve sampleCurve=(CubicCurve) allOFCurves.getChildren().getFirst();
+//            AllCurvesMethods.wire_setLikeSample(this,sampleCurve);
+//        }
+//    }
 
     public Wire cloneWire() {
         return new Wire(this.firstgate, this.secondgate);

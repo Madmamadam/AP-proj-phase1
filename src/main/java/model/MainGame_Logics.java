@@ -525,7 +525,8 @@ public class MainGame_Logics {
 
 
     public void time_to_remove_wire(Wire wire) {
-        view.just_game_pane.getChildren().remove(wire.getJustAllOfCurve_Group());
+        System.out.println("remove A Wire");
+        view.just_game_pane.getChildren().remove(wire.getAllOfCurve_Group());
         wire.getFirstgate().setWire(null);
         wire.getSecondgate().setWire(null);
         staticDataModel.wires.remove(wire);
@@ -558,7 +559,7 @@ public class MainGame_Logics {
 
     private void corrected_wire_add_to_view(Wire wire) {
         //paint it forever
-        view.just_game_pane.getChildren().add(wire.getCubicCurvesModels());
+        view.just_game_pane.getChildren().add(wire.getAllOfCurve_Group());
     }
 
     private void corrected_wire_add_to_model(Wire wire) {

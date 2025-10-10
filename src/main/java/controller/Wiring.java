@@ -3,7 +3,6 @@ package controller;
 import javafx.scene.Node;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
-import javafx.scene.shape.CubicCurve;
 import javafx.scene.shape.Polygon;
 import model.MainGame_Logics;
 import model.Gate;
@@ -77,18 +76,7 @@ public class Wiring {
         mainModel.view.just_game_pane.setOnMouseClicked(event ->{
             if(mainModel.staticDataModel.stop_wiring) return;
             if(event.getButton() != MouseButton.SECONDARY) return;
-
-            Node nodeUnderMouse = event.getPickResult().getIntersectedNode();
-
-            for(Wire wire: mainModel.staticDataModel.wires){
-                CubicCurve poly =wire.getCubicCurvesModels();
-//                System.out.println("right before if");
-                if(nodeUnderMouse == poly || poly.equals(nodeUnderMouse) || poly.isHover()){
-//                    System.out.println("right after if");
-                    mainModel.time_to_remove_wire(wire);
-                    return;
-                }
-            }
+            checkReleaseWasOnAWre(event);
         });
 //        System.out.println("number of wire right before for:"+level_gamemodel.wires.size());
 //        for(Wire wire: level_gamemodel.wires){
@@ -104,6 +92,21 @@ public class Wiring {
 //        }
 
 
+    }
+
+    private void checkReleaseWasOnAWre(MouseEvent event) {
+        Node nodeUnderMouse = event.getPickResult().getIntersectedNode();
+
+        for(Wire wire: mainModel.staticDataModel.wires){
+            for (Node curveNode : wire.getAllOfCurve_Group().getChildren()) {
+//                System.out.println("right before if");
+                if (nodeUnderMouse == curveNode || curveNode.equals(nodeUnderMouse) || curveNode.isHover()) {
+//                    System.out.println("right after if");
+                    mainModel.time_to_remove_wire(wire);
+                    return;
+                }
+            }
+        }
     }
 
     private void SecondClickedOnA_OuterGate(Gate gate) {
