@@ -19,32 +19,17 @@ public class Wire {
 
 
     public Wire(){
-        Configg cons = Configg.getInstance();
-        //just make first curve that use for older curve style
-
-        CubicCurve firstCurve = new CubicCurve();
-
-        firstCurve.setStrokeWidth(cons.getLine_width());
-        firstCurve.setStroke(cons.getLine_color());
-        firstCurve.setFill(null);
-
-        allOFCurves.getChildren().add(firstCurve);
-
-
-
-
-
     }
     public Wire(Gate firstgate, Gate secondgate) {
-        Configg cons = Configg.getInstance();
-        this();
+
         //first is outer. maybe...
         this.firstgate = firstgate;
         this.secondgate = secondgate;
 
-        CubicCurve firstCurve =(CubicCurve) allOFCurves.getChildren().getFirst();
-        AllCurvesMethods.locateACurve(firstCurve,firstgate.getX(),firstgate.getY(),secondgate.getX(),secondgate.getY());
-        length= Methods.calculate_wire_length(this);
+
+//        CubicCurve firstCurve =(CubicCurve) allOFCurves.getChildren().getFirst();
+//        AllCurvesMethods.locateACurve(firstCurve,firstgate.getX(),firstgate.getY(),secondgate.getX(),secondgate.getY());
+//        length= Methods.calculate_wire_length(this);
     }
 
     public Gate getFirstgate() {
@@ -72,9 +57,13 @@ public class Wire {
     }
 
     private void just_isSafeTo_DrawCurve() {
-//        CubicCurve firstCurve = new CubicCurve();
-//        AllCurvesMethods.locateACurve(firstCurve,firstgate.getX(),firstgate.getY(),secondgate.getX(),secondgate.getY());
-//        firstCurve.setStrokeWidth(cons.getLine_width());
+        System.out.println("just_isSafeTo_DrawCurve");
+        CubicCurve firstCurve = new CubicCurve();
+        AllCurvesMethods.locateACurve(firstCurve,firstgate.getX(),firstgate.getY(),secondgate.getX(),secondgate.getY());
+        firstCurve.setStrokeWidth(cons.getLine_width());
+        firstCurve.setStroke(cons.getLine_color());
+        firstCurve.setFill(null);
+        allOFCurves.getChildren().add(firstCurve);
     }
 
     public double getLength() {

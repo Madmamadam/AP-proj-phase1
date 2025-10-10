@@ -98,13 +98,13 @@ public class Wiring {
     private void SecondClickedOnA_OuterGate(Gate gate) {
         decoy_wire.setSecondgate(gate);
         isEndedInGate=true;
-        mainModel.wire_check_to_add(decoy_wire.cloneWire());
+        mainModel.wire_check_to_add(decoy_wire);
     }
 
     private void SecondClickedOnA_InnerGate(Gate gate) {
         decoy_wire.setSecondgate(gate);
         isEndedInGate=true;
-        mainModel.wire_check_to_add(decoy_wire.cloneWire());
+        mainModel.wire_check_to_add(decoy_wire);
     }
 
     private void FirstClickedOnA_OuterGate(Gate gate) {

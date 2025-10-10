@@ -68,7 +68,7 @@ public class MainGame_Logics {
         }
         else {
             view.gameTimer.setStopping(true);
-            System.out.println("signal update is short circled (virual_run:"+virtual_run+") & (stop_wiring:"+staticDataModel.stop_wiring+")");
+//            System.out.println("signal update is short circled (virual_run:"+virtual_run+") & (stop_wiring:"+staticDataModel.stop_wiring+")");
         }
     }));
 
