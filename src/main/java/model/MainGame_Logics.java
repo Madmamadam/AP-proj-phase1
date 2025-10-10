@@ -536,8 +536,8 @@ public class MainGame_Logics {
 
     public void wire_check_to_add(Wire wire) {
         wire.setLength(methods.calculate_wire_length(wire));
-        if(   wire.getFirstgate().getWire()!=null
-                ||wire.getSecondgate().getWire()!=null){
+        if(   wire.getFirstgate().getWire()!=null ||wire.getSecondgate().getWire()!=null){
+            System.out.println("Error: wire_check_to_add");
         }
         else if(        !Objects.equals(wire.getFirstgate().getTypee().getShapeName(),wire.getSecondgate().getTypee().getShapeName())
                 || Objects.equals(wire.getFirstgate().getSysbox(),wire.getSecondgate().getSysbox())

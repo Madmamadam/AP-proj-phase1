@@ -16,7 +16,6 @@ public class Wire {
     private Gate secondgate;
     private double length;
     private Line line ;
-    private ArrayList<CubicCurve> cubicCurves= new ArrayList<>();
     private Group allOFCurves = new Group();
 
 
