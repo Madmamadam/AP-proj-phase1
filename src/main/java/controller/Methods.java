@@ -2,7 +2,7 @@ package controller;
 
 import javafx.scene.shape.Polygon;
 import mains.Configg;
-import mains.MainGame_Logics;
+import model.MainGame_Logics;
 import model.*;
 import org.locationtech.jts.geom.*;
 
@@ -49,14 +49,15 @@ public class Methods {
         return null;
 
     }
-    public void update_signal_onwire(Signal signal) {
+    public void update_signal_OnWire(Signal signal) {
         Wire wire=signal.getLinked_wire();
         double ratio = signal.getLength_on_wire()/ wire.getLength();
+
         signal.setX_on_wire(wire.getFirstgate().getX()*(1-ratio) + wire.getSecondgate().getX()*ratio);
         signal.setY_on_wire(wire.getFirstgate().getY()*(1-ratio) + wire.getSecondgate().getY()*ratio);
-        one_signal_update_polygan(signal);
+        one_signal_update_polygon(signal);
     }
-    private void one_signal_update_polygan(Signal signal){
+    private void one_signal_update_polygon(Signal signal){
         Configg cons = Configg.getInstance();
         double pi=3.01415;
 

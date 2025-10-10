@@ -1,15 +1,12 @@
-package mains;
+package model;
 
-import controller.Add_level;
-import controller.Controller;
-import controller.Methods;
-import controller.Wiring;
+import controller.*;
 import javafx.animation.KeyFrame;
 import javafx.animation.PauseTransition;
 import javafx.animation.Timeline;
 import javafx.stage.Stage;
 import javafx.util.Duration;
-import model.*;
+import mains.Configg;
 import org.locationtech.jts.geom.Coordinate;
 import view.Paintt;
 
@@ -217,7 +214,7 @@ public class MainGame_Logics {
                     signal_go_to_bank(signal);
                 }
                 else {
-                    methods.update_signal_onwire(signal);
+                    methods.update_signal_OnWire(signal);
 //                    System.out.println("update on wire ");
                 }
             }
@@ -528,7 +525,7 @@ public class MainGame_Logics {
 
 
     public void time_to_remove_wire(Wire wire) {
-        view.just_game_pane.getChildren().remove(wire.getLine());
+        view.just_game_pane.getChildren().remove(wire.getJustAllOfCurve_Group());
         wire.getFirstgate().setWire(null);
         wire.getSecondgate().setWire(null);
         staticDataModel.wires.remove(wire);
@@ -561,7 +558,7 @@ public class MainGame_Logics {
 
     private void corrected_wire_add_to_view(Wire wire) {
         //paint it forever
-        view.just_game_pane.getChildren().add(wire.getLine());
+        view.just_game_pane.getChildren().add(wire.getCubicCurvesModels());
     }
 
     private void corrected_wire_add_to_model(Wire wire) {
@@ -575,13 +572,12 @@ public class MainGame_Logics {
     public void add_wrong_wire(Wire wire) {
         Configg cons = Configg.getInstance();
 
+        AllCurvesMethods.wire_setStroke(wire,cons.getWrong_line_color());
 
-        wire.getLine().setStroke(cons.getWrong_line_color());
-
-        view.just_game_pane.getChildren().add(wire.getLine());
+        view.just_game_pane.getChildren().add(wire.getAllOfCurve_Group());
         PauseTransition pause = new PauseTransition(Duration.seconds(cons.getSeeing_wrong_line_duration()));
         pause.setOnFinished(event -> {
-            view.just_game_pane.getChildren().remove(wire.getLine());
+            view.just_game_pane.getChildren().remove(wire.getAllOfCurve_Group());
             wire.getFirstgate().setWire(null);
             wire.getSecondgate().setWire(null);
         });

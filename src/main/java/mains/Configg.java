@@ -37,6 +37,8 @@ public class Configg {
     private Color sysbox_color=Color.GRAY;
 
 
+    private double controlXConstant=2;
+
     private double gate_rectangle_width=15;
     private double gate_rectangle_height=15;
     private double gate_triangle_radius =12;
@@ -296,5 +298,9 @@ public class Configg {
             instance = new Configg();
         }
         return instance;
+    }
+
+    public double getControlXConstant() {
+        return controlXConstant;
     }
 }

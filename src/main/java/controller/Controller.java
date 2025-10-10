@@ -6,7 +6,7 @@ import javafx.scene.input.KeyEvent;
 
 import javafx.stage.Stage;
 import javafx.util.Duration;
-import mains.MainGame_Logics;
+import model.MainGame_Logics;
 import mains.Start_menu;
 import model.*;
 import view.Paintt;

@@ -1,6 +1,6 @@
 package controller;
 
-import mains.MainGame_Logics;
+import model.MainGame_Logics;
 import view.Paintt;
 
 import static mains.Start_menu.primaryStage_static;

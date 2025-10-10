@@ -3,9 +3,9 @@ package controller;
 import javafx.scene.Node;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
-import javafx.scene.shape.Line;
+import javafx.scene.shape.CubicCurve;
 import javafx.scene.shape.Polygon;
-import mains.MainGame_Logics;
+import model.MainGame_Logics;
 import model.Gate;
 import model.Sysbox;
 import model.Wire;
@@ -81,7 +81,7 @@ public class Wiring {
             Node nodeUnderMouse = event.getPickResult().getIntersectedNode();
 
             for(Wire wire: mainModel.staticDataModel.wires){
-                Line poly =wire.getLine();
+                CubicCurve poly =wire.getCubicCurvesModels();
 //                System.out.println("right before if");
                 if(nodeUnderMouse == poly || poly.equals(nodeUnderMouse) || poly.isHover()){
 //                    System.out.println("right after if");
