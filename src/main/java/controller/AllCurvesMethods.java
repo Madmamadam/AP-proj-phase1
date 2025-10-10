@@ -60,4 +60,6 @@ public class AllCurvesMethods {
         cubicCurve.setControlX2(lastX-horizontal_distance/cons.getControlXConstant());
         cubicCurve.setControlY2(lastY);
     }
+
+
 }

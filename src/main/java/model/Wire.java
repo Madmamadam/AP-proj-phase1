@@ -3,13 +3,9 @@ package model;
 import controller.AllCurvesMethods;
 import controller.Methods;
 import javafx.scene.Group;
-import javafx.scene.Node;
 import javafx.scene.shape.CubicCurve;
 import javafx.scene.shape.Line;
 import mains.Configg;
-
-import java.util.ArrayList;
-import java.util.Objects;
 
 public class Wire {
     private Gate firstgate;
@@ -17,6 +13,8 @@ public class Wire {
     private double length;
     private Line line ;
     private Group allOFCurves = new Group();
+    Configg cons = Configg.getInstance();
+
 
 
 
@@ -44,13 +42,9 @@ public class Wire {
         this.firstgate = firstgate;
         this.secondgate = secondgate;
 
-
         CubicCurve firstCurve =(CubicCurve) allOFCurves.getChildren().getFirst();
         AllCurvesMethods.locateACurve(firstCurve,firstgate.getX(),firstgate.getY(),secondgate.getX(),secondgate.getY());
-
-
         length= Methods.calculate_wire_length(this);
-
     }
 
     public Gate getFirstgate() {
@@ -58,13 +52,9 @@ public class Wire {
     }
 
     public void setFirstgate(Gate firstgate) {
-        Configg cons = Configg.getInstance();
         this.firstgate = firstgate;
-
         if(secondgate!= null){
-            line=new Line(firstgate.getX(),firstgate.getY(),secondgate.getX(),secondgate.getY());
-            line.setStrokeWidth(cons.getLine_width());
-            line.setStroke(cons.getLine_color());
+            just_isSafeTo_DrawCurve();
         }
     }
 
@@ -72,17 +62,21 @@ public class Wire {
         return secondgate;
     }
 
+    //most wire create here (have gates and curve)
     public void setSecondgate(Gate secondgate) {
-        Configg cons = Configg.getInstance();
         this.secondgate = secondgate;
 
-
         if(firstgate!= null){
-            line=new Line(firstgate.getX(),firstgate.getY(),secondgate.getX(),secondgate.getY());
-            line.setStrokeWidth(cons.getLine_width());
-            line.setFill(cons.getLine_color());
+            just_isSafeTo_DrawCurve();
         }
     }
+
+    private void just_isSafeTo_DrawCurve() {
+//        CubicCurve firstCurve = new CubicCurve();
+//        AllCurvesMethods.locateACurve(firstCurve,firstgate.getX(),firstgate.getY(),secondgate.getX(),secondgate.getY());
+//        firstCurve.setStrokeWidth(cons.getLine_width());
+    }
+
     public double getLength() {
         return length;
     }
@@ -91,9 +85,6 @@ public class Wire {
         this.length = length;
     }
 
-    public Line getLine() { return line;}
-
-    public void setLine(Line line) { this.line = line;}
 
 //    public ArrayList<CubicCurve> getCubicCurvesModels() {
 //        return cubicCurves;

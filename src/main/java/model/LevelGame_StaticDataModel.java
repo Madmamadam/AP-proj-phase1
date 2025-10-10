@@ -78,7 +78,7 @@ public class LevelGame_StaticDataModel {
         clone_stack.signals.addAll(clone_stack.sysboxes.getFirst().signal_bank);
 
 
-        //clone wires
+        //clone wires       MUST CHANGE FOR PHASE 2
         System.out.println("this.wires.size()= "+this.wires.size());
         for(Wire old_wire : this.wires) {
 
