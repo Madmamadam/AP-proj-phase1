@@ -1,7 +1,6 @@
 package model;
 
 import controller.AllCurvesMethods;
-import controller.Methods;
 import javafx.scene.Group;
 import javafx.scene.shape.CubicCurve;
 import javafx.scene.shape.Line;
@@ -29,7 +28,7 @@ public class Wire {
 
 //        CubicCurve firstCurve =(CubicCurve) allOFCurves.getChildren().getFirst();
 //        AllCurvesMethods.locateACurve(firstCurve,firstgate.getX(),firstgate.getY(),secondgate.getX(),secondgate.getY());
-//        length= Methods.calculate_wire_length(this);
+//        length= Methods.calculateWireLength(this);
     }
 
     public Gate getFirstgate() {
@@ -64,6 +63,12 @@ public class Wire {
         firstCurve.setStroke(cons.getLine_color());
         firstCurve.setFill(null);
         allOFCurves.getChildren().add(firstCurve);
+
+        update_length_AfterNewAllOfCurves();
+    }
+
+    private void update_length_AfterNewAllOfCurves() {
+        length=AllCurvesMethods.calculateWireLength(this);
     }
 
     public double getLength() {

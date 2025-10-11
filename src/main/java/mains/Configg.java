@@ -38,6 +38,7 @@ public class Configg {
 
 
     private double controlXConstant=2;
+    private int lengthIterationStep =1000;
 
     private double gate_rectangle_width=15;
     private double gate_rectangle_height=15;
@@ -302,5 +303,9 @@ public class Configg {
 
     public double getControlXConstant() {
         return controlXConstant;
+    }
+
+    public int getLengthIterationStep(){
+        return lengthIterationStep;
     }
 }

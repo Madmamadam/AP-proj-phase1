@@ -1,5 +1,6 @@
 package controller;
 
+import javafx.geometry.Point2D;
 import javafx.scene.Node;
 import javafx.scene.paint.Paint;
 import javafx.scene.shape.CubicCurve;
@@ -62,4 +63,109 @@ public class AllCurvesMethods {
     }
 
 
+    public static double calculateWireLength(Wire wire) {
+        Configg cons=Configg.getInstance();
+        double lengthSum = 0;
+        for (Node cubicCurveNode : wire.getAllOfCurve_Group().getChildren()) {
+            if (cubicCurveNode.getClass() == CubicCurve.class) {
+                CubicCurve cubicCurve = (CubicCurve) cubicCurveNode;
+                lengthSum=lengthSum+getCubicCurveLength(cubicCurve,cons.getLengthIterationStep());
+            }
+            else {
+                System.out.println("Error: Not a cubic curve in group");
+            }
+        }
+        return lengthSum;
+    }
+
+    public static Point2D positionOnALength(Wire wire, double length){
+        double remainingLength = length;
+        Configg cons=Configg.getInstance();
+        for(Node cubicCurveNode : wire.getAllOfCurve_Group().getChildren()){
+            if (cubicCurveNode.getClass() == CubicCurve.class) {
+                CubicCurve cubicCurve = (CubicCurve) cubicCurveNode;
+                double cubicCurveLength = getCubicCurveLength(cubicCurve,cons.getLengthIterationStep());
+                if(remainingLength < cubicCurveLength){
+                    return evaluateCubicCurve(cubicCurve,remainingLength/cubicCurveLength);
+                }
+                else {
+                    remainingLength -= cubicCurveLength;
+                }
+            }
+            else {
+                System.out.println("Error: Not a cubic curve in group");
+            }
+        }
+        return null;
+    }
+
+
+
+
+
+
+    /**
+     * Calculates the approximate length of a CubicCurve by flattening it into a series of line segments.
+     * The accuracy of the result depends on the number of steps.
+     *
+     * @param curve The CubicCurve to measure.
+     * @param steps The number of line segments to use for the approximation. A value of 1000 is often sufficient.
+     * @return The approximate length of the curve.
+     */
+    private static double getCubicCurveLength(CubicCurve curve, int steps) {
+        if (curve == null || steps <= 0) {
+            return 0.0;
+        }
+
+        double totalLength = 0.0;
+
+        // Get the starting point of the curve
+        Point2D previousPoint = new Point2D(curve.getStartX(), curve.getStartY());
+
+        for (int i = 1; i <= steps; i++) {
+            // 't' is the parameter that goes from 0.0 to 1.0
+            double t = (double) i / steps;
+
+            // Calculate the point on the curve for the current 't'
+            Point2D currentPoint = evaluateCubicCurve(curve, t);
+
+            // Add the distance between the last point and the current point
+            totalLength += previousPoint.distance(currentPoint);
+
+            // Update the previous point for the next iteration
+            previousPoint = currentPoint;
+        }
+
+        return totalLength;
+    }
+
+    /**
+     * Evaluates the coordinates of a point on a CubicCurve at a given parameter 't'.
+     * The cubic Bézier formula is: B(t) = (1-t)³P₀ + 3(1-t)²tP₁ + 3(1-t)t²P₂ + t³P₃
+     *
+     * @param curve The CubicCurve.
+     * @param t     The parameter, which ranges from 0.0 (start of the curve) to 1.0 (end of the curve).
+     * @return The Point2D coordinate on the curve for the given t.
+     */
+    private static Point2D evaluateCubicCurve(CubicCurve curve, double t) {
+        // Pre-calculate powers of t and (1-t) for efficiency
+        double u = 1 - t;
+        double tt = t * t;
+        double uu = u * u;
+        double uuu = uu * u;
+        double ttt = tt * t;
+
+        // Apply the cubic Bézier formula
+        double x = uuu * curve.getStartX() +
+                3 * uu * t * curve.getControlX1() +
+                3 * u * tt * curve.getControlX2() +
+                ttt * curve.getEndX();
+
+        double y = uuu * curve.getStartY() +
+                3 * uu * t * curve.getControlY1() +
+                3 * u * tt * curve.getControlY2() +
+                ttt * curve.getEndY();
+
+        return new Point2D(x, y);
+    }
 }

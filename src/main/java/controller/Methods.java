@@ -1,5 +1,6 @@
 package controller;
 
+import javafx.geometry.Point2D;
 import javafx.scene.shape.Polygon;
 import mains.Configg;
 import model.MainGame_Logics;
@@ -51,10 +52,10 @@ public class Methods {
     }
     public void update_signal_OnWire(Signal signal) {
         Wire wire=signal.getLinked_wire();
-        double ratio = signal.getLength_on_wire()/ wire.getLength();
 
-        signal.setX_on_wire(wire.getFirstgate().getX()*(1-ratio) + wire.getSecondgate().getX()*ratio);
-        signal.setY_on_wire(wire.getFirstgate().getY()*(1-ratio) + wire.getSecondgate().getY()*ratio);
+        Point2D pos = AllCurvesMethods.positionOnALength(wire,signal.getLength_on_wire());
+        signal.setX_on_wire(pos.getX());
+        signal.setY_on_wire(pos.getY());
         one_signal_update_polygon(signal);
     }
     private void one_signal_update_polygon(Signal signal){
