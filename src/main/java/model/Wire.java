@@ -12,6 +12,8 @@ public class Wire {
     private double length;
     private Line line ;
     private Group allOFCurves = new Group();
+    public boolean _state_temp;
+
     Configg cons = Configg.getInstance();
 
 
@@ -25,10 +27,15 @@ public class Wire {
         this.firstgate = firstgate;
         this.secondgate = secondgate;
 
+    }
+    public Wire getClone(){
+        Wire clone = new Wire();
+        clone.setFirstgate(firstgate.cloneGate());
+        clone.setSecondgate(secondgate.cloneGate());
 
-//        CubicCurve firstCurve =(CubicCurve) allOFCurves.getChildren().getFirst();
-//        AllCurvesMethods.locateACurve(firstCurve,firstgate.getX(),firstgate.getY(),secondgate.getX(),secondgate.getY());
-//        length= Methods.calculateWireLength(this);
+
+
+        return
     }
 
     public Gate getFirstgate() {

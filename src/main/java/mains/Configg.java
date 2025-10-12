@@ -38,7 +38,7 @@ public class Configg {
 
 
     private double controlXConstant=2;
-    private int lengthIterationStep =1000;
+    private int lengthIterationStep =40;
 
     private double gate_rectangle_width=15;
     private double gate_rectangle_height=15;
