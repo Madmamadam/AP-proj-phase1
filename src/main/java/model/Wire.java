@@ -3,14 +3,13 @@ package model;
 import controller.AllCurvesMethods;
 import javafx.scene.Group;
 import javafx.scene.shape.CubicCurve;
-import javafx.scene.shape.Line;
 import mains.Configg;
 
 public class Wire {
     private Gate firstgate;
     private Gate secondgate;
     private double length;
-    private Line line ;
+    private String state; //can be 1.satisfied 2.have_bug
     private Group allOFCurves = new Group();
     public boolean _state_temp;
 
@@ -28,14 +27,10 @@ public class Wire {
         this.secondgate = secondgate;
 
     }
-    public Wire getClone(){
-        Wire clone = new Wire();
-        clone.setFirstgate(firstgate.cloneGate());
-        clone.setSecondgate(secondgate.cloneGate());
-
-
-
-        return
+    public void getClone_justCurvesAndLength(Wire clone){
+        clone.length = length;
+        clone.allOFCurves=AllCurvesMethods.allCurve_justData_Clone(this);
+        AllCurvesMethods.wire_setLikeSample(clone, (CubicCurve) this.getAllOfCurve_Group().getChildren().getFirst());
     }
 
     public Gate getFirstgate() {

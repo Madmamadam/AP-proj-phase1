@@ -1,6 +1,7 @@
 package controller;
 
 import javafx.geometry.Point2D;
+import javafx.scene.Group;
 import javafx.scene.Node;
 import javafx.scene.paint.Paint;
 import javafx.scene.shape.CubicCurve;
@@ -167,5 +168,32 @@ public class AllCurvesMethods {
                 ttt * curve.getEndY();
 
         return new Point2D(x, y);
+    }
+
+    public static Group allCurve_justData_Clone(Wire wire) {
+        Group cloneGroup = new Group();
+        for (Node cubicCurveNode : wire.getAllOfCurve_Group().getChildren()) {
+            if (cubicCurveNode.getClass() == CubicCurve.class) {
+                CubicCurve cubicCurve = (CubicCurve) cubicCurveNode;
+                cloneGroup.getChildren().add(get_one_curve_clone(cubicCurve));
+            }
+            else {
+                System.out.println("Error: Not a cubic curve in group");
+            }
+        }
+        return cloneGroup;
+    }
+
+    private static Node get_one_curve_clone(CubicCurve cubicCurve) {
+        CubicCurve cloneCubicCurve = new CubicCurve();
+        cloneCubicCurve.setStartX(cubicCurve.getStartX());
+        cloneCubicCurve.setStartY(cubicCurve.getStartY());
+        cloneCubicCurve.setControlX1(cubicCurve.getControlX1());
+        cloneCubicCurve.setControlY1(cubicCurve.getControlY1());
+        cloneCubicCurve.setControlX2(cubicCurve.getControlX2());
+        cloneCubicCurve.setControlY2(cubicCurve.getControlY2());
+        cloneCubicCurve.setEndX(cubicCurve.getEndX());
+        cloneCubicCurve.setEndY(cubicCurve.getEndY());
+        return cloneCubicCurve;
     }
 }
