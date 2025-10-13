@@ -4,8 +4,10 @@ import javafx.animation.PauseTransition;
 import javafx.scene.Scene;
 import javafx.scene.input.KeyEvent;
 
+import javafx.scene.input.MouseEvent;
 import javafx.stage.Stage;
 import javafx.util.Duration;
+import mains.Configg;
 import model.MainGame_Logics;
 import mains.Start_menu;
 import model.*;
@@ -18,6 +20,7 @@ public class Controller {
     public MainGame_Logics mainGameViewAndModel;
     public Paintt view;
     Methods methods =new Methods(mainGameViewAndModel);
+    private boolean permission_to_add_curve_handler = false;
 
 
     public static void exit() {
@@ -57,6 +60,15 @@ public class Controller {
 
         }
 
+    }
+
+    public void changePermissionOfCurveHandler(){
+        if(permission_to_add_curve_handler){
+            permission_to_add_curve_handler=false;
+        }
+        else{
+            permission_to_add_curve_handler=true;
+        }
     }
 
 
@@ -171,5 +183,37 @@ public class Controller {
 
     public void edit_wires() {
 
+    }
+
+    public void request_to_add_curveHandler(Wire wire, MouseEvent event) {
+        if(permission_to_add_curve_handler) {
+            time_to_safe_add_curveHandler(wire, event.getX(), event.getY());
+        }
+        else {
+            view.showCheckToAddAHandler(wire,event);
+        }
+    }
+
+    public void time_to_safe_add_curveHandler(Wire wire,double x,double y) {
+        if(money_is_possible_for_add_a_curve_handler()){
+            time_to_add_curveHandler(wire,x,y);
+        }
+    }
+
+
+    public void time_to_add_curveHandler(Wire wire,double x,double y) {
+        Configg cons =Configg.getInstance();
+        System.out.println("time_to_add_curveHandler");
+        view.controller.mainGameViewAndModel.staticDataModel.setSekke(view.controller.mainGameViewAndModel.staticDataModel.getSekke()-cons.getCurve_handler_cost());
+        CurveHandler curveHandler = new CurveHandler(x,y,wire);
+        view.just_game_pane.getChildren().add(curveHandler.getViewCircle());
+    }
+
+    public boolean money_is_possible_for_add_a_curve_handler() {
+        Configg cons =Configg.getInstance();
+        if(view.controller.mainGameViewAndModel.staticDataModel.getSekke() > cons.getCurve_handler_cost()) {
+            return true;
+        }
+        return false;
     }
 }

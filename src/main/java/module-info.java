@@ -15,4 +15,5 @@ module org.example.testproj1 {
 
     opens org.example.testproj1 to javafx.fxml;
     exports model to javafx.graphics;
+    exports view to javafx.graphics;
 }

@@ -57,9 +57,9 @@ public class AllCurvesMethods {
         cubicCurve.setStartY(firstY);
         cubicCurve.setEndX(lastX);
         cubicCurve.setEndY(lastY);
-        cubicCurve.setControlX1(firstX+horizontal_distance/cons.getControlXConstant());
+        cubicCurve.setControlX1(firstX+cons.getControlXConstant());
         cubicCurve.setControlY1(firstY);
-        cubicCurve.setControlX2(lastX-horizontal_distance/cons.getControlXConstant());
+        cubicCurve.setControlX2(lastX -cons.getControlXConstant());
         cubicCurve.setControlY2(lastY);
     }
 

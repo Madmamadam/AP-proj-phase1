@@ -20,7 +20,6 @@ public class Configg {
     private double impulse_move_time=0.3;
 
 
-
     private double health_bar_width=4;
     private double health_bar_back_length=250;
     private Color health_bar_back_color=Color.GRAY;
@@ -37,12 +36,14 @@ public class Configg {
     private Color sysbox_color=Color.GRAY;
 
 
-    private double controlXConstant=2;
+    private double curve_handler_cost=1;
+
+    private double controlXConstant=150;
     private int lengthIterationStep =40;
 
-    private double gate_rectangle_width=15;
-    private double gate_rectangle_height=15;
-    private double gate_triangle_radius =12;
+    private double gate_rectangle_width=10;
+    private double gate_rectangle_height=gate_rectangle_width;
+    private double gate_triangle_radius =gate_rectangle_width*4/5;
     private Color gate_rectangle_color=Color.BROWN;
     private Color gate_triangle_color=Color.BROWN;
 
@@ -51,6 +52,9 @@ public class Configg {
     private double signal_triangle_radius =gate_triangle_radius;
     private Color signal_rectangle_color=Color.BLUE;
     private Color signal_triangle_color=Color.BLUE;
+
+    private double event_Handler_view_pref_width=100;
+    private double event_Handler_view_pref_height=100;
 
 
 
@@ -62,8 +66,17 @@ public class Configg {
     private double rectangle_signal_sekke_added =1;
     private double traiangle_signal_sekke_added =2;
 
+    private double CurveHandler_radius=line_width*1.2;
+    private Color CurveHandler_color=Color.YELLOW;
 
 
+    public Color getCurveHandler_color() {
+        return CurveHandler_color;
+    }
+
+    public double getCurveHandler_radius() {
+        return CurveHandler_radius;
+    }
 
     public int getBank_capacity() {
         return bank_capacity;
@@ -307,5 +320,17 @@ public class Configg {
 
     public int getLengthIterationStep(){
         return lengthIterationStep;
+    }
+
+    public double getEvent_Handler_view_pref_width() {
+        return event_Handler_view_pref_width;
+    }
+
+    public double getEvent_Handler_view_pref_height() {
+        return event_Handler_view_pref_height;
+    }
+
+    public double getCurve_handler_cost() {
+        return curve_handler_cost;
     }
 }

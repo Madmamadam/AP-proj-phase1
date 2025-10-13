@@ -13,7 +13,7 @@ public class Inital_Load {
 
         for (int i = 0; i < sysbox.inner_gates.size(); i++){
             sysbox.inner_gates.get(i).setSysbox(sysbox);
-//            sysbox.inner_gates.get(i).setX(sysbox.getRectangle().getX()+sysbox.getRectangle().getWidth()/2);
+//            sysbox.inner_gates.get(i).setSafeX(sysbox.getRectangle().getX()+sysbox.getRectangle().getWidth()/2);
 //            sysbox.inner_gates.get(i).setY(sysbox.getRectangle().getY()+i*sysbox.getRectangle().getHeight()/(amount-1));
             sysbox.inner_gates.get(i).setX(sysbox.getRectangle().getX());
             sysbox.inner_gates.get(i).setY(sysbox.getRectangle().getY()+i*sysbox.getRectangle().getHeight()/(amount-1));

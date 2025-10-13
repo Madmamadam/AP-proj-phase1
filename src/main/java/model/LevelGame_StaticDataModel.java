@@ -21,7 +21,7 @@ public class LevelGame_StaticDataModel {
     public Boolean Oairyaman = false;
     public boolean Oatar = false;
     public boolean OAnahita =false;
-    private double sekke;
+    private double sekke =8;
     public int signal_run_frame_counter = 0;
     public int dead_count = 0;
 
@@ -99,7 +99,7 @@ public class LevelGame_StaticDataModel {
             Wire wire = new Wire(outer_gate,inner_gate);
             outer_gate.setWire(wire);
             inner_gate.setWire(wire);
-            old_wire.getClone_justCurvesAndLength(wire);
+            old_wire.getClone_justCurvesAndLengthAndHandlers(wire);
 
             if(outer_index<0 || inner_index<0 || A1 <0 || A2 <0) {
                 System.out.println("++++++++++++++ index problem");

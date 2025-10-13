@@ -5,12 +5,16 @@ import javafx.scene.Group;
 import javafx.scene.shape.CubicCurve;
 import mains.Configg;
 
+import java.util.ArrayList;
+import java.util.Collection;
+
 public class Wire {
     private Gate firstgate;
     private Gate secondgate;
     private double length;
     private String state; //can be 1.satisfied 2.have_bug
     private Group allOFCurves = new Group();
+    private ArrayList<CurveHandler> CurveHandlers = new ArrayList<>();
     public boolean _state_temp;
 
     Configg cons = Configg.getInstance();
@@ -27,10 +31,17 @@ public class Wire {
         this.secondgate = secondgate;
 
     }
-    public void getClone_justCurvesAndLength(Wire clone){
+    public void getClone_justCurvesAndLengthAndHandlers(Wire clone){
         clone.length = length;
         clone.allOFCurves=AllCurvesMethods.allCurve_justData_Clone(this);
         AllCurvesMethods.wire_setLikeSample(clone, (CubicCurve) this.getAllOfCurve_Group().getChildren().getFirst());
+        clone.getCurveHandlers().clear();
+        clone.getCurveHandlers().addAll((Collection<? extends CurveHandler>) this.getCurveHandlers().clone());
+    }
+
+
+    public ArrayList<CurveHandler> getCurveHandlers() {
+        return CurveHandlers;
     }
 
     public Gate getFirstgate() {

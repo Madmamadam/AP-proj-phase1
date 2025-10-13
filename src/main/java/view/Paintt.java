@@ -11,6 +11,7 @@ import javafx.scene.control.Label;
 import javafx.scene.control.Slider;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyCombination;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.*;
 import javafx.scene.shape.Line;
 import javafx.scene.text.Text;
@@ -19,6 +20,7 @@ import mains.Configg;
 import model.Gate;
 import model.Signal;
 import model.Sysbox;
+import model.Wire;
 
 import java.util.Objects;
 
@@ -355,7 +357,9 @@ public class Paintt {
     }
 
 
+    public void showCheckToAddAHandler(Wire wire, MouseEvent event) {
+        eventHandlerView eventHandlerView = new eventHandlerView(event.getX(),event.getY(),this,1,wire);
 
 
-
+    }
 }
