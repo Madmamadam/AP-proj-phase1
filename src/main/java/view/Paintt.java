@@ -22,6 +22,7 @@ import model.Signal;
 import model.Sysbox;
 import model.Wire;
 
+import java.util.ArrayList;
 import java.util.Objects;
 
 import static java.lang.Math.cos;
@@ -44,6 +45,7 @@ public class Paintt {
     public Pane lose_ending_pane=new Pane();
     public Scene end_stage_scene ;
     public Label coins = new Label("💰 1277");
+    private ArrayList<EventHandlerView> eventHandlerOnViews = new ArrayList<>();
 
 
 
@@ -358,8 +360,12 @@ public class Paintt {
 
 
     public void showCheckToAddAHandler(Wire wire, MouseEvent event) {
-        eventHandlerView eventHandlerView = new eventHandlerView(event.getX(),event.getY(),this,1,wire);
-
-
+        EventHandlerView eventHandlerView = new EventHandlerView(event.getX(),event.getY(),this,1,wire);
+        eventHandlerOnViews.add(eventHandlerView);
+    }
+    public void clear_CurveHandlers_fromView(){
+        for (EventHandlerView eventHandler : eventHandlerOnViews) {
+            eventHandlerOnViews.remove(eventHandler);
+        }
     }
 }

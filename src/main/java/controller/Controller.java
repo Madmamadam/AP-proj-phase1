@@ -5,6 +5,7 @@ import javafx.scene.Scene;
 import javafx.scene.input.KeyEvent;
 
 import javafx.scene.input.MouseEvent;
+import javafx.scene.shape.CubicCurve;
 import javafx.stage.Stage;
 import javafx.util.Duration;
 import mains.Configg;
@@ -185,16 +186,16 @@ public class Controller {
 
     }
 
-    public void request_to_add_curveHandler(Wire wire, MouseEvent event) {
+    public void request_to_add_curveHandler(Wire wire, MouseEvent event, CubicCurve cubicCurve) {
         if(permission_to_add_curve_handler) {
-            time_to_safe_add_curveHandler(wire, event.getX(), event.getY());
+            time_to_safe_add_curveHandler(wire, event.getX(), event.getY(),cubicCurve);
         }
         else {
             view.showCheckToAddAHandler(wire,event);
         }
     }
 
-    public void time_to_safe_add_curveHandler(Wire wire,double x,double y) {
+    public void time_to_safe_add_curveHandler(Wire wire, double x, double y, CubicCurve cubicCurve) {
         if(money_is_possible_for_add_a_curve_handler()){
             time_to_add_curveHandler(wire,x,y);
         }
@@ -216,4 +217,5 @@ public class Controller {
         }
         return false;
     }
+
 }

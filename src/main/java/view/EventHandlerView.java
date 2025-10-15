@@ -9,7 +9,7 @@ import javafx.util.Duration;
 import mains.Configg;
 import model.Wire;
 
-public class eventHandlerView {
+public class EventHandlerView {
     private VBox vBox=new VBox(10);
     private Paintt view;
     int type;
@@ -21,11 +21,11 @@ public class eventHandlerView {
     Timeline remover ;
     Wire wire;
 
-    private eventHandlerView(){}
+    private EventHandlerView(){}
 
-    public eventHandlerView(double x , double y, Paintt view, int type, Wire wire){
+    public EventHandlerView(double x , double y, Paintt view, int type, Wire wire){
         Configg cons = Configg.getInstance();
-        System.out.println("in eventHandlerView");
+        System.out.println("in EventHandlerView");
 
         this.view =view;
         this.type = type;

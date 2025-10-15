@@ -3,6 +3,7 @@ package controller;
 import javafx.scene.Node;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.shape.CubicCurve;
 import javafx.scene.shape.Polygon;
 import model.*;
 
@@ -69,29 +70,33 @@ public class Wiring {
 
 
 
-        mainModel.view.just_game_pane.setOnMouseClicked(event ->{
+        mainModel.view.just_game_pane.addEventHandler(MouseEvent.MOUSE_CLICKED,event -> {
             if(mainModel.staticDataModel.stop_wiring) return;
 
-            //wire removing
+
             if(event.getButton() == MouseButton.SECONDARY) {
-                //first check curve handler
-                CurveHandler curveHandler = checkReleaseWasOnACurveHandler(event);
-                if(curveHandler != null) {
-                    System.out.println("curveHandler is founded");
-
-                }
-
+                //wire removing
                 Wire wire = checkReleaseWasOnAWire(event);
                 if (wire != null) {
                     System.out.println("wire is founded");
                     mainModel.time_to_remove_wire(wire);
                 }
             }
-            //wire adding a curve
+
+
             if(event.getButton() == MouseButton.PRIMARY) {
+                //first check curve handler
+                CurveHandler curveHandler = checkReleaseWasOnACurveHandler(event);
+                if(curveHandler != null) {
+                    System.out.println("curveHandler is founded");
+                    curveHandler_start_moving(curveHandler,event.getX(),event.getY());
+                }
+
+                //wire adding a curve
                 Wire wire = checkReleaseWasOnAWire(event);
                 if (wire != null) {
-                    mainModel.controller.request_to_add_curveHandler(wire, event);
+                    CubicCurve cubicCurve = curveThatClickedOn_find(wire,event);
+                    mainModel.controller.request_to_add_curveHandler(wire, event,cubicCurve);
                 }
             }
 
@@ -99,14 +104,26 @@ public class Wiring {
     }
 
 
+    private void curveHandler_start_moving(CurveHandler curveHandler, double x, double y) {
+        mainModel.view.just_game_pane.addEventHandler(MouseEvent.MOUSE_MOVED ,event -> {
+            double deltaX = event.getX()-x;
+            double deltaY = event.getY()-y;
+            curveHandler_settle_on_new_location(curveHandler,deltaX ,deltaY );
+        });
+    }
+
+    private void curveHandler_settle_on_new_location(CurveHandler curveHandler, double deltaX, double deltaY) {
+        curveHandler.setSafeX(deltaX);
+    }
+
+
     private Wire checkReleaseWasOnAWire(MouseEvent event) {
         Node nodeUnderMouse = event.getPickResult().getIntersectedNode();
 
         for(Wire wire: mainModel.staticDataModel.wires){
-            for (Node curveNode : wire.getAllOfCurve_Group().getChildren()) {
-//                System.out.println("right before if");
+            for (int i=0;i<wire.getAllOfCurve_Group().getChildren().size();i++) {
+                Node curveNode = wire.getAllOfCurve_Group().getChildren().get(i);
                 if (nodeUnderMouse == curveNode || curveNode.equals(nodeUnderMouse) || curveNode.isHover()) {
-//                    System.out.println("right after if");
                     return wire;
                 }
             }
@@ -115,17 +132,27 @@ public class Wiring {
         return null;
     }
 
+
     private CurveHandler checkReleaseWasOnACurveHandler(MouseEvent event) {
         Node nodeUnderMouse = event.getPickResult().getIntersectedNode();
 
         for(Wire wire: mainModel.staticDataModel.wires){
             for (CurveHandler curveHandler : wire.getCurveHandlers()) {
-//                System.out.println("right before if");
-                Node curvehandlerNode = curveHandler.getViewCircle();
-                if (nodeUnderMouse == curvehandlerNode || curvehandlerNode.equals(nodeUnderMouse) || curvehandlerNode.isHover()) {
-//                    System.out.println("right after if");
+                Node curveHandlerNode = (Node) curveHandler.getViewCircle();
+                if (nodeUnderMouse == curveHandlerNode || curveHandlerNode.equals(nodeUnderMouse) || curveHandlerNode.isHover()) {
                     return curveHandler;
                 }
+            }
+        }
+        System.out.println("return is null");
+        return null;
+    }
+
+    private CubicCurve curveThatClickedOn_find(Wire wire,MouseEvent event) {
+        Node nodeUnderMouse = event.getPickResult().getIntersectedNode();
+        for (Node curve : wire.getAllOfCurve_Group().getChildren()) {
+            if (nodeUnderMouse == curve || curve.equals(nodeUnderMouse) || curve.isHover()) {
+                return (CubicCurve) curve;
             }
         }
         System.out.println("return is null");

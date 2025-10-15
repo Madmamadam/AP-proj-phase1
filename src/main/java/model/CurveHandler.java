@@ -1,5 +1,6 @@
 package model;
 
+import javafx.scene.Node;
 import javafx.scene.shape.Circle;
 import mains.Configg;
 
@@ -14,13 +15,17 @@ public class CurveHandler {
         this.x = x;
         this.y = y;
         this.wire=wire;
+        Node viewCirclenode =(Node) viewCircle;
+
+
         viewCircle.setCenterX(x);
         viewCircle.setCenterY(y);
         viewCircle.setRadius(cons.getCurveHandler_radius()+10);
         viewCircle.setFill(cons.getCurveHandler_color());
         if(wire!=null){
-            wire.getCurveHandlers().add(this);
+            wire.newCurveHandlerAdded(this);
         }
+
     }
     public double getX() {
         return x;

@@ -16,7 +16,6 @@ public class Wire {
     private Group allOFCurves = new Group();
     private ArrayList<CurveHandler> CurveHandlers = new ArrayList<>();
     public boolean _state_temp;
-
     Configg cons = Configg.getInstance();
 
 
@@ -128,4 +127,19 @@ public class Wire {
     }
 
 
+    public void newCurveHandlerAdded(CurveHandler curveHandler) {
+        CubicCurve cubicCurve = new CubicCurve();
+        allOFCurves.getChildren().add(cubicCurve);
+
+    }
+    private int curveHandler_index(CurveHandler curveHandler){
+        //just count that curve handler what time added
+        for(int i=0;i<CurveHandlers.size();i++){
+            if(CurveHandlers.get(i).equals(curveHandler)){
+                return i;
+            }
+        }
+        System.out.println("Error cubic curve handler not found");
+        return -1;
+    }
 }
