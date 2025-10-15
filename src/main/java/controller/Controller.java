@@ -51,6 +51,10 @@ public class Controller {
                         break;
                     }
                 }
+                mainGameViewAndModel.update_Level_wires_length();
+                if(mainGameViewAndModel.staticDataModel.getLevel_wires_length()>mainGameViewAndModel.staticDataModel.constraintss.getMaximum_length()){
+                    accesss = false;
+                }
             }
             if(accesss){
                 mainGameViewAndModel.time_to_stop_wiring();
@@ -187,27 +191,33 @@ public class Controller {
     }
 
     public void request_to_add_curveHandler(Wire wire, MouseEvent event, CubicCurve cubicCurve) {
+        //have new request so delete other request
+        view.clear_CurveHandlersRequest_fromView();
+
+
         if(permission_to_add_curve_handler) {
             time_to_safe_add_curveHandler(wire, event.getX(), event.getY(),cubicCurve);
         }
         else {
-            view.showCheckToAddAHandler(wire,event);
+            view.showCheckToAddAHandler(wire,event,cubicCurve);
         }
     }
 
     public void time_to_safe_add_curveHandler(Wire wire, double x, double y, CubicCurve cubicCurve) {
         if(money_is_possible_for_add_a_curve_handler()){
-            time_to_add_curveHandler(wire,x,y);
+            time_to_add_curveHandler(wire,x,y,cubicCurve);
         }
     }
 
 
-    public void time_to_add_curveHandler(Wire wire,double x,double y) {
+    public void time_to_add_curveHandler(Wire wire, double x, double y, CubicCurve cubicCurve) {
         Configg cons =Configg.getInstance();
         System.out.println("time_to_add_curveHandler");
         view.controller.mainGameViewAndModel.staticDataModel.setSekke(view.controller.mainGameViewAndModel.staticDataModel.getSekke()-cons.getCurve_handler_cost());
-        CurveHandler curveHandler = new CurveHandler(x,y,wire);
+        CurveHandler curveHandler = new CurveHandler(x,y,wire,cubicCurve);
         view.just_game_pane.getChildren().add(curveHandler.getViewCircle());
+        mainGameViewAndModel.update_Level_wires_length();
+
     }
 
     public boolean money_is_possible_for_add_a_curve_handler() {

@@ -13,14 +13,12 @@ import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyCombination;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.*;
+import javafx.scene.shape.CubicCurve;
 import javafx.scene.shape.Line;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
 import mains.Configg;
-import model.Gate;
-import model.Signal;
-import model.Sysbox;
-import model.Wire;
+import model.*;
 
 import java.util.ArrayList;
 import java.util.Objects;
@@ -45,7 +43,7 @@ public class Paintt {
     public Pane lose_ending_pane=new Pane();
     public Scene end_stage_scene ;
     public Label coins = new Label("💰 1277");
-    private ArrayList<EventHandlerView> eventHandlerOnViews = new ArrayList<>();
+    private ArrayList<EventHandlerView> requestedEventHandlerOnViews = new ArrayList<>();
 
 
 
@@ -359,13 +357,36 @@ public class Paintt {
     }
 
 
-    public void showCheckToAddAHandler(Wire wire, MouseEvent event) {
-        EventHandlerView eventHandlerView = new EventHandlerView(event.getX(),event.getY(),this,1,wire);
-        eventHandlerOnViews.add(eventHandlerView);
+    public void showCheckToAddAHandler(Wire wire, MouseEvent event, CubicCurve cubicCurve) {
+        EventHandlerView eventHandlerView = new EventHandlerView(event.getX(),event.getY(),this,1,wire,cubicCurve);
+        this.just_game_pane.getChildren().add(eventHandlerView.vBox);
+        requestedEventHandlerOnViews.add(eventHandlerView);
     }
-    public void clear_CurveHandlers_fromView(){
-        for (EventHandlerView eventHandler : eventHandlerOnViews) {
-            eventHandlerOnViews.remove(eventHandler);
+    public void clear_CurveHandlersRequest_fromView(){
+        ArrayList<EventHandlerView> mostBeremoved = new ArrayList<>();
+        for (EventHandlerView eventHandler : requestedEventHandlerOnViews) {
+            this.just_game_pane.getChildren().remove(eventHandler.vBox);
+        }
+        requestedEventHandlerOnViews.clear();
+    }
+
+    public void remove_a_wire_from_view(Wire wire) {
+        //remove Curves
+        this.just_game_pane.getChildren().remove(wire.getAllOfCurve_Group());
+        for(CurveHandler curveHandler : wire.getCurveHandlers()) {
+            this.just_game_pane.getChildren().remove(curveHandler.getViewCircle());
+        }
+
+        //remove CurveHandlers
+        ArrayList<EventHandlerView> mostBeremoved = new ArrayList<>();
+        for (EventHandlerView eventHandler : requestedEventHandlerOnViews) {
+            if(Objects.equals(eventHandler.wire,wire)){
+                this.just_game_pane.getChildren().remove(eventHandler.vBox);
+                mostBeremoved.add(eventHandler);
+            }
+        }
+        for (EventHandlerView eventHandler : mostBeremoved) {
+            requestedEventHandlerOnViews.remove(eventHandler);
         }
     }
 }

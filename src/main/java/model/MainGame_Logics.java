@@ -526,7 +526,7 @@ public class MainGame_Logics {
 
     public void time_to_remove_wire(Wire wire) {
         System.out.println("remove A Wire");
-        view.just_game_pane.getChildren().remove(wire.getAllOfCurve_Group());
+        view.remove_a_wire_from_view(wire);
         wire.getFirstgate().setWire(null);
         wire.getSecondgate().setWire(null);
         staticDataModel.wires.remove(wire);
@@ -567,6 +567,14 @@ public class MainGame_Logics {
         staticDataModel.wires.add(wire);
 //        System.out.println("number of wires:"+level_gamemodel.wires.size());
         staticDataModel.setLevel_wires_length(staticDataModel.getLevel_wires_length() + wire.getLength());
+    }
+
+    public void update_Level_wires_length() {
+        double newSum=0;
+        for(Wire wire : staticDataModel.wires) {
+            newSum+=wire.getLength();
+        }
+        staticDataModel.setLevel_wires_length(newSum);
     }
 
     public void add_wrong_wire(Wire wire) {

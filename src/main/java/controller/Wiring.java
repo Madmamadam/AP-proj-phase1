@@ -92,11 +92,13 @@ public class Wiring {
                     curveHandler_start_moving(curveHandler,event.getX(),event.getY());
                 }
 
-                //wire adding a curve
+                //Curve handler add to a wire
                 Wire wire = checkReleaseWasOnAWire(event);
                 if (wire != null) {
                     CubicCurve cubicCurve = curveThatClickedOn_find(wire,event);
                     mainModel.controller.request_to_add_curveHandler(wire, event,cubicCurve);
+
+
                 }
             }
 

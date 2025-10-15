@@ -11,7 +11,7 @@ public class Add_level {
         Configg cons =Configg.getInstance();
         if (level == 1) {
             //level constraint
-            level_gamemodel.constraintss.setMaximum_length(3000);
+            level_gamemodel.constraintss.setMaximum_length(5000);
             level_gamemodel.constraintss.setMaximum_noise(5.0);
             level_gamemodel.constraintss.setMaximum_time_sec(40);
             level_gamemodel.constraintss.setMaximum_dead_ratio(0.2);

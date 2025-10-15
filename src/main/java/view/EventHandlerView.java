@@ -5,12 +5,13 @@ import javafx.animation.Timeline;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.layout.VBox;
+import javafx.scene.shape.CubicCurve;
 import javafx.util.Duration;
 import mains.Configg;
 import model.Wire;
 
 public class EventHandlerView {
-    private VBox vBox=new VBox(10);
+    public VBox vBox=new VBox(10);
     private Paintt view;
     int type;
     Label firstLabel;
@@ -20,10 +21,11 @@ public class EventHandlerView {
     Button noButton  = new Button("No");
     Timeline remover ;
     Wire wire;
+    CubicCurve cubicCurve;
 
     private EventHandlerView(){}
 
-    public EventHandlerView(double x , double y, Paintt view, int type, Wire wire){
+    public EventHandlerView(double x , double y, Paintt view, int type, Wire wire, CubicCurve cubicCurve){
         Configg cons = Configg.getInstance();
         System.out.println("in EventHandlerView");
 
@@ -31,6 +33,7 @@ public class EventHandlerView {
         this.type = type;
         this.x = x;
         this.y = y;
+        this.cubicCurve = cubicCurve;
         this.wire = wire;
         vBox.setLayoutX(x);
         vBox.setLayoutY(y);
@@ -56,7 +59,6 @@ public class EventHandlerView {
 
         });
         vBox.getChildren().addAll(firstLabel,secondLabel,yesButton,noButton);
-        view.just_game_pane.getChildren().add(vBox);
         run_remover();
     }
 
@@ -77,7 +79,7 @@ public class EventHandlerView {
         Configg cons = Configg.getInstance();
         if(type==1){
             if(view.controller.money_is_possible_for_add_a_curve_handler()) {
-                view.controller.time_to_add_curveHandler(wire, x, y);
+                view.controller.time_to_add_curveHandler(wire, x, y, cubicCurve);
             }
         }
         else {

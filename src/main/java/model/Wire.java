@@ -14,7 +14,7 @@ public class Wire {
     private double length;
     private String state; //can be 1.satisfied 2.have_bug
     private Group allOFCurves = new Group();
-    private ArrayList<CurveHandler> CurveHandlers = new ArrayList<>();
+    private ArrayList<CurveHandler> curveHandlers = new ArrayList<>();
     public boolean _state_temp;
     Configg cons = Configg.getInstance();
 
@@ -40,7 +40,7 @@ public class Wire {
 
 
     public ArrayList<CurveHandler> getCurveHandlers() {
-        return CurveHandlers;
+        return curveHandlers;
     }
 
     public Gate getFirstgate() {
@@ -80,7 +80,7 @@ public class Wire {
     }
 
     private void update_length_AfterNewAllOfCurves() {
-        length=AllCurvesMethods.calculateWireLength(this);
+        this.setLength(AllCurvesMethods.calculateWireLength(this));
     }
 
     public double getLength() {
@@ -128,18 +128,22 @@ public class Wire {
 
 
     public void newCurveHandlerAdded(CurveHandler curveHandler) {
-        CubicCurve cubicCurve = new CubicCurve();
-        allOFCurves.getChildren().add(cubicCurve);
+        this.curveHandlers.add(curveHandler);
 
     }
     private int curveHandler_index(CurveHandler curveHandler){
         //just count that curve handler what time added
-        for(int i=0;i<CurveHandlers.size();i++){
-            if(CurveHandlers.get(i).equals(curveHandler)){
+        for(int i = 0; i< curveHandlers.size(); i++){
+            if(curveHandlers.get(i).equals(curveHandler)){
                 return i;
             }
         }
         System.out.println("Error cubic curve handler not found");
         return -1;
     }
+
+    public void curveAdded_so_update_needed(){
+        AllCurvesMethods.wire_setLikeSample(this, (CubicCurve) this.getAllOfCurve_Group().getChildren().getFirst());
+        update_length_AfterNewAllOfCurves();
+    };
 }
