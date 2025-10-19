@@ -1,5 +1,6 @@
 package controller;
 
+import javafx.animation.Timeline;
 import javafx.scene.Node;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
@@ -7,11 +8,15 @@ import javafx.scene.shape.CubicCurve;
 import javafx.scene.shape.Polygon;
 import model.*;
 
+import java.util.ArrayList;
+
 public class Wiring {
     public MainGame_Logics mainModel;
     Wire decoy_wire;
     boolean isStartedInGate ;
     boolean isEndedInGate = false;
+    boolean isMovingACurveHandler=false;
+    ArrayList<Timeline> movingTimelines= new ArrayList<>();
 
 
 
@@ -85,10 +90,17 @@ public class Wiring {
 
 
             if(event.getButton() == MouseButton.PRIMARY) {
-                //first check curve handler
+                //check that was on moving a curve handler
+                if(isMovingACurveHandler) {
+                    curve_handler_end_of_moving();
+                }
+
+
+                //second check curve handler
                 CurveHandler curveHandler = checkReleaseWasOnACurveHandler(event);
                 if(curveHandler != null) {
                     System.out.println("curveHandler is founded");
+                    isMovingACurveHandler=true;
                     curveHandler_start_moving(curveHandler,event.getX(),event.getY());
                 }
 
@@ -105,17 +117,29 @@ public class Wiring {
         });
     }
 
+    private void curve_handler_end_of_moving() {
+        isMovingACurveHandler=false;
+    }
+
 
     private void curveHandler_start_moving(CurveHandler curveHandler, double x, double y) {
+        final double[] previousX = {x};
+        final double[] previousY = {y};
+        Mouse
+
         mainModel.view.just_game_pane.addEventHandler(MouseEvent.MOUSE_MOVED ,event -> {
-            double deltaX = event.getX()-x;
-            double deltaY = event.getY()-y;
+            double deltaX = event.getX()- previousX[0];
+            double deltaY = event.getY()- previousY[0];
+            previousX[0] =event.getX();
+            previousY[0] =event.getY();
+
             curveHandler_settle_on_new_location(curveHandler,deltaX ,deltaY );
         });
     }
 
     private void curveHandler_settle_on_new_location(CurveHandler curveHandler, double deltaX, double deltaY) {
-        curveHandler.setSafeX(deltaX);
+        curveHandler.setSafeX(curveHandler.getX()+deltaX);
+        curveHandler.setSafeY(curveHandler.getY()+deltaY);
     }
 
 
@@ -140,7 +164,7 @@ public class Wiring {
 
         for(Wire wire: mainModel.staticDataModel.wires){
             for (CurveHandler curveHandler : wire.getCurveHandlers()) {
-                Node curveHandlerNode = (Node) curveHandler.getViewCircle();
+                Node curveHandlerNode = curveHandler.getViewCircle();
                 if (nodeUnderMouse == curveHandlerNode || curveHandlerNode.equals(nodeUnderMouse) || curveHandlerNode.isHover()) {
                     return curveHandler;
                 }
