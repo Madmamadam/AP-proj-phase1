@@ -165,6 +165,7 @@ public class Wire {
     }
 
     public void wire_not_have_intersect() {
+        this.state="satisfied";
         AllCurvesMethods.wire_setStroke(this,cons.getLine_color());
     }
 }

@@ -58,6 +58,7 @@ public class Controller {
                 for (Wire wire: mainGameViewAndModel.staticDataModel.wires) {
                     if(wire.getState()!="satisfied"){
                         accesss = false;
+                        System.out.println("there is a wire that not satisfied (wire.state = "+wire.getState()+")");
                     }
                 }
             }
