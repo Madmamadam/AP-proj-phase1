@@ -1,11 +1,13 @@
 package controller;
 
+import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
 import javafx.scene.Node;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.shape.CubicCurve;
 import javafx.scene.shape.Polygon;
+import javafx.util.Duration;
 import model.*;
 
 import java.util.ArrayList;
@@ -17,6 +19,8 @@ public class Wiring {
     boolean isEndedInGate = false;
     boolean isMovingACurveHandler=false;
     ArrayList<Timeline> movingTimelines= new ArrayList<>();
+    double mouseLocationX;
+    double mouseLocationY;
 
 
 
@@ -26,6 +30,7 @@ public class Wiring {
 
 
     public void run_listeners(){
+
         //running till signal_play button pressed
         //System.out.println("in wiring");
 
@@ -95,51 +100,56 @@ public class Wiring {
                     curve_handler_end_of_moving();
                 }
 
+                else {
+                    //second check curve handler
+                    CurveHandler curveHandler = checkReleaseWasOnACurveHandler(event);
+                    if (curveHandler != null) {
+                        System.out.println("curveHandler is founded");
+                        isMovingACurveHandler = true;
+                        curveHandler_start_moving(curveHandler);
+                    }
 
-                //second check curve handler
-                CurveHandler curveHandler = checkReleaseWasOnACurveHandler(event);
-                if(curveHandler != null) {
-                    System.out.println("curveHandler is founded");
-                    isMovingACurveHandler=true;
-                    curveHandler_start_moving(curveHandler,event.getX(),event.getY());
-                }
-
-                //Curve handler add to a wire
-                Wire wire = checkReleaseWasOnAWire(event);
-                if (wire != null) {
-                    CubicCurve cubicCurve = curveThatClickedOn_find(wire,event);
-                    mainModel.controller.request_to_add_curveHandler(wire, event,cubicCurve);
+                    //Curve handler add to a wire
+                    Wire wire = checkReleaseWasOnAWire(event);
+                    if (wire != null) {
+                        CubicCurve cubicCurve = curveThatClickedOn_find(wire, event);
+                        mainModel.controller.request_to_add_curveHandler(wire, event, cubicCurve);
 
 
+                    }
                 }
             }
 
         });
-    }
-
-    private void curve_handler_end_of_moving() {
-        isMovingACurveHandler=false;
-    }
-
-
-    private void curveHandler_start_moving(CurveHandler curveHandler, double x, double y) {
-        final double[] previousX = {x};
-        final double[] previousY = {y};
-        Mouse
-
-        mainModel.view.just_game_pane.addEventHandler(MouseEvent.MOUSE_MOVED ,event -> {
-            double deltaX = event.getX()- previousX[0];
-            double deltaY = event.getY()- previousY[0];
-            previousX[0] =event.getX();
-            previousY[0] =event.getY();
-
-            curveHandler_settle_on_new_location(curveHandler,deltaX ,deltaY );
+        //capture mouse location
+        mainModel.view.just_game_pane.addEventHandler(MouseEvent.MOUSE_MOVED,event -> {
+            this.mouseLocationX=event.getX();
+            this.mouseLocationY=event.getY();
         });
     }
 
-    private void curveHandler_settle_on_new_location(CurveHandler curveHandler, double deltaX, double deltaY) {
-        curveHandler.setSafeX(curveHandler.getX()+deltaX);
-        curveHandler.setSafeY(curveHandler.getY()+deltaY);
+    private void curve_handler_end_of_moving() {
+        System.out.println("curve_handler_end_of_moving");
+        isMovingACurveHandler=false;
+        for (Timeline timeline : movingTimelines) {
+            timeline.pause();
+        }
+    }
+
+
+    private void curveHandler_start_moving(CurveHandler curveHandler) {
+        Timeline movingTimeline = new Timeline(new KeyFrame(Duration.millis(0.17),event -> {
+            curveHandler_settle_on_new_location(curveHandler,mouseLocationX,mouseLocationY);
+        }));
+        movingTimelines.add(movingTimeline);
+        movingTimeline.setCycleCount(Timeline.INDEFINITE);
+        movingTimeline.play();
+    }
+
+    private void curveHandler_settle_on_new_location(CurveHandler curveHandler, double x, double y) {
+        curveHandler.setSafeXY(x,y);
+        curveHandler.update_two_curves();
+        mainModel.update_Level_wires_length();
     }
 
 

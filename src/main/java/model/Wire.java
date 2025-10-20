@@ -79,7 +79,7 @@ public class Wire {
         update_length_AfterNewAllOfCurves();
     }
 
-    private void update_length_AfterNewAllOfCurves() {
+    public void update_length_AfterNewAllOfCurves() {
         this.setLength(AllCurvesMethods.calculateWireLength(this));
     }
 

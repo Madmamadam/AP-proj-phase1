@@ -530,8 +530,7 @@ public class MainGame_Logics {
         wire.getFirstgate().setWire(null);
         wire.getSecondgate().setWire(null);
         staticDataModel.wires.remove(wire);
-        staticDataModel.setLevel_wires_length(staticDataModel.getLevel_wires_length() - wire.getLength());
-
+        update_Level_wires_length();
     }
 
     public void wire_check_to_add(Wire wire) {
@@ -566,7 +565,7 @@ public class MainGame_Logics {
         wire.getSecondgate().setWire(wire);
         staticDataModel.wires.add(wire);
 //        System.out.println("number of wires:"+level_gamemodel.wires.size());
-        staticDataModel.setLevel_wires_length(staticDataModel.getLevel_wires_length() + wire.getLength());
+        update_Level_wires_length();
     }
 
     public void update_Level_wires_length() {

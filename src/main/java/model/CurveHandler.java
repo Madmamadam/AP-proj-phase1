@@ -31,16 +31,25 @@ public class CurveHandler {
         if(wire!=null){
             wire.newCurveHandlerAdded(this);
         }
+        add_second_curve_and_update_first_curve();
+    }
+
+    private void add_second_curve_and_update_first_curve() {
         double endX=firstCurve.getEndX();
         double endY=firstCurve.getEndY();
         AllCurvesMethods.locateACurve(firstCurve,firstCurve.getStartX(),firstCurve.getStartY(),this.x, this.y);
         secondAddedCurve = new CubicCurve();
         AllCurvesMethods.locateACurve(secondAddedCurve,this.x,this.y,endX,endY);
-
-        update_wire();
+        add_second_curve_to_wire();
     }
 
-    private void update_wire() {
+    public void update_two_curves(){
+        AllCurvesMethods.locateACurve(firstCurve,firstCurve.getStartX(),firstCurve.getStartY(),this.x, this.y);
+        AllCurvesMethods.locateACurve(secondAddedCurve,this.x,this.y,secondAddedCurve.getEndX(),secondAddedCurve.getEndY());
+        wire.curveAdded_so_update_needed();
+    }
+
+    private void add_second_curve_to_wire() {
         if(wire!=null){
             int index = wire.getAllOfCurve_Group().getChildren().indexOf(firstCurve);
             wire.getAllOfCurve_Group().getChildren().add(index+1,secondAddedCurve);
@@ -69,4 +78,14 @@ public class CurveHandler {
         return viewCircle;
     }
 
+    public void updateCurves() {
+    }
+
+    public void setSafeXY(double x, double y) {
+        this.x=x;
+        this.y=y;
+        viewCircle.setCenterX(x);
+        viewCircle.setCenterY(y);
+        this.wire.update_length_AfterNewAllOfCurves();
+    }
 }
