@@ -2,6 +2,7 @@ package model;
 
 import controller.AllCurvesMethods;
 import javafx.scene.Group;
+import javafx.scene.paint.Color;
 import javafx.scene.shape.CubicCurve;
 import mains.Configg;
 
@@ -12,10 +13,10 @@ public class Wire {
     private Gate firstgate;
     private Gate secondgate;
     private double length;
-    private String state; //can be 1.satisfied 2.have_bug
+    private String state; //can be 1.satisfied 2.collision_with_sysboxs 3.
     private Group allOFCurves = new Group();
     private ArrayList<CurveHandler> curveHandlers = new ArrayList<>();
-    public boolean _state_temp;
+    public boolean ___state_temp;
     Configg cons = Configg.getInstance();
 
 
@@ -50,7 +51,7 @@ public class Wire {
     public void setFirstgate(Gate firstgate) {
         this.firstgate = firstgate;
         if(secondgate!= null){
-            just_isSafeTo_DrawCurve();
+            just_isSafeTo_DrawFirstCurve();
         }
     }
 
@@ -63,12 +64,21 @@ public class Wire {
         this.secondgate = secondgate;
 
         if(firstgate!= null){
-            just_isSafeTo_DrawCurve();
+            just_isSafeTo_DrawFirstCurve();
         }
     }
 
-    private void just_isSafeTo_DrawCurve() {
-        System.out.println("just_isSafeTo_DrawCurve");
+
+    public String getState() {
+        return state;
+    }
+
+    public void setState(String state) {
+        this.state = state;
+    }
+
+    private void just_isSafeTo_DrawFirstCurve() {
+        System.out.println("just_isSafeTo_DrawFirstCurve");
         CubicCurve firstCurve = new CubicCurve();
         AllCurvesMethods.locateACurve(firstCurve,firstgate.getX(),firstgate.getY(),secondgate.getX(),secondgate.getY());
         firstCurve.setStrokeWidth(cons.getLine_width());
@@ -77,6 +87,7 @@ public class Wire {
         allOFCurves.getChildren().add(firstCurve);
 
         update_length_AfterNewAllOfCurves();
+
     }
 
     public void update_length_AfterNewAllOfCurves() {
@@ -146,4 +157,14 @@ public class Wire {
         AllCurvesMethods.wire_setLikeSample(this, (CubicCurve) this.getAllOfCurve_Group().getChildren().getFirst());
         update_length_AfterNewAllOfCurves();
     };
+
+    public void wire_have_intersect() {
+        this.state="collision_with_sysboxs";
+        System.out.println("changing the color");
+        AllCurvesMethods.wire_setStroke(this, cons.getIntersected_line_color());
+    }
+
+    public void wire_not_have_intersect() {
+        AllCurvesMethods.wire_setStroke(this,cons.getLine_color());
+    }
 }

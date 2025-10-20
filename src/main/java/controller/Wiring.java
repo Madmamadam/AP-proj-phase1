@@ -7,6 +7,7 @@ import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.shape.CubicCurve;
 import javafx.scene.shape.Polygon;
+import javafx.scene.shape.Shape;
 import javafx.util.Duration;
 import model.*;
 
@@ -21,11 +22,14 @@ public class Wiring {
     ArrayList<Timeline> movingTimelines= new ArrayList<>();
     double mouseLocationX;
     double mouseLocationY;
-
+    Methods methods;
+    private ArrayList<CurveHandler> movingCurveHandelers = new ArrayList<>();
 
 
     public Wiring(MainGame_Logics MainModel) {
         this.mainModel = MainModel;
+        Methods methods = new Methods(mainModel);
+
     }
 
 
@@ -132,18 +136,24 @@ public class Wiring {
         System.out.println("curve_handler_end_of_moving");
         isMovingACurveHandler=false;
         for (Timeline timeline : movingTimelines) {
-            timeline.pause();
+            timeline.stop();
         }
+        for (CurveHandler curveHandler : movingCurveHandelers) {
+            check_the_wire_collisions(curveHandler.getWire());
+        }
+        movingCurveHandelers.clear();
     }
 
 
     private void curveHandler_start_moving(CurveHandler curveHandler) {
-        Timeline movingTimeline = new Timeline(new KeyFrame(Duration.millis(0.17),event -> {
+        Timeline movingTimeline = new Timeline(new KeyFrame(Duration.millis(0.17*2),event -> {
             curveHandler_settle_on_new_location(curveHandler,mouseLocationX,mouseLocationY);
         }));
         movingTimelines.add(movingTimeline);
+        movingCurveHandelers.add(curveHandler);
         movingTimeline.setCycleCount(Timeline.INDEFINITE);
         movingTimeline.play();
+
     }
 
     private void curveHandler_settle_on_new_location(CurveHandler curveHandler, double x, double y) {
@@ -219,5 +229,49 @@ public class Wiring {
         decoy_wire.setFirstgate(gate);
         isStartedInGate=true;
     }
+//    private void check_All_wire_collisions(){
+//        //what happen when a wire just intersect with himself sysbox
+//        for (Sysbox sysbox:mainModel.staticDataModel.sysboxes){
+//            for (Wire wire:mainModel.staticDataModel.wires){
+//                for (int i=0; i< wire.getAllOfCurve_Group().getChildren().size();i++){
+//                    CubicCurve cubicCurve = (CubicCurve) wire.getAllOfCurve_Group().getChildren().get(i);
+//                    Shape intersect = Shape.intersect(sysbox.getRectangle(),cubicCurve);
+//                    if(check_wire_collision_area(sysbox,wire,intersect)){
+//                        wire.wire_have_intersect();
+//                    }
+//                }
+//            }
+//        }
+//    }
 
+    public void check_the_wire_collisions(Wire wire){
+        System.out.println("in Check_the_wire_collisions");
+        boolean intersects = false;
+        for (Sysbox sysbox:mainModel.staticDataModel.sysboxes){
+            for (int i=0; i< wire.getAllOfCurve_Group().getChildren().size();i++){
+                CubicCurve cubicCurve = (CubicCurve) wire.getAllOfCurve_Group().getChildren().get(i);
+                Shape intersect = Shape.intersect(sysbox.getRectangle(),cubicCurve);
+                if(check_wire_collision_area(sysbox,wire,intersect)){
+                    wire.wire_have_intersect();
+                    intersects = true;
+                    break;
+                }
+            }
+            if (intersects) break;
+        }
+        if(!intersects) {
+            //so not intersect
+            wire.wire_not_have_intersect();
+        }
+    }
+
+    private boolean check_wire_collision_area(Sysbox sysbox, Wire wire, Shape intersect) {
+        Shape diffFormGate1=Shape.subtract(intersect,wire.getFirstgate().poly);
+        Shape diffFormBothGate=Shape.subtract(diffFormGate1,wire.getSecondgate().poly);
+        if(diffFormBothGate.getBoundsInLocal().isEmpty()){
+            return false;
+        }
+        System.out.println("catch a real intersect");
+        return true;
+    }
 }

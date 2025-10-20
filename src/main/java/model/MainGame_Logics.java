@@ -558,12 +558,15 @@ public class MainGame_Logics {
     private void corrected_wire_add_to_view(Wire wire) {
         //paint it forever
         view.just_game_pane.getChildren().add(wire.getAllOfCurve_Group());
+
     }
 
     private void corrected_wire_add_to_model(Wire wire) {
         wire.getFirstgate().setWire(wire);
         wire.getSecondgate().setWire(wire);
         staticDataModel.wires.add(wire);
+        wire.setState("satisfied");
+        wiring.check_the_wire_collisions(wire);
 //        System.out.println("number of wires:"+level_gamemodel.wires.size());
         update_Level_wires_length();
     }

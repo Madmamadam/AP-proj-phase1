@@ -55,6 +55,11 @@ public class Controller {
                 if(mainGameViewAndModel.staticDataModel.getLevel_wires_length()>mainGameViewAndModel.staticDataModel.constraintss.getMaximum_length()){
                     accesss = false;
                 }
+                for (Wire wire: mainGameViewAndModel.staticDataModel.wires) {
+                    if(wire.getState()!="satisfied"){
+                        accesss = false;
+                    }
+                }
             }
             if(accesss){
                 mainGameViewAndModel.time_to_stop_wiring();

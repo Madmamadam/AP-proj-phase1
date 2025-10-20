@@ -26,7 +26,7 @@ public class CurveHandler {
 
         viewCircle.setCenterX(x);
         viewCircle.setCenterY(y);
-        viewCircle.setRadius(cons.getCurveHandler_radius()+10);
+        viewCircle.setRadius(cons.getCurveHandler_radius());
         viewCircle.setFill(cons.getCurveHandler_color());
         if(wire!=null){
             wire.newCurveHandlerAdded(this);
@@ -66,6 +66,11 @@ public class CurveHandler {
     public double getY() {
         return y;
     }
+
+    public Wire getWire() {
+        return wire;
+    }
+
     public void setSafeX(double x) {
         this.x = x;
         viewCircle.setCenterX(x);

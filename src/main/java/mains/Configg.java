@@ -60,6 +60,7 @@ public class Configg {
 
     private Color line_color=Color.GREEN;
     private Color wrong_line_color=Color.RED;
+    private Color intersected_line_color=Color.ORANGE;
     private double seeing_wrong_line_duration=1;
     private double line_width=4;
 
@@ -67,8 +68,12 @@ public class Configg {
     private double traiangle_signal_sekke_added =2;
 
     private double CurveHandler_radius=line_width*1.2;
-    private Color CurveHandler_color=Color.YELLOW;
+    private Color CurveHandler_color=Color.BROWN;
 
+
+    public Color getIntersected_line_color() {
+        return intersected_line_color;
+    }
 
     public Color getCurveHandler_color() {
         return CurveHandler_color;
