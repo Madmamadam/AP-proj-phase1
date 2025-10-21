@@ -11,6 +11,7 @@ public class Signal {
     private double length_on_wire;
     private Wire linked_wire;
     private boolean is_updated;
+    double each_frame_length_delta; //that means velocity
 
     private double x;
     private double y;
@@ -141,5 +142,13 @@ public class Signal {
 
     public void setIs_updated(boolean is_updated) {
         this.is_updated = is_updated;
+    }
+
+    public double getEach_frame_length_delta() {
+        return each_frame_length_delta;
+    }
+
+    public void setEach_frame_length_delta(double each_frame_length_delta) {
+        this.each_frame_length_delta = each_frame_length_delta;
     }
 }

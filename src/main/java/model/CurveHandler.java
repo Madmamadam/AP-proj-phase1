@@ -14,12 +14,21 @@ public class CurveHandler {
     CubicCurve firstCurve;
     CubicCurve secondAddedCurve;
     Circle viewCircle=new Circle();
+    boolean previousNeighborIsGate = false;
+    boolean nextNeighborIsGate = false;
 
     public CurveHandler(double x, double y, Wire wire, CubicCurve cubicCurve) {
         this.x = x;
         this.y = y;
         this.wire=wire;
         this.firstCurve=cubicCurve;
+        int index = wire.getAllOfCurve_Group().getChildren().indexOf(cubicCurve);
+        if(index==0){
+            previousNeighborIsGate=true;
+        }
+        if(index==wire.getAllOfCurve_Group().getChildren().size()-1){
+            nextNeighborIsGate=true;
+        }
 
         Node viewCirclenode =(Node) viewCircle;
 
@@ -37,15 +46,16 @@ public class CurveHandler {
     private void add_second_curve_and_update_first_curve() {
         double endX=firstCurve.getEndX();
         double endY=firstCurve.getEndY();
-        AllCurvesMethods.locateACurve(firstCurve,firstCurve.getStartX(),firstCurve.getStartY(),this.x, this.y);
+        //because curve handler is not a gate absolutely
+        AllCurvesMethods.locateACurve(firstCurve,firstCurve.getStartX(),firstCurve.getStartY(),this.x, this.y,previousNeighborIsGate,false);
         secondAddedCurve = new CubicCurve();
-        AllCurvesMethods.locateACurve(secondAddedCurve,this.x,this.y,endX,endY);
+        AllCurvesMethods.locateACurve(secondAddedCurve,this.x,this.y,endX,endY,false,nextNeighborIsGate);
         add_second_curve_to_wire();
     }
 
     public void update_two_curves(){
-        AllCurvesMethods.locateACurve(firstCurve,firstCurve.getStartX(),firstCurve.getStartY(),this.x, this.y);
-        AllCurvesMethods.locateACurve(secondAddedCurve,this.x,this.y,secondAddedCurve.getEndX(),secondAddedCurve.getEndY());
+        AllCurvesMethods.locateACurve(firstCurve,firstCurve.getStartX(),firstCurve.getStartY(),this.x, this.y,previousNeighborIsGate,false);
+        AllCurvesMethods.locateACurve(secondAddedCurve,this.x,this.y,secondAddedCurve.getEndX(),secondAddedCurve.getEndY(),false,nextNeighborIsGate);
         wire.curveAdded_so_update_needed();
     }
 

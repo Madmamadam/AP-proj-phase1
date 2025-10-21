@@ -80,7 +80,7 @@ public class Wire {
     private void just_isSafeTo_DrawFirstCurve() {
         System.out.println("just_isSafeTo_DrawFirstCurve");
         CubicCurve firstCurve = new CubicCurve();
-        AllCurvesMethods.locateACurve(firstCurve,firstgate.getX(),firstgate.getY(),secondgate.getX(),secondgate.getY());
+        AllCurvesMethods.locateACurve(firstCurve,firstgate.getX(),firstgate.getY(),secondgate.getX(),secondgate.getY(),true,true);
         firstCurve.setStrokeWidth(cons.getLine_width());
         firstCurve.setStroke(cons.getLine_color());
         firstCurve.setFill(null);

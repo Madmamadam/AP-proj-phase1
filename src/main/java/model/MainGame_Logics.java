@@ -208,7 +208,7 @@ public class MainGame_Logics {
                 }
                 //speed adjust
                 signal_one_step_on_wire(signal);
-                signal.setLength_on_wire(signal.getLength_on_wire()+cons.getDefault_delta_wire_length());
+//                signal.setLength_on_wire(signal.getLength_on_wire()+cons.getDefault_delta_wire_length());
                 //
                 if(signal.getLength_on_wire()>signal.getLinked_wire().getLength()){
                     signal_go_to_bank(signal);

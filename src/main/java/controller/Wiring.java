@@ -25,7 +25,6 @@ public class Wiring {
     Methods methods;
     private ArrayList<CurveHandler> movingCurveHandelers = new ArrayList<>();
 
-
     public Wiring(MainGame_Logics MainModel) {
         this.mainModel = MainModel;
         Methods methods = new Methods(mainModel);

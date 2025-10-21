@@ -49,18 +49,27 @@ public class AllCurvesMethods {
 
     }
 
-    public static void locateACurve(CubicCurve cubicCurve,double firstX,double firstY,double lastX,double lastY){
-        double horizontal_distance = lastX - firstX;
+    public static void locateACurve(CubicCurve cubicCurve,double firstX,double firstY,double lastX,double lastY,boolean firstLocationIsGate,boolean secondLocationIsGate){
         Configg cons=Configg.getInstance();
-
+        double horizontal_distance=lastX-firstX;
         cubicCurve.setStartX(firstX);
         cubicCurve.setStartY(firstY);
         cubicCurve.setEndX(lastX);
         cubicCurve.setEndY(lastY);
-        cubicCurve.setControlX1(firstX+cons.getControlXConstant());
         cubicCurve.setControlY1(firstY);
-        cubicCurve.setControlX2(lastX -cons.getControlXConstant());
         cubicCurve.setControlY2(lastY);
+        if(firstLocationIsGate || horizontal_distance>=0) {
+            cubicCurve.setControlX1(firstX + cons.getControlXConstant());
+        }
+        else {
+            cubicCurve.setControlX1(firstX - cons.getControlXConstant());
+        }
+        if(secondLocationIsGate || horizontal_distance>=0) {
+            cubicCurve.setControlX2(lastX - cons.getControlXConstant());
+        }
+        else {
+            cubicCurve.setControlX2(lastX + cons.getControlXConstant());
+        }
     }
 
 

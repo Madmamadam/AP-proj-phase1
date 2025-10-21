@@ -15,6 +15,7 @@ public class Sysbox {
     private boolean starter;
 
 
+
     public Rectangle getRectangle() {
         return rectangle;
     }
