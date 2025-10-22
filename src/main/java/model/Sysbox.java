@@ -13,8 +13,16 @@ public class Sysbox {
     public ArrayList<Gate> inner_gates = new ArrayList<>(); ;
     public ArrayList<Gate> outer_gates = new ArrayList<>(); ;
     private boolean starter;
+    private boolean healthy =true;
 
 
+    public boolean isHealthy() {
+        return healthy;
+    }
+
+    public void setHealthy(boolean healthy) {
+        this.healthy = healthy;
+    }
 
     public Rectangle getRectangle() {
         return rectangle;

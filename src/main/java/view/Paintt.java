@@ -46,6 +46,11 @@ public class Paintt {
     private ArrayList<EventHandlerView> requestedEventHandlerOnViews = new ArrayList<>();
 
 
+    public  Paintt(){
+        initial_UI();
+    }
+
+
 
 
     public void HUD_signal_run_update() {

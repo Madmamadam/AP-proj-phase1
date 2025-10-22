@@ -1,6 +1,7 @@
 package model;
 
 import javafx.scene.shape.Polygon;
+import mains.Configg;
 
 public class Signal {
 //  anything
@@ -11,7 +12,7 @@ public class Signal {
     private double length_on_wire;
     private Wire linked_wire;
     private boolean is_updated;
-    double each_frame_length_delta; //that means velocity
+    private double each_frame_length_delta ; //that means velocity
 
     private double x;
     private double y;
@@ -22,6 +23,7 @@ public class Signal {
     private double y_ekhtelaf;
 
     public Signal(Typee typee) {
+        Configg cons = Configg.getInstance();
         x_ekhtelaf=0.0;
         y_ekhtelaf=0.0;
         noise=0.0;
@@ -29,6 +31,7 @@ public class Signal {
         is_updated=false;
         this.typee=typee;
         state="on_wire";
+        each_frame_length_delta = cons.getDefault_delta_wire_length();
     }
     public Signal(Typee typee,Sysbox sysbox) {
         x_ekhtelaf=0.0;

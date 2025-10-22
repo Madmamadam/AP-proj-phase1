@@ -5,6 +5,7 @@ import javafx.scene.paint.Color;
 public class Configg {
     private int bank_capacity=5;
     private double default_delta_wire_length =0.5;
+    private double default_delta_wire_acceleration =0.005;
 
     private double virtual_frequency=60*200;
 
@@ -16,9 +17,10 @@ public class Configg {
     private double impulse_show_time=0.5;
     private double impulse_resttime=0.5;
 
-    private double impulse_delta_r=5;
+    private double impulse_delta_r=2;
     private double impulse_move_time=0.3;
 
+    private double maximum_acceptable_speed = 1.5;
 
     private double health_bar_width=4;
     private double health_bar_back_length=250;
@@ -33,6 +35,7 @@ public class Configg {
     private double border=0;  // باگ داره
     private Color off_indicator_color=Color.RED;
     private Color on_indicator_color=Color.BLUE;
+    private Color unHealthy_indicator_color=Color.YELLOW;
     private Color sysbox_color=Color.GRAY;
 
 
@@ -70,6 +73,14 @@ public class Configg {
     private double CurveHandler_radius=line_width*1.2;
     private Color CurveHandler_color=Color.BROWN;
 
+
+    public Color getUnHealthy_indicator_color() {
+        return unHealthy_indicator_color;
+    }
+
+    public double getMaximum_acceptable_speed() {
+        return maximum_acceptable_speed;
+    }
 
     public Color getIntersected_line_color() {
         return intersected_line_color;
@@ -337,5 +348,9 @@ public class Configg {
 
     public double getCurve_handler_cost() {
         return curve_handler_cost;
+    }
+
+    public double getDefault_delta_wire_acceleration() {
+        return default_delta_wire_acceleration;
     }
 }

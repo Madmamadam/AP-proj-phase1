@@ -223,6 +223,7 @@ public class Controller {
         CurveHandler curveHandler = new CurveHandler(x,y,wire,cubicCurve);
         view.just_game_pane.getChildren().add(curveHandler.getViewCircle());
         mainGameViewAndModel.update_Level_wires_length();
+        mainGameViewAndModel.wiring.check_the_wire_collisions(wire);
 
     }
 
