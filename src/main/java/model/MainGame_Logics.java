@@ -33,7 +33,6 @@ public class MainGame_Logics {
     public boolean user_changing=true;
     public boolean virtual_run = false;
     private boolean first_time = true;
-    public static Stage primaryStage_static;
     public boolean dynamic_isRunning=true;
 
 
@@ -100,10 +99,10 @@ public class MainGame_Logics {
 //        -------------------------------------
 //    }
 
-    public void start(Stage primaryStage, int l) throws Exception {
+    public void start(int l) throws Exception {
 
         level =l;
-        primaryStage_static = primaryStage;
+//        primaryStage_static = primaryStageClone;
 
 
 //        staticDataModel.stop_wiring = false;
@@ -115,7 +114,7 @@ public class MainGame_Logics {
 
 
         Add_level.start(level,staticDataModel);
-        view.initial_UI(primaryStage);
+        view.initial_model_UI_on_primaryStage();
 
 
 //        paintt.addtopane_signals();
@@ -555,12 +554,11 @@ public class MainGame_Logics {
             return 1;
     }
 
-    public void time_to_restart(Stage primaryStage) throws Exception {
+    public void time_to_restart() throws Exception {
         System.out.println("stop_wiring=false command");
         staticDataModel.stop_wiring=false;
-        primaryStage.hide();
-        this.start(primaryStage,level);
-
+//        primaryStageClone.hide();
+        this.start(level);
     }
 
     public void reset_all_noise() {

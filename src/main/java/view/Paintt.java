@@ -32,13 +32,17 @@ import static mains.Start_menu.static_market_pane;
 public class Paintt {
     public Controller controller;
 
+    public Stage primaryStageClone;
+
     public Pane just_game_pane = new Pane();
     public Pane HUDpane = new Pane();
     public StackPane main_game_root = new StackPane(just_game_pane, HUDpane);
     static Slider virtualTimeSlider = new Slider(0, 1, 0.0);
     private Text timetext = new Text("");
     public GameTimer gameTimer = new GameTimer();
-    static Line showline = new Line();
+    private Line showline = new Line();
+    private HBox hudControls= new HBox();
+    private Line backline = new Line();
     public Pane win_ending_pane=new Pane();
     public Pane lose_ending_pane=new Pane();
     public Scene end_stage_scene ;
@@ -46,8 +50,12 @@ public class Paintt {
     private ArrayList<EventHandlerView> requestedEventHandlerOnViews = new ArrayList<>();
 
 
+
+
     public  Paintt(){
-        initial_UI();
+        HUDpane.getChildren().add(backline);
+        HUDpane.getChildren().add(showline);
+        HUDpane.getChildren().add(hudControls);
     }
 
 
@@ -131,13 +139,14 @@ public class Paintt {
         }
     }
     //have bug for restart(see usage)
-    public void initial_UI(Stage primaryStage){
+    //load sysbox and model first view , must be added after model start
+    public void initial_model_UI_on_primaryStage(){
         StackPane.setAlignment(HUDpane, Pos.TOP_LEFT); // مکان کل HUDpane
         HUDpane.setStyle("-fx-background-color: rgba(92,82,82,0.5);");
         HUDpane.setPrefWidth(300);
         HUDpane.setPrefHeight(100);
         HUDpane.setMaxHeight(Region.USE_PREF_SIZE);
-        setupHUD(primaryStage);
+        setupHUD(primaryStageClone);
 
         setup_ending_panes();
         setup_market_pane();
@@ -153,11 +162,11 @@ public class Paintt {
 
 
         Scene main_game_scene = new Scene(main_game_root);
-        primaryStage.setScene(main_game_scene);
-        primaryStage.setFullScreenExitKeyCombination(KeyCombination.NO_MATCH); // غیرفعال‌سازی ESC
-        primaryStage.setFullScreen(true);
-        primaryStage.setScene(main_game_scene);
-        primaryStage.show();
+        primaryStageClone.setScene(main_game_scene);
+        primaryStageClone.setFullScreenExitKeyCombination(KeyCombination.NO_MATCH); // غیرفعال‌سازی ESC
+        primaryStageClone.setFullScreen(true);
+        primaryStageClone.setScene(main_game_scene);
+        primaryStageClone.show();
         controller.signal_log_enable(main_game_scene);
         addtopane_sysboxsandindicators();
         addtopane_gates();
@@ -284,7 +293,10 @@ public class Paintt {
         //نوار طول سیم
         Configg cons = Configg.getInstance();
 
-        Line backline = new Line(700,25,700+cons.getHealth_bar_back_length(),25);
+        backline.setStartX(700);
+        backline.setStartY(25);
+        backline.setEndX(700+cons.getHealth_bar_back_length());
+        backline.setEndY(25);
         backline.setStrokeWidth(cons.getHealth_bar_width());
         backline.setStroke(cons.getHealth_bar_back_color());
 
@@ -312,7 +324,6 @@ public class Paintt {
             runStopButton.setText(controller.mainGameViewAndModel.staticDataModel.stop_wiring ? "wiring" : "Run");
         });
 
-        double time = gameTimer.getTime_sec();
         timetext.setText(String.format("max Time: %.1fs",  controller.mainGameViewAndModel.staticDataModel.constraintss.getMaximum_time_sec()));
 
 
@@ -331,15 +342,15 @@ public class Paintt {
 
 
         // HBox برای چیدن عناصر کنار هم
-        HBox hudControls = new HBox(10); // فاصله بین اجزا
+        hudControls.setSpacing(10);// فاصله بین اجزا
         hudControls.setPadding(new Insets(10));
         hudControls.setAlignment(Pos.TOP_LEFT);
         hudControls.getChildren().addAll(runStopButton, volumeLabel, virtualTimeSlider, timetext , marketButton);
 
-        // اضافه کردن به HUDpane
-        HUDpane.getChildren().add(hudControls);
-        HUDpane.getChildren().add(backline);
-        HUDpane.getChildren().add(showline);
+//         اضافه کردن به HUDpane
+//        HUDpane.getChildren().add(hudControls);
+//        HUDpane.getChildren().add(backline);
+//        HUDpane.getChildren().add(showline);
     }
 
     public void show_ending_stage() {

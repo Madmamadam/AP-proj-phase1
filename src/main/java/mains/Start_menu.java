@@ -182,17 +182,17 @@ public class Start_menu extends Application {
 
         newGameButton.setOnAction(event ->{
             try {
-                MainMenuController.newGamebutton_Clicked();
+                MainMenuController.newGameButton_Clicked();
 
             } catch (Exception e) {
                 throw new RuntimeException(e);
             }
         });
 
-//        primaryStage.setOnHidden(event -> {
+//        primaryStageClone.setOnHidden(event -> {
 //            Platform.runLater(() -> {
-//                primaryStage.setScene(menuscene);
-//                primaryStage.show();
+//                primaryStageClone.setScene(menuscene);
+//                primaryStageClone.show();
 //            });
 //        });
 

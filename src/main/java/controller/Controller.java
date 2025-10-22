@@ -30,7 +30,7 @@ public class Controller {
 
     public void run_stop_button_pressed(Stage primaryStage) throws Exception {
         if(mainGameViewAndModel.staticDataModel.stop_wiring){
-            mainGameViewAndModel.time_to_restart(primaryStage);
+            mainGameViewAndModel.time_to_restart();
         }
         else {
             boolean accesss =true;
@@ -111,12 +111,12 @@ public class Controller {
     }
 
     public void restartBtn_clicked() throws Exception {
-        mainGameViewAndModel.time_to_restart(primaryStage_static);
+        mainGameViewAndModel.time_to_restart();
     }
 
     public void nextLevelBtn_clicked() {
         try {
-            this.mainGameViewAndModel.start(primaryStage_static,2);
+            this.mainGameViewAndModel.start(2);
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
