@@ -14,6 +14,12 @@ public class Sysbox {
     public ArrayList<Gate> outer_gates = new ArrayList<>(); ;
     private boolean starter;
     private boolean healthy =true;
+    private String state; // 1.casual 2.data_spying 3.ddos_attacker 4.vpn
+
+
+    public String getState() {
+        return state;
+    }
 
 
     public boolean isHealthy() {
@@ -79,6 +85,11 @@ public class Sysbox {
         this.indicator_rectangle.setX(this.rectangle.getX()+this.rectangle.getWidth()/2-this.indicator_rectangle.getWidth()/2);
         this.indicator_rectangle.setY(this.rectangle.getY()+cons.getIndicator_y_from_head());
         this.signal_bank=new ArrayList<>();
+        state="casual";
+    }
+    public Sysbox(int x , int y,String state){
+        this(x,y);
+        this.state=state;
     }
     public Sysbox(int x ,int y, int width, int height) {
         Configg cons=Configg.getInstance();
@@ -92,6 +103,11 @@ public class Sysbox {
         this.indicator_rectangle.setX(this.rectangle.getX()+this.rectangle.getWidth()/2-this.indicator_rectangle.getWidth()/2);
         this.indicator_rectangle.setY(this.rectangle.getY()+cons.getIndicator_y_from_head());
         this.signal_bank=new ArrayList<>();
+        state="casual";
+    }
+    public Sysbox(int x ,int y, int width, int height, String state) {
+        this(x, y, width, height);
+        this.state=state;
     }
 
     public Sysbox getClone(){

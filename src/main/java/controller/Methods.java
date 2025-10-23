@@ -71,75 +71,218 @@ public class Methods {
         if(mainGameModel.virtual_run){
             System.out.println("virtual run polygon");
         }
-
-        if(Objects.equals(signal.getTypee().getShapeName(),"rectangle")){
-            poly.getPoints().addAll(signal.getX()-cons.getSignal_rectangle_width()/2,signal.getY()-cons.getSignal_rectangle_height()/2);
-            poly.getPoints().addAll(signal.getX()-cons.getSignal_rectangle_width()/2,signal.getY()+cons.getSignal_rectangle_height()/2);
-            poly.getPoints().addAll(signal.getX()+cons.getSignal_rectangle_width()/2,signal.getY()+cons.getSignal_rectangle_height()/2);
-            poly.getPoints().addAll(signal.getX()+cons.getSignal_rectangle_width()/2,signal.getY()-cons.getSignal_rectangle_height()/2);
-            poly.setFill(cons.getSignal_rectangle_color());
-            System.out.println("add rectangle");
-        }
-        if(Objects.equals(signal.getTypee().getShapeName(),"triangle")){
-            for (int i=0 ; i<3;i++) {
-                poly.getPoints().addAll(signal.getX()-cons.getSignal_triangle_radius()*sin(i*2*pi/3), signal.getY() - cons.getSignal_triangle_radius()*cos(i*2*pi/3));
+        if(!signal.isSecure()) {
+            if (Objects.equals(signal.getTypee().getShapeName(), "rectangle")) {
+                poly.getPoints().addAll(signal.getX() - cons.getSignal_rectangle_width() / 2, signal.getY() - cons.getSignal_rectangle_height() / 2);
+                poly.getPoints().addAll(signal.getX() - cons.getSignal_rectangle_width() / 2, signal.getY() + cons.getSignal_rectangle_height() / 2);
+                poly.getPoints().addAll(signal.getX() + cons.getSignal_rectangle_width() / 2, signal.getY() + cons.getSignal_rectangle_height() / 2);
+                poly.getPoints().addAll(signal.getX() + cons.getSignal_rectangle_width() / 2, signal.getY() - cons.getSignal_rectangle_height() / 2);
+                poly.setFill(cons.getSignal_rectangle_color());
+                System.out.println("add rectangle");
             }
-            poly.setFill(cons.getSignal_triangle_color());
-            System.out.println("add triangle");
-        }
-        if(Objects.equals(signal.getTypee().getShapeName(),"two6")){
-            /*
-             * This implements "two hexagons" as a single 10-sided polygon
-             * (decagon) representing two regular hexagons touching along
-             * a vertical edge. This is necessary because signal.poly
-             * can only be one continuous polygon.
-             *
-             * Requires:
-             * 1. cons.getSignal_two6_radius() [double]: The radius from center
-             * to vertex of one of the hexagons.
-             * 2. cons.getSignal_two6_color() [javafx.scene.paint.Paint]
-             *
-             * Note: Uses Math.PI and Math.cos/sin for accuracy, differing
-             * from the 'pi' variable and assumed static imports in the
-             * "triangle" implementation.
-             */
+            if (Objects.equals(signal.getTypee().getShapeName(), "triangle")) {
+                for (int i = 0; i < 3; i++) {
+                    poly.getPoints().addAll(signal.getX() - cons.getSignal_triangle_radius() * sin(i * 2 * pi / 3), signal.getY() - cons.getSignal_triangle_radius() * cos(i * 2 * pi / 3));
+                }
+                poly.setFill(cons.getSignal_triangle_color());
+                System.out.println("add triangle");
+            }
+            if (Objects.equals(signal.getTypee().getShapeName(), "two6")) {
+                /*
+                 * This implements "two hexagons" as a single 10-sided polygon
+                 * (decagon) representing two regular hexagons touching along
+                 * a vertical edge. This is necessary because signal.poly
+                 * can only be one continuous polygon.
+                 *
+                 * Requires:
+                 * 1. cons.getSignal_two6_radius() [double]: The radius from center
+                 * to vertex of one of the hexagons.
+                 * 2. cons.getSignal_two6_color() [javafx.scene.paint.Paint]
+                 *
+                 * Note: Uses Math.PI and Math.cos/sin for accuracy, differing
+                 * from the 'pi' variable and assumed static imports in the
+                 * "triangle" implementation.
+                 */
 
-            // Center point of the combined shape
+                // Center point of the combined shape
+                double cx = signal.getX();
+                double cy = signal.getY();
+
+                // Radius of a single hexagon
+                double r = cons.getSignal_two6_radius();
+
+                // Pre-calculate geometric offsets based on a 60-degree (PI/3) angle
+                // w_offset is the horizontal distance from a hex center to its vertical edge
+                double w_offset = r * Math.sin(Math.PI / 3.0); // r * 0.866
+                // h_offset is the vertical distance from a hex center to its shared vertex
+                double h_offset = r * Math.cos(Math.PI / 3.0); // r * 0.5
+
+                // Add the 10 vertices of the combined outline in counter-clockwise order
+                // The shape is centered around (cx, cy)
+
+                // Start at the top-middle "waist" vertex
+                poly.getPoints().addAll(cx, cy - h_offset);             // V1
+
+                // Left Hexagon outline
+                poly.getPoints().addAll(cx - w_offset, cy - r);         // V2
+                poly.getPoints().addAll(cx - (2 * w_offset), cy - h_offset); // V3
+                poly.getPoints().addAll(cx - (2 * w_offset), cy + h_offset); // V4
+                poly.getPoints().addAll(cx - w_offset, cy + r);         // V5
+
+                // Bottom-middle "waist" vertex
+                poly.getPoints().addAll(cx, cy + h_offset);             // V6
+
+                // Right Hexagon outline
+                poly.getPoints().addAll(cx + w_offset, cy + r);         // V7
+                poly.getPoints().addAll(cx + (2 * w_offset), cy + h_offset); // V8
+                poly.getPoints().addAll(cx + (2 * w_offset), cy - h_offset); // V9
+                poly.getPoints().addAll(cx + w_offset, cy - r);         // V10
+
+                poly.setFill(cons.getSignal_two6_color());
+                System.out.println("add two6 (decagon)");
+            }
+
+        }
+        else {
+            //it's secure
+            if (Objects.equals(signal.getTypee().getShapeName(), "hidden")) {
+
+            }
+
+
+            else {
+                //secureCasual type
+                if(Objects.equals(signal.getTypee().getShapeName(),"two6")){
+                    // --- Start of added code ---
+
+                    // I'm assuming you'll add these new methods to your Configg class,
+                    // following the pattern of your other shapes.
+                    double r = cons.getSignal_lock_radius(); // This single radius defines the shape
+                    double cx = signal.getX(); // Center X of the lock's body
+                    double cy = signal.getY(); // Center Y of the lock's body
+
+                    // The center of the shackle's arc is on the top-middle of the body
+                    double arcCenterX = cx;
+                    double arcCenterY = cy - r;
+
+                    int arcSegments = 12; // Number of points to make the arc smooth
+
+                    // We'll draw the outline of the solid shape, starting from the bottom-left
+                    // and going clockwise.
+
+                    // 1. Bottom-left point
+                    poly.getPoints().addAll(cx - r, cy + r);
+
+                    // 2. Bottom-right point
+                    poly.getPoints().addAll(cx + r, cy + r);
+
+                    // 3. Top-right point (where the body meets the shackle)
+                    poly.getPoints().addAll(cx + r, cy - r);
+
+                    // 4. Draw the semi-circle arc
+                    // We loop from angle 0 (right) to pi (left)
+                    // Note: Your 'pi' is 3.01415, so we use that.
+                    for (int i = 1; i < arcSegments; i++) {
+                        // Calculate the angle for this segment
+                        double angle = (i * pi / (double)arcSegments);
+
+                        // Add the point on the arc.
+                        // We use cos(angle) for x and *negative* sin(angle) for y
+                        // because the arc is on *top* of the center.
+                        // (Assuming Y increases downwards in your coordinate system)
+                        poly.getPoints().addAll(arcCenterX + r * cos(angle),
+                                arcCenterY - r * sin(angle));
+                    }
+
+                    // Let's re-check the triangle code's Y-axis logic.
+                    // signal.getY() - cons.getSignal_triangle_radius()*cos(i*2*pi/3)
+                    // At i=0, cos(0)=1, so point is (cx, cy - r). This is the TOP point.
+                    // This confirms Y increases downwards.
+
+                    // My arc logic was backwards for a Y-down system. Let's fix it.
+                    // We need the arc from pi (180 deg) to 2*pi (360 deg).
+
+        /*
+        // --- Corrected Code Block ---
+        if(Objects.equals(signal.getTypee().getShapeName(),"two6")){
+            double r = cons.getSignal_lock_radius();
             double cx = signal.getX();
             double cy = signal.getY();
 
-            // Radius of a single hexagon
-            double r = cons.getSignal_two6_radius();
+            double arcCenterX = cx;
+            double arcCenterY = cy - r; // Center of the arc
 
-            // Pre-calculate geometric offsets based on a 60-degree (PI/3) angle
-            // w_offset is the horizontal distance from a hex center to its vertical edge
-            double w_offset = r * Math.sin(Math.PI / 3.0); // r * 0.866
-            // h_offset is the vertical distance from a hex center to its shared vertex
-            double h_offset = r * Math.cos(Math.PI / 3.0); // r * 0.5
+            int arcSegments = 12;
 
-            // Add the 10 vertices of the combined outline in counter-clockwise order
-            // The shape is centered around (cx, cy)
+            // 1. Bottom-left
+            poly.getPoints().addAll(cx - r, cy + r);
 
-            // Start at the top-middle "waist" vertex
-            poly.getPoints().addAll(cx, cy - h_offset);             // V1
+            // 2. Bottom-right
+            poly.getPoints().addAll(cx + r, cy + r);
 
-            // Left Hexagon outline
-            poly.getPoints().addAll(cx - w_offset, cy - r);         // V2
-            poly.getPoints().addAll(cx - (2 * w_offset), cy - h_offset); // V3
-            poly.getPoints().addAll(cx - (2 * w_offset), cy + h_offset); // V4
-            poly.getPoints().addAll(cx - w_offset, cy + r);         // V5
+            // 3. Top-right (start of arc)
+            poly.getPoints().addAll(cx + r, cy - r);
 
-            // Bottom-middle "waist" vertex
-            poly.getPoints().addAll(cx, cy + h_offset);             // V6
+            // 4. Draw the arc (looping from right-to-left)
+            // Angle goes from 2*pi (right) down to pi (left)
+            for (int i = 1; i < arcSegments; i++) {
+                double angle = (2 * pi) - (i * pi / (double)arcSegments);
+                poly.getPoints().addAll(arcCenterX + r * cos(angle),
+                                        arcCenterY + r * sin(angle)); // sin is correct for Y-down
+            }
 
-            // Right Hexagon outline
-            poly.getPoints().addAll(cx + w_offset, cy + r);         // V7
-            poly.getPoints().addAll(cx + (2 * w_offset), cy + h_offset); // V8
-            poly.getPoints().addAll(cx + (2 * w_offset), cy - h_offset); // V9
-            poly.getPoints().addAll(cx + w_offset, cy - r);         // V10
+            // 5. Top-left (end of arc)
+            poly.getPoints().addAll(cx - r, cy - r);
 
-            poly.setFill(cons.getSignal_two6_color());
-            System.out.println("add two6 (decagon)");
+            // Polygon closes automatically from point 5 back to point 1.
+
+            poly.setFill(cons.getSignal_lock_color()); // Assuming this method exists
+            System.out.println("add lock");
+        }
+        */
+
+                    // --- Clean final code ---
+                    poly.getPoints().clear(); // This is already in your code, but for clarity:
+
+                    double r = cons.getSignal_lock_radius(); // e.g., getSignal_lock_radius()
+                    double cx = signal.getX();
+                    double cy = signal.getY(); // Center of the rectangular body
+
+                    // Center of the shackle's arc (on the top edge of the body)
+                    double arcCenterX = cx;
+                    double arcCenterY = cy - r;
+
+                    int arcSegments = 12; // More segments = smoother arc
+
+                    // 1. Start at bottom-left
+                    poly.getPoints().addAll(cx - r, cy + r);
+
+                    // 2. Go to bottom-right
+                    poly.getPoints().addAll(cx + r, cy + r);
+
+                    // 3. Go to top-right (this is the start of the arc)
+                    poly.getPoints().addAll(cx + r, cy - r);
+
+                    // 4. Add the arc points, going from right to left (2*pi down to pi)
+                    // We use your 'pi' value.
+                    for (int i = 1; i < arcSegments; i++) {
+                        double angle = (2 * pi) - (i * pi / (double)arcSegments);
+                        poly.getPoints().addAll(arcCenterX + r * cos(angle),
+                                arcCenterY + r * sin(angle));
+                    }
+
+                    // 5. Add the top-left point (the end of the arc)
+                    poly.getPoints().addAll(cx - r, cy - r);
+
+                    // The polygon will auto-close by connecting point 5 back to point 1.
+
+                    // 6. Set the fill color
+                    poly.setFill(cons.getSignal_lock_color()); // Assumes you add getSignal_lock_color()
+                    System.out.println("add lock");
+
+                    // --- End of added code ---
+                }
+            }
         }
         System.out.println("end poly");
     }
@@ -211,5 +354,28 @@ public class Methods {
         double dx=x-x1;
         double dy=y-y1;
         return Math.sqrt(dx*dx+dy*dy);
+    }
+
+    public int number_of_healthy_spy(Sysbox sysbox1) {
+        int number =0;
+        for (Sysbox sysbox:mainGameModel.staticDataModel.sysboxes){
+            if(sysbox.getState()=="data_spying" &&sysbox.isHealthy() && !Objects.equals(sysbox,sysbox1)){
+                number=number+1;
+            }
+        }
+        return number;
+    }
+
+    public Sysbox i_healthy_spy_sysbox(int targetIndex) {
+        for (Sysbox sysbox:mainGameModel.staticDataModel.sysboxes){
+            if(sysbox.getState()=="data_spying" &&sysbox.isHealthy()){
+                if(targetIndex ==0){
+                    return sysbox;
+                }
+                targetIndex = targetIndex -1;
+            }
+        }
+        System.out.println("error in finding the spy");
+        return null;
     }
 }

@@ -13,7 +13,8 @@ public class Signal {
     private Wire linked_wire;
     private boolean is_updated;
     private boolean going_forward;
-    private double each_frame_length_delta ; //that means velocity
+    private double each_frame_length_delta ;//that means velocity
+    private boolean isSecure;
 
     private double x;
     private double y;
@@ -22,6 +23,8 @@ public class Signal {
     private double y_on_wire;
     private double x_ekhtelaf;
     private double y_ekhtelaf;
+
+
 
     public Signal(Typee typee) {
         Configg cons = Configg.getInstance();
@@ -49,6 +52,14 @@ public class Signal {
         Signal clone = new Signal(this.typee);
         clone.setState("on_sysbox");
         return clone;
+    }
+
+    public boolean isSecure() {
+        return isSecure;
+    }
+
+    public void setSecure(boolean secure) {
+        isSecure = secure;
     }
 
     public boolean isGoing_forward() {

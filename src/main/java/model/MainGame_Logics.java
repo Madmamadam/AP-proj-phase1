@@ -181,34 +181,12 @@ public class MainGame_Logics {
         //first: update signals that on sysbox  (Assign wire)
         for (Sysbox sysbox : staticDataModel.sysboxes) {
             System.out.println("sysbox.signal_bank.size() "+sysbox.signal_bank.size());
-            for (int i=0;i<sysbox.signal_bank.size() && !sysbox.signal_bank.isEmpty();){
+            for (int i=0;i<sysbox.signal_bank.size() && !sysbox.signal_bank.isEmpty();i++){
                 Signal signal=sysbox.signal_bank.get(i);
-                signal.setIs_updated(true);
-                System.out.println("nice1  sysbox_index: "+ staticDataModel.sysboxes.indexOf(sysbox));
-
-                //just check outer_gates
-                System.out.println("just check outer_gates");
-                for (Gate gate:sysbox.outer_gates){
-                    System.out.println("gate.isIn_use() "+gate.isIn_use());
-                    if(gate.getWire()==null){
-                        System.out.println("gate.getWire()==null");
-                    }
-                }
-                System.out.println("end check");
-                //end of checking
-
-                if(methods.recommended_gate(sysbox,signal) != null && signal.getState()=="on_sysbox"){
-                    Gate recom_gate = (Gate) methods.recommended_gate(sysbox,signal);
-                    System.out.println("sysbox.signal_bank.size() "+sysbox.signal_bank.size());
-                    System.out.println("nice2");
-                    signal_go_to_wire(signal,recom_gate);
-                    System.out.println("nice3");
-                }
-                else{
-                    i++;
-                }
+                signal_in_a_sysbox_wanna_go(signal,sysbox);
             }
         }
+
         //second: update signals that on wire (move on wire or add them to a sysbox)
         for(Signal signal : staticDataModel.signals){
             check_noise(signal);
@@ -244,6 +222,18 @@ public class MainGame_Logics {
         }
         System.out.println("/// end-  Signals_Update()");
 
+    }
+
+    private void signal_in_a_sysbox_wanna_go(Signal signal, Sysbox sysbox) {
+        signal.setIs_updated(true);
+
+        if(methods.recommended_gate(sysbox,signal) != null && signal.getState()=="on_sysbox"){
+            Gate recom_gate = (Gate) methods.recommended_gate(sysbox,signal);
+            System.out.println("sysbox.signal_bank.size() "+sysbox.signal_bank.size());
+            System.out.println("nice2");
+            signal_go_to_wire(signal,recom_gate);
+            System.out.println("nice3");
+        }
     }
 
     private void update_signal_length_on_wire(Signal signal) {
@@ -403,15 +393,15 @@ public class MainGame_Logics {
     private void signal_go_to_next_bank(Signal signal) {
         Sysbox sysbox =signal.getLinked_wire().getSecondgate().getSysbox();
 
-        signal_go_to_the_sysbox(signal,sysbox,true);
+        signal_go_to_the_sysbox(signal,sysbox,true,false);
     }
 
     private void signal_go_to_previous_bank(Signal signal) {
         Sysbox sysbox =signal.getLinked_wire().getFirstgate().getSysbox();
-        signal_go_to_the_sysbox(signal,sysbox,false);
+        signal_go_to_the_sysbox(signal,sysbox,false,false);
     }
 
-    private void signal_go_to_the_sysbox(Signal signal, Sysbox sysbox, boolean isNext) {
+    private void signal_go_to_the_sysbox(Signal signal, Sysbox sysbox, boolean isNext , boolean virtual_add) {
         if(sysbox.isHealthy()) {
             view.just_game_pane.getChildren().remove(signal.poly);
             signal.getLinked_wire().getFirstgate().setIn_use(false);
@@ -427,26 +417,32 @@ public class MainGame_Logics {
             } else {
                 signal.setGoing_forward(true);
             }
-
-            sysbox.signal_bank.add(signal);
-
-
-            if (signal.getEach_frame_length_delta() > cons.getMaximum_acceptable_speed()) {
+            if (signal.getEach_frame_length_delta() > cons.getMaximum_acceptable_speed() && !virtual_add) {
                 high_speed_signal_added_to_sysbox(signal, sysbox);
             }
 
-            if(signal.getLinked_wire().getFirstgate().getTypee().getId()==signal.getTypee().getId()) {
-                //reset signal speed
-                signal.setEach_frame_length_delta(cons.getDefault_delta_wire_length());
-            }
-            else {
-                signal.setEach_frame_length_delta(2*cons.getDefault_delta_wire_length());
+            //virtual add
+            if(sysbox.getState()=="data_spying" && !signal.isSecure() && !virtual_add){
+                weak_signal_spying(signal,sysbox);
             }
 
-            if (sysbox.isStarter()) {
-                signal.setState("ended");
-            } else {
-                signal.setState("on_sysbox");
+            //real add
+            else {
+                sysbox.signal_bank.add(signal);
+
+
+                if (signal.getLinked_wire().getFirstgate().getTypee().getId() == signal.getTypee().getId()) {
+                    //reset signal speed
+                    signal.setEach_frame_length_delta(cons.getDefault_delta_wire_length());
+                } else {
+                    signal.setEach_frame_length_delta(2 * cons.getDefault_delta_wire_length());
+                }
+
+                if (sysbox.isStarter()) {
+                    signal.setState("ended");
+                } else {
+                    signal.setState("on_sysbox");
+                }
             }
         }
         else {
@@ -454,6 +450,12 @@ public class MainGame_Logics {
         }
     }
 
+    private void weak_signal_spying(Signal signal, Sysbox sysbox) {
+        int number=methods.number_of_healthy_spy(sysbox);
+        int result = java.util.concurrent.ThreadLocalRandom.current().nextInt(1, number + 1);
+        Sysbox targetSysbox = methods.i_healthy_spy_sysbox(result-1);
+        signal_go_to_the_sysbox(signal,targetSysbox,true,true);
+    }
 
 
     private void sysbox_join_reward(Signal signal) {
