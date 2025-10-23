@@ -273,7 +273,7 @@ public class MainGame_Logics {
                                     //add a backward signal
                                     check_signal_is_two6(signal1);
                                     check_signal_is_two6(signal2);
-                                    
+
                                     just_collapse_noise(signal1, signal2);
                                     collapse_happen_in_a_location((Coordinate) Methods.checkCollisionAndGetPoint(signal1.poly, signal2.poly), signal1, signal2);
                                 }
@@ -489,24 +489,23 @@ public class MainGame_Logics {
             if (signal.getLinked_wire().getFirstgate().getTypee().getShapeName() == "rectangle") {
                 signal.setEach_frame_length_delta(cons.getDefault_delta_wire_length());
             }
-            else if (signal.getLinked_wire().getFirstgate().getTypee().getShapeName() == "triangle") {
-                signal.setEach_frame_length_delta(cons.getDefault_delta_wire_length() / 2);
-            }
             else {
-                System.out.println("+++++type not found error firstgateName:"+signal.getLinked_wire().getFirstgate().getTypee().getShapeName());
-                System.out.println("signal.Name :" + signal.getTypee().getShapeName());
+                signal.setEach_frame_length_delta(cons.getDefault_delta_wire_length() / 2);
             }
         }
         if(signal.getTypee().getShapeName()=="triangle"){
-            if(signal.getLinked_wire().getFirstgate().getTypee().getShapeName()=="rectangle") {
-                signal.setEach_frame_length_delta(signal.getEach_frame_length_delta()+cons.getDefault_delta_wire_acceleration());
-            }
-            else if(signal.getLinked_wire().getFirstgate().getTypee().getShapeName()=="triangle"){
+            if(signal.getLinked_wire().getFirstgate().getTypee().getShapeName()=="triangle"){
                 signal.setEach_frame_length_delta(cons.getDefault_delta_wire_length());
             }
-            else {
-                System.out.println("+++++type not found error");
+            else{
+                signal.setEach_frame_length_delta(signal.getEach_frame_length_delta()+cons.getDefault_delta_wire_acceleration());
             }
+        }
+        if(signal.getTypee().getShapeName()=="two6"){
+            signal.setEach_frame_length_delta(cons.getDefault_delta_wire_length());
+        }
+        else {
+            signal.setEach_frame_length_delta(signal.getEach_frame_length_delta()+cons.getDefault_delta_wire_negative_acceleration());
         }
 
     }

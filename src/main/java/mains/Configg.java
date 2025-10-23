@@ -6,6 +6,7 @@ public class Configg {
     private int bank_capacity=5;
     private double default_delta_wire_length =0.5;
     private double default_delta_wire_acceleration =0.005;
+    private double default_delta_wire_negative_acceleration =-0.0005;
 
     private double virtual_frequency=60*200;
 
@@ -76,6 +77,10 @@ public class Configg {
     private double CurveHandler_radius=line_width*1.2;
     private Color CurveHandler_color=Color.BROWN;
 
+
+    public double getDefault_delta_wire_negative_acceleration() {
+        return default_delta_wire_negative_acceleration;
+    }
 
     public double getSignal_two6_radius() {
         return signal_two6_radius;
