@@ -38,8 +38,7 @@ public class MainGame_Logics {
     public Timeline signals_virtual_run = new Timeline(new KeyFrame(Duration.millis(1000/cons.getVirtual_frequency()), event -> {
         if (staticDataModel.stop_wiring) {
             System.out.println("//////////in virtual run");
-                Signals_Update();
-                check_and_do_collision();
+                run_one_frame_model_signalRun_part();
                 staticDataModel.signal_run_frame_counter++;
         }
 //            if(gameTimer.getTime_sec()>goToTime_sec){
@@ -134,12 +133,7 @@ public class MainGame_Logics {
         view.initial_model_UI_on_primaryStage();
 
 
-//        paintt.addtopane_signals();
-
-
-//       wiring mode (run some listener)
         wiring.run_listeners();
-        controller.edit_wires();
 
 
 
@@ -770,7 +764,7 @@ public class MainGame_Logics {
 
         System.out.println("staticDataModel.stop_wiring:"+staticDataModel.stop_wiring );
         virtual_run=true;
-        restart_level_signals();
+        restart_level_dynamic();
 
         signals_virtual_run.setCycleCount((int) (cyclecount));
         System.out.println("new virtual run");
@@ -782,7 +776,7 @@ public class MainGame_Logics {
         System.out.println("******************** HALF RESTART ENDED ******************");
     }
 
-    private void restart_level_signals() {
+    private void restart_level_dynamic() {
         for (Signal signal : staticDataModel.signals) {
             view.just_game_pane.getChildren().remove(signal.poly);
         }
@@ -791,6 +785,9 @@ public class MainGame_Logics {
 //        }
 
         staticDataModel = level_gamemodel_start.getClone_inMainModel();
+
+        view.update_indicator_view();
+
         staticDataModel.stop_wiring=true;
 
         System.out.println("signals size now: " + staticDataModel.signals.size());

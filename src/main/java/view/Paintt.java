@@ -142,6 +142,7 @@ public class Paintt {
     //have bug for restart(see usage)
     //load sysbox and model first view , must be added after model start
     public void initial_model_UI_on_primaryStage(){
+        just_game_pane.getChildren().clear();
         StackPane.setAlignment(HUDpane, Pos.TOP_LEFT); // مکان کل HUDpane
         HUDpane.setStyle("-fx-background-color: rgba(92,82,82,0.5);");
         HUDpane.setPrefWidth(300);
@@ -404,6 +405,18 @@ public class Paintt {
         }
         for (EventHandlerView eventHandler : mostBeremoved) {
             requestedEventHandlerOnViews.remove(eventHandler);
+        }
+    }
+
+    public void update_indicator_view() {
+        Configg cons=Configg.getInstance();
+        for (Sysbox sysbox : controller.mainGameViewAndModel.staticDataModel.sysboxes){
+            if(sysbox.isHealthy()){
+                sysbox.getIndicator_rectangle().setFill(cons.getOn_indicator_color());
+            }
+            else {
+                sysbox.getIndicator_rectangle().setFill(cons.getUnHealthy_indicator_color());
+            }
         }
     }
 }

@@ -90,6 +90,9 @@ public class AllCurvesMethods {
 
     public static Point2D positionOnALength(Wire wire, double length){
         double remainingLength = length;
+        if (length<0){
+            System.out.println("Error: Length is negative");
+        }
         Configg cons=Configg.getInstance();
         for(Node cubicCurveNode : wire.getAllOfCurve_Group().getChildren()){
             if (cubicCurveNode.getClass() == CubicCurve.class) {
@@ -106,6 +109,7 @@ public class AllCurvesMethods {
                 System.out.println("Error: Not a cubic curve in group");
             }
         }
+        System.out.println("Error: Not a cubic curve in group");
         return null;
     }
 

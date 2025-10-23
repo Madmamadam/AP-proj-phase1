@@ -164,243 +164,60 @@ public class Methods {
 
         }
         else {
+            System.out.println("secure");
+
             //it's secure
             if (Objects.equals(signal.getTypee().getShapeName(), "hidden")) {
 
             }
 
-
             else {
                 //secureCasual type
-                poly.getPoints().clear();
+                System.out.println("secureCasual type");
+                // --- Draw Padlock Shape ---
 
-                double lockBodyWidth = cons.getSignal_lock_length();   // e.g., 2 * r_outer_shackle
-                double lockBodyHeight = cons.getSignal_lock_length(); // e.g., 2 * r_outer_shackle
-                double shackleOuterRadius = cons.getSignal_lock_length();
-                double shackleInnerRadius = 0.8*cons.getSignal_lock_length(); // Must be less than outer
-                double shackleThickness = shackleOuterRadius - shackleInnerRadius; // Not directly used but defines the thickness
-
-                // Define center of the *lock body*
+                // 1. Get shape parameters
+                double r = cons.getSignal_lock_length();
                 double cx = signal.getX();
-                double cy = signal.getY();
+                double cy = signal.getY(); // Center of the rectangular body
 
-                int arcSegments = 20; // More segments for smoother arcs
+                // 2. Define the arc
+                double arcCenterX = cx;
+                double arcCenterY = cy - r; // Center of the shackle's arc
+                int arcSegments = 12; // Number of points for a smooth arc
 
-                // --- Start by defining the outer perimeter of the combined shape ---
+                // 3. Add polygon points, starting bottom-left and moving clockwise
 
-                // 1. Bottom-left corner of the lock body
-                poly.getPoints().addAll(cx - lockBodyWidth / 2, cy + lockBodyHeight / 2);
+                // Point 1: Bottom-left
+                poly.getPoints().addAll(cx - r, cy + r);
 
-                // 2. Bottom-right corner of the lock body
-                poly.getPoints().addAll(cx + lockBodyWidth / 2, cy + lockBodyHeight / 2);
+                // Point 2: Bottom-right
+                poly.getPoints().addAll(cx + r, cy + r);
 
-                // 3. Top-right corner of the lock body (start of outer shackle arc)
-                poly.getPoints().addAll(cx + lockBodyWidth / 2, cy - lockBodyHeight / 2);
+                // Point 3: Top-right (This is the start of the arc, at angle 0)
+                poly.getPoints().addAll(cx + r, cy - r);
 
-                // Calculate the center for the shackle arcs
-                // This center is typically aligned with the top edge of the body.
-                double shackleArcCenterX = cx;
-                double shackleArcCenterY = cy - lockBodyHeight / 2; // Top of the lock body
-
-                // 4. Draw the outer semi-circle arc for the shackle (from right to left)
-                // Angle goes from 2*pi (right) down to pi (left)
-                for (int i = 0; i <= arcSegments; i++) {
-                    // Angle from 2*pi down to pi (top half of a circle, going counter-clockwise visually)
-                    double angle = (2 * pi) - (i * pi / (double) arcSegments);
-                    poly.getPoints().addAll(shackleArcCenterX + shackleOuterRadius * cos(angle),
-                            shackleArcCenterY + shackleOuterRadius * sin(angle));
-                }
-
-                // Now, we've traced the entire outer perimeter.
-                // To create the "hole", we connect back to the inner perimeter and trace it
-                // in the opposite direction (clockwise) to create a continuous path.
-
-                // 5. Connect from the end of the outer arc (top-left of outer shackle)
-                // to the start of the inner arc (top-left of inner shackle).
-                // The start of the inner arc will be at angle 'pi' (left) for tracing clockwise.
-                // However, a direct connection won't work perfectly. We need to jump directly
-                // to the inner arc's start and then trace it.
-                // So, we'll start tracing the inner arc from the top-left (angle 'pi').
-
-                // We jump to the point where the inner arc *starts* if we trace it clockwise
-                // from left to right, which corresponds to angle 'pi' to '2*pi'.
-                // So, for the first point of the inner arc, we use angle 'pi'.
-                poly.getPoints().addAll(shackleArcCenterX + shackleInnerRadius * cos(pi),
-                        shackleArcCenterY + shackleInnerRadius * sin(pi));
-
-                // 6. Draw the inner semi-circle arc (from left to right, going clockwise)
-                // Angle goes from pi (left) up to 2*pi (right)
+                // Point 4: Draw the arc
+                // We loop from angle 0 (right) to pi (left).
+                // The formula (arcCenterY - r * sin(angle)) is correct for a
+                // Y-down coordinate system (like JavaFX) to draw a top-half circle.
                 for (int i = 1; i < arcSegments; i++) {
-                    // Angle from pi up to 2*pi (top half of a circle, going clockwise visually)
-                    double angle = pi + (i * pi / (double) arcSegments);
-                    poly.getPoints().addAll(shackleArcCenterX + shackleInnerRadius * cos(angle),
-                            shackleArcCenterY + shackleInnerRadius * sin(angle));
-                }
-
-                // 7. Connect from the end of the inner arc (top-right of inner shackle)
-                // back to the lock body. This point is at (cx + lockBodyWidth / 2, cy - lockBodyHeight / 2)
-                // This is actually the same as point 3 if shackle is aligned.
-                // We've completed the inner loop. The polygon will now implicitly close by
-                // connecting the last point of the inner arc back to the starting point
-                // of the outer polygon (bottom-left). However, we need to explicitly connect
-                // the inner arc's right side to the body.
-
-                // So, after tracing the inner arc clockwise, the last point added is the top-right
-                // of the inner shackle. We need to connect this point to the top-right corner of the
-                // lock body, which we already visited as point 3.
-                // It's cleaner to explicitly connect to the corner of the body for a continuous path.
-
-                // Last point of inner arc is at angle 2*pi. We need to connect from here
-                // back to the top-right corner of the *lock body*.
-                // poly.getPoints().addAll(cx + lockBodyWidth / 2, cy - lockBodyHeight / 2); // This closes the inner gap
-
-                // The JavaFX Polygon renders fill based on the "winding rule".
-                // Tracing the outer perimeter counter-clockwise and the inner perimeter clockwise
-                // usually creates the "hole" effect.
-
-                // Let's re-evaluate the connection points for simplicity for a robust hole.
-                // Trace outer from top-right of body (angle 2*pi) to top-left of body (angle pi).
-                // Then, connect from top-left of body *to* top-left of inner shackle.
-                // Then, trace inner from top-left of inner shackle (angle pi) to top-right of inner shackle (angle 2*pi).
-                // Then, connect from top-right of inner shackle back to top-right of body.
-
-                // This is the correct winding order for a "hole" with a single Polygon:
-                // 1. Outer boundary (e.g., counter-clockwise)
-                // 2. Connect to inner boundary
-                // 3. Inner boundary (e.g., clockwise)
-                // 4. Connect back to outer boundary to close the overall shape.
-
-                // --- Corrected logic for a solid lock body with a thick shackle ---
-                poly.getPoints().clear();
-
-                // Lock Body (simple rectangle)
-                // Bottom-left
-                poly.getPoints().addAll(cx - lockBodyWidth / 2, cy + lockBodyHeight / 2);
-                // Bottom-right
-                poly.getPoints().addAll(cx + lockBodyWidth / 2, cy + lockBodyHeight / 2);
-                // Top-right
-                poly.getPoints().addAll(cx + lockBodyWidth / 2, cy - lockBodyHeight / 2);
-                // Top-left
-                poly.getPoints().addAll(cx - lockBodyWidth / 2, cy - lockBodyHeight / 2);
-                // This completes the lock body. Now we will *add* the shackle on top of it.
-                // This means the rectangle points will be part of the overall polygon.
-
-                // Let's refine the shape: we want a lock with a rectangular body and a thick semi-circular shackle.
-                // The Polygon must define the entire *outer* contour, then the *inner* contour of the hole.
-
-                // Define the corners of the main lock body
-                double bodyLeft = cx - lockBodyWidth / 2;
-                double bodyRight = cx + lockBodyWidth / 2;
-                double bodyBottom = cy + lockBodyHeight / 2;
-                double bodyTop = cy - lockBodyHeight / 2;
-
-                // Start tracing the outer perimeter of the entire lock (body + shackle)
-
-                // 1. Bottom-left of body
-                poly.getPoints().addAll(bodyLeft, bodyBottom);
-                // 2. Bottom-right of body
-                poly.getPoints().addAll(bodyRight, bodyBottom);
-
-                // Now trace up the right side of the body, then around the outer shackle arc
-                // 3. Top-right of body (this is where the outer shackle arc begins)
-                poly.getPoints().addAll(bodyRight, bodyTop);
-
-                // Outer shackle arc (from top-right of body, counter-clockwise)
-                // Center for shackle arcs is (shackleArcCenterX, shackleArcCenterY)
-                // which is bodyTop aligned with bodyWidth. Let's make it simpler,
-                // center for shackle is (cx, bodyTop).
-
-                shackleArcCenterX = cx;
-                shackleArcCenterY = bodyTop; // Center for the arc is at the top of the body
-
-                for (int i = 0; i <= arcSegments; i++) {
-                    // Angle from 0 (right) to pi (left) for the top semi-circle (counter-clockwise)
-                    double angle = (i * pi / (double) arcSegments); // Use Math.PI if available for precision
-                    poly.getPoints().addAll(shackleArcCenterX + shackleOuterRadius * cos(angle),
-                            shackleArcCenterY - shackleOuterRadius * sin(angle)); // -sin for arc *above* center
-                }
-                // At the end of this loop, we are at the top-left point of the outer shackle.
-
-                // Now we connect from the outer contour to the inner contour to define the hole.
-                // Jump to the top-left point of the *inner* shackle arc.
-                // This point is at (shackleArcCenterX - shackleInnerRadius, shackleArcCenterY - shackleInnerRadius)
-
-                // Ensure the inner arc also starts and ends at the vertical lines of the body for a clean look
-                // The inner arc should also align with the top of the body, but offset by its radius
-
-                // To make the lock clean, the inner shackle usually starts from the top-left and top-right of the body's internal section.
-                // Let's make the "hole" directly above the main body, centered.
-
-                // Trace the entire OUTER outline first (rectangle body + outer shackle)
-                // Then trace the entire INNER outline (inner shackle + top of body that forms the base of the hole).
-
-                // --- Simpler combined shape for the lock with a hole ---
-                // This will define the outer edge of the lock, and then the inner edge of the shackle's hole.
-                poly.getPoints().clear();
-
-                // 1. Outer perimeter of the lock body + outer shackle
-
-                // Bottom-left of body
-                poly.getPoints().addAll(cx - lockBodyWidth / 2, cy + lockBodyHeight / 2);
-                // Bottom-right of body
-                poly.getPoints().addAll(cx + lockBodyWidth / 2, cy + lockBodyHeight / 2);
-                // Top-right of body
-                poly.getPoints().addAll(cx + lockBodyWidth / 2, cy - lockBodyHeight / 2);
-
-                // Outer shackle arc (from top-right of body, counter-clockwise to top-left of body)
-                // Center of the shackle's arc is at the mid-point of the top of the body.
-                shackleArcCenterX = cx;
-                shackleArcCenterY = cy - lockBodyHeight / 2;
-
-                // Trace from angle 0 (right) to pi (left) for the upper semi-circle
-                for (int i = 0; i <= arcSegments; i++) {
+                    // Calculate the angle for this segment
                     double angle = (i * pi / (double) arcSegments);
-                    poly.getPoints().addAll(shackleArcCenterX + shackleOuterRadius * cos(angle),
-                            shackleArcCenterY - shackleOuterRadius * sin(angle)); // -sin for arc *above* center
-                }
-                // After this loop, we are at the top-left of the outer shackle, which should align with (cx - lockBodyWidth / 2, cy - lockBodyHeight / 2) if lockBodyWidth == 2*shackleOuterRadius.
-                // Let's assume shackleOuterRadius is half the body width for a neat fit.
-                // If not, the polygon will auto-close from the last point of the arc to the initial bottom-left point.
-                // To ensure it closes cleanly to the body, ensure the last arc point connects to (cx - lockBodyWidth / 2, cy - lockBodyHeight / 2).
 
-                // This completes the *outer* boundary: bottom-left -> bottom-right -> top-right -> outer shackle arc -> top-left.
-                // Now, we define the inner hole. We jump to a point on the inner boundary and trace it in the opposite direction (clockwise).
-
-                // Inner shackle arc (from top-left of inner shackle, clockwise to top-right of inner shackle)
-                // Start from the top-left of the inner shackle.
-                // We'll jump to the inner arc's *start point* and trace it clockwise.
-                // The start point will be (shackleArcCenterX - shackleInnerRadius, shackleArcCenterY - shackleInnerRadius)
-
-                // First point of the inner loop (top-left of the inner shackle)
-                poly.getPoints().addAll(shackleArcCenterX - shackleInnerRadius, shackleArcCenterY - shackleInnerRadius);
-
-                // Trace the inner semi-circle clockwise (from left to right)
-                // Angle goes from pi (left) to 2*pi (right), so starting at pi and incrementing.
-                for (int i = 0; i <= arcSegments; i++) {
-                    double angle = pi + (i * pi / (double) arcSegments); // +sin for arc *above* center, if we assume Y-down
-                    // But since the shackle is 'up', it's still -sin
-                    // Oh wait, for clockwise, sin values go negative then positive.
-                    // Let's use negative angles for clockwise
-                    poly.getPoints().addAll(shackleArcCenterX + shackleInnerRadius * cos(angle),
-                            shackleArcCenterY - shackleInnerRadius * sin(angle));
+                    poly.getPoints().addAll(arcCenterX + r * cos(angle),
+                            arcCenterY - r * sin(angle));
                 }
 
-                // At the end of this loop, we are at the top-right of the inner shackle.
-                // We now need to connect this point to the top-right of the body to complete the hole's base.
-                // This is (shackleArcCenterX + shackleInnerRadius, shackleArcCenterY - shackleInnerRadius)
+                // Point 5: Top-left (This is the end of the arc, at angle 'pi')
+                // !! THIS WAS THE MISSING LINE THAT CAUSED THE BUG !!
+                poly.getPoints().addAll(cx - r, cy - r);
 
-                // This creates a polygon that fills the space between the outer and inner paths.
+                // 6. Set fill and finish
+                // The polygon will now correctly auto-close from Point 5 (top-left)
+                // back to Point 1 (bottom-left), forming the left wall.
                 poly.setFill(cons.getSignal_lock_color());
-                System.out.println("add lock with thick shackle");
-
-                // --- Configuration in Configg.java (example, you'll need to add these) ---
-                // private double signal_lock_body_width = 30;
-                // private double signal_lock_body_height = 30;
-                // private double signal_shackle_outer_radius = 15; // half of body width for nice fit
-                // private double signal_shackle_inner_radius = 8;
-                // private Paint signal_lock_color = Color.DARKGOLDENROD;
-
-
+                System.out.println("add lock");
             }
         }
         System.out.println("end poly");
