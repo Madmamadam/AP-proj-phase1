@@ -18,7 +18,7 @@ public class LevelGame_StaticDataModel {
     public ArrayList<Wire> wires = new ArrayList<>();
     public Constraintss constraintss = new Constraintss(); ;
     public ArrayList<Pairs> collapsedPairs = new ArrayList<>();
-    public ArrayList<EventHappenWithFrame> seekSyboxes = new ArrayList<>();
+    public ArrayList<EventHappenWithFrame> seekSysboxes = new ArrayList<>();
     public Boolean Oairyaman = false;
     public boolean Oatar = false;
     public boolean OAnahita =false;

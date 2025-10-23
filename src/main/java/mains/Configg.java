@@ -21,6 +21,7 @@ public class Configg {
     private double impulse_move_time=0.3;
 
     private double maximum_acceptable_speed = 1.5;
+    private double seekSysbox_duration=5*60;
 
     private double health_bar_width=4;
     private double health_bar_back_length=250;
@@ -53,8 +54,10 @@ public class Configg {
     private double signal_rectangle_width=gate_rectangle_width;
     private double signal_rectangle_height=gate_rectangle_height;
     private double signal_triangle_radius =gate_triangle_radius;
+    private double signal_two6_radius =gate_triangle_radius;
     private Color signal_rectangle_color=Color.BLUE;
     private Color signal_triangle_color=Color.BLUE;
+    private Color signal_two6_color=Color.BLACK;
 
     private double event_Handler_view_pref_width=100;
     private double event_Handler_view_pref_height=100;
@@ -73,6 +76,18 @@ public class Configg {
     private double CurveHandler_radius=line_width*1.2;
     private Color CurveHandler_color=Color.BROWN;
 
+
+    public double getSignal_two6_radius() {
+        return signal_two6_radius;
+    }
+
+    public Color getSignal_two6_color() {
+        return signal_two6_color;
+    }
+
+    public double getSeekSysbox_duration() {
+        return seekSysbox_duration;
+    }
 
     public Color getUnHealthy_indicator_color() {
         return unHealthy_indicator_color;

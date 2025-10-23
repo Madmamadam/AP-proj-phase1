@@ -16,6 +16,9 @@ public class Typee {
         else if(id==2){
             this.shapeName = "triangle";
         }
+        else if(id==3){
+            this.shapeName = "two6";
+        }
     }
 
     public int getId() {

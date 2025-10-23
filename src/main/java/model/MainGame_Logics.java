@@ -4,7 +4,6 @@ import controller.*;
 import javafx.animation.KeyFrame;
 import javafx.animation.PauseTransition;
 import javafx.animation.Timeline;
-import javafx.stage.Stage;
 import javafx.util.Duration;
 import mains.Configg;
 import org.locationtech.jts.geom.Coordinate;
@@ -59,7 +58,7 @@ public class MainGame_Logics {
             Signals_Update();
             check_and_do_collision();
             ending_check();
-
+            update_seekSysbox();
 
             signal_run_viewUpdate();
 
@@ -70,6 +69,20 @@ public class MainGame_Logics {
 //            System.out.println("signal update is short circled (virual_run:"+virtual_run+") & (stop_wiring:"+staticDataModel.stop_wiring+")");
         }
     }));
+
+    private void update_seekSysbox() {
+        for(EventHappenWithFrame event : staticDataModel.seekSysboxes){
+            if(staticDataModel.signal_run_frame_counter-event.frame>cons.getSeekSysbox_duration()){
+                remove_seekSysbox((Sysbox)event.objectEffectedEvent);
+            }
+        }
+    }
+
+    private void remove_seekSysbox(Sysbox sysbox) {
+        staticDataModel.seekSysboxes.remove(sysbox);
+        sysbox.setHealthy(true);
+        sysbox.getIndicator_rectangle().setFill(cons.getOn_indicator_color());
+    }
 
     private void signal_run_viewUpdate() {
         view.gameTimer.setStopping(false);
@@ -172,6 +185,7 @@ public class MainGame_Logics {
                 Signal signal=sysbox.signal_bank.get(i);
                 signal.setIs_updated(true);
                 System.out.println("nice1  sysbox_index: "+ staticDataModel.sysboxes.indexOf(sysbox));
+
                 //just check outer_gates
                 System.out.println("just check outer_gates");
                 for (Gate gate:sysbox.outer_gates){
@@ -209,7 +223,8 @@ public class MainGame_Logics {
                 update_signal_speed_on_wire(signal);
 //                signal.setLength_on_wire(signal.getLength_on_wire()+cons.getDefault_delta_wire_length());
                 //
-                signal.setLength_on_wire(signal.getLength_on_wire()+signal.getEach_frame_length_delta());
+                update_signal_length_on_wire(signal);
+                System.out.println("signal.getLength_on_wire() "+signal.getLength_on_wire());
 
                 if(signal.getLength_on_wire()>signal.getLinked_wire().getLength()){
                     signal_go_to_next_bank(signal);
@@ -231,6 +246,15 @@ public class MainGame_Logics {
 
     }
 
+    private void update_signal_length_on_wire(Signal signal) {
+        if(signal.isGoing_forward()){
+            signal.setLength_on_wire(signal.getLength_on_wire()+signal.getEach_frame_length_delta());
+        }
+        else {
+            System.out.println("a signal is going backward");
+            signal.setLength_on_wire(signal.getLength_on_wire()-signal.getEach_frame_length_delta());
+        }
+    }
 
 
     public void check_and_do_collision() {
@@ -246,6 +270,10 @@ public class MainGame_Logics {
 
                                 //check to not consider a collapse twice
                                 if (!methods.found_in_pairs(signal1, signal2)) {
+                                    //add a backward signal
+                                    check_signal_is_two6(signal1);
+                                    check_signal_is_two6(signal2);
+                                    
                                     just_collapse_noise(signal1, signal2);
                                     collapse_happen_in_a_location((Coordinate) Methods.checkCollisionAndGetPoint(signal1.poly, signal2.poly), signal1, signal2);
                                 }
@@ -258,6 +286,12 @@ public class MainGame_Logics {
             }
         }
 
+    }
+
+    private void check_signal_is_two6(Signal signal) {
+        if(signal.getTypee().getShapeName()=="two6"){
+            signal.setGoing_forward(!signal.isGoing_forward());
+        }
     }
 
     public boolean is_winner_and_update_dead_count() {
@@ -367,75 +401,74 @@ public class MainGame_Logics {
     }
 
     private void signal_go_to_next_bank(Signal signal) {
-        Configg cons = Configg.getInstance();
-
         Sysbox sysbox =signal.getLinked_wire().getSecondgate().getSysbox();
 
-        if(sysbox.signal_bank.size()>5 && !sysbox.isStarter()){
-            //lost
-            signal.setState("lost");
-            return;
-        }
+        signal_go_to_the_sysbox(signal,sysbox,true);
+    }
 
-        sysbox.signal_bank.add(signal);
+    private void signal_go_to_previous_bank(Signal signal) {
+        Sysbox sysbox =signal.getLinked_wire().getFirstgate().getSysbox();
+        signal_go_to_the_sysbox(signal,sysbox,false);
+    }
+
+    private void signal_go_to_the_sysbox(Signal signal, Sysbox sysbox, boolean isNext) {
+        if(sysbox.isHealthy()) {
+            view.just_game_pane.getChildren().remove(signal.poly);
+            signal.getLinked_wire().getFirstgate().setIn_use(false);
+
+            if (sysbox.signal_bank.size() > 5 && !sysbox.isStarter()) {
+                //lost
+                signal.setState("lost");
+                return;
+            }
+
+            if (isNext) {
+                sysbox_join_reward(signal);
+            } else {
+                signal.setGoing_forward(true);
+            }
+
+            sysbox.signal_bank.add(signal);
+
+
+            if (signal.getEach_frame_length_delta() > cons.getMaximum_acceptable_speed()) {
+                high_speed_signal_added_to_sysbox(signal, sysbox);
+            }
+
+            if(signal.getLinked_wire().getFirstgate().getTypee().getId()==signal.getTypee().getId()) {
+                //reset signal speed
+                signal.setEach_frame_length_delta(cons.getDefault_delta_wire_length());
+            }
+            else {
+                signal.setEach_frame_length_delta(2*cons.getDefault_delta_wire_length());
+            }
+
+            if (sysbox.isStarter()) {
+                signal.setState("ended");
+            } else {
+                signal.setState("on_sysbox");
+            }
+        }
+        else {
+            signal.setGoing_forward(false);
+        }
+    }
+
+
+
+    private void sysbox_join_reward(Signal signal) {
         if(signal.getTypee().getId()==1) {
             staticDataModel.setSekke(staticDataModel.getSekke() + cons.getRectangle_signal_sekke_added());
         }
         if(signal.getTypee().getId()==2) {
             staticDataModel.setSekke(staticDataModel.getSekke() + cons.getTraiangle_signal_sekke_added());
         }
-        view.just_game_pane.getChildren().remove(signal.poly);
-        signal.getLinked_wire().getFirstgate().setIn_use(false);
-
-        if(signal.getEach_frame_length_delta()>cons.getMaximum_acceptable_speed()){
-            high_speed_signal_added_to_sysbox(signal,sysbox);
-        }
-
-        if(sysbox.isStarter()){
-            signal.setState("ended");
-        }
-        else {
-//           did not use method because it's easy
-            signal.setState("on_sysbox");
-
-        }
-    }
-
-    private void signal_go_to_previous_bank(Signal signal) {
-        Configg cons = Configg.getInstance();
-
-        Sysbox sysbox =signal.getLinked_wire().getSecondgate().getSysbox();
-
-        if(sysbox.signal_bank.size()>5 && !sysbox.isStarter()){
-            //lost
-            signal.setState("lost");
-            return;
-        }
-
-        sysbox.signal_bank.add(signal);
-//        if(signal.getTypee().getId()==1) {
-//            staticDataModel.setSekke(staticDataModel.getSekke() + cons.getRectangle_signal_sekke_added());
-//        }
-//        if(signal.getTypee().getId()==2) {
-//            staticDataModel.setSekke(staticDataModel.getSekke() + cons.getTraiangle_signal_sekke_added());
-//        }
-        view.just_game_pane.getChildren().remove(signal.poly);
-        signal.getLinked_wire().getFirstgate().setIn_use(false);
-
-        if(sysbox.isStarter()){
-            signal.setState("ended");
-        }
-        else {
-//           did not use method because it's easy
-            signal.setState("on_sysbox");
-
-        }
     }
 
     private void high_speed_signal_added_to_sysbox(Signal signal, Sysbox sysbox) {
         sysbox.setHealthy(false);
         sysbox.getIndicator_rectangle().setFill(cons.getUnHealthy_indicator_color());
-        staticDataModel.seekSyboxes.add(new EventHappenWithFrame(sysbox,staticDataModel.signal_run_frame_counter));
+        staticDataModel.seekSysboxes.add(new EventHappenWithFrame(sysbox,staticDataModel.signal_run_frame_counter));
     }
 
     private void signal_go_to_wire(Signal signal, Gate recom_gate) {

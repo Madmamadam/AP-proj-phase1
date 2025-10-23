@@ -12,6 +12,7 @@ public class Signal {
     private double length_on_wire;
     private Wire linked_wire;
     private boolean is_updated;
+    private boolean going_forward;
     private double each_frame_length_delta ; //that means velocity
 
     private double x;
@@ -29,6 +30,7 @@ public class Signal {
         noise=0.0;
         length_on_wire=0.0;
         is_updated=false;
+        going_forward=true;
         this.typee=typee;
         state="on_wire";
         each_frame_length_delta = cons.getDefault_delta_wire_length();
@@ -47,6 +49,14 @@ public class Signal {
         Signal clone = new Signal(this.typee);
         clone.setState("on_sysbox");
         return clone;
+    }
+
+    public boolean isGoing_forward() {
+        return going_forward;
+    }
+
+    public void setGoing_forward(boolean going_forward) {
+        this.going_forward = going_forward;
     }
 
     public double getY() {

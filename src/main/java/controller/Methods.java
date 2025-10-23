@@ -36,12 +36,14 @@ public class Methods {
         boolean second_found = false;
         Gate secound_gate = null;
         for(Gate gate:sysbox.outer_gates){
-            if (Objects.equals(gate.getTypee().getShapeName(),signal.getTypee().getShapeName()) && !gate.isIn_use() && gate.getWire()!=null){
-                return gate;
-            }
-            if(!gate.isIn_use() && !second_found && gate.getWire()!=null){
-                second_found = true;
-                secound_gate = gate;
+            if(gate.getWire().getSecondgate().getSysbox().isHealthy()) {
+                if (Objects.equals(gate.getTypee().getShapeName(), signal.getTypee().getShapeName()) && !gate.isIn_use() && gate.getWire() != null) {
+                    return gate;
+                }
+                if (!gate.isIn_use() && !second_found && gate.getWire() != null) {
+                    second_found = true;
+                    secound_gate = gate;
+                }
             }
         }
         if(second_found){
@@ -64,10 +66,12 @@ public class Methods {
 
         Polygon poly =signal.poly;
         poly.getPoints().clear();
+
         //just for debugging
         if(mainGameModel.virtual_run){
             System.out.println("virtual run polygon");
         }
+
         if(Objects.equals(signal.getTypee().getShapeName(),"rectangle")){
             poly.getPoints().addAll(signal.getX()-cons.getSignal_rectangle_width()/2,signal.getY()-cons.getSignal_rectangle_height()/2);
             poly.getPoints().addAll(signal.getX()-cons.getSignal_rectangle_width()/2,signal.getY()+cons.getSignal_rectangle_height()/2);
@@ -82,6 +86,60 @@ public class Methods {
             }
             poly.setFill(cons.getSignal_triangle_color());
             System.out.println("add triangle");
+        }
+        if(Objects.equals(signal.getTypee().getShapeName(),"two6")){
+            /*
+             * This implements "two hexagons" as a single 10-sided polygon
+             * (decagon) representing two regular hexagons touching along
+             * a vertical edge. This is necessary because signal.poly
+             * can only be one continuous polygon.
+             *
+             * Requires:
+             * 1. cons.getSignal_two6_radius() [double]: The radius from center
+             * to vertex of one of the hexagons.
+             * 2. cons.getSignal_two6_color() [javafx.scene.paint.Paint]
+             *
+             * Note: Uses Math.PI and Math.cos/sin for accuracy, differing
+             * from the 'pi' variable and assumed static imports in the
+             * "triangle" implementation.
+             */
+
+            // Center point of the combined shape
+            double cx = signal.getX();
+            double cy = signal.getY();
+
+            // Radius of a single hexagon
+            double r = cons.getSignal_two6_radius();
+
+            // Pre-calculate geometric offsets based on a 60-degree (PI/3) angle
+            // w_offset is the horizontal distance from a hex center to its vertical edge
+            double w_offset = r * Math.sin(Math.PI / 3.0); // r * 0.866
+            // h_offset is the vertical distance from a hex center to its shared vertex
+            double h_offset = r * Math.cos(Math.PI / 3.0); // r * 0.5
+
+            // Add the 10 vertices of the combined outline in counter-clockwise order
+            // The shape is centered around (cx, cy)
+
+            // Start at the top-middle "waist" vertex
+            poly.getPoints().addAll(cx, cy - h_offset);             // V1
+
+            // Left Hexagon outline
+            poly.getPoints().addAll(cx - w_offset, cy - r);         // V2
+            poly.getPoints().addAll(cx - (2 * w_offset), cy - h_offset); // V3
+            poly.getPoints().addAll(cx - (2 * w_offset), cy + h_offset); // V4
+            poly.getPoints().addAll(cx - w_offset, cy + r);         // V5
+
+            // Bottom-middle "waist" vertex
+            poly.getPoints().addAll(cx, cy + h_offset);             // V6
+
+            // Right Hexagon outline
+            poly.getPoints().addAll(cx + w_offset, cy + r);         // V7
+            poly.getPoints().addAll(cx + (2 * w_offset), cy + h_offset); // V8
+            poly.getPoints().addAll(cx + (2 * w_offset), cy - h_offset); // V9
+            poly.getPoints().addAll(cx + w_offset, cy - r);         // V10
+
+            poly.setFill(cons.getSignal_two6_color());
+            System.out.println("add two6 (decagon)");
         }
         System.out.println("end poly");
     }

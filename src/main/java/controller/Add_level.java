@@ -13,8 +13,8 @@ public class Add_level {
             //level constraint
             level_gamemodel.constraintss.setMaximum_length(5000);
             level_gamemodel.constraintss.setMaximum_noise(5.0);
-            level_gamemodel.constraintss.setMaximum_time_sec(40);
-            level_gamemodel.constraintss.setMaximum_dead_ratio(0.2);
+            level_gamemodel.constraintss.setMaximum_time_sec(90);
+            level_gamemodel.constraintss.setMaximum_dead_ratio(0.3);
 
 
             //intial model
@@ -25,6 +25,7 @@ public class Add_level {
 
             Signal recSignal = new Signal(new Typee(1));
             Signal triSignal = new Signal(new Typee(2));
+            Signal two6Signal = new Signal(new Typee(3));
 
 
             level_gamemodel.sysboxes.add(new Sysbox(50, 250, 150, 400));
@@ -50,6 +51,7 @@ public class Add_level {
             //باید برای اونایی که بعدا اضافه میشن هم بکنیم اینکارو
             level_gamemodel.signals.addAll(starterSysbox.signal_bank);
 
+            level_gamemodel.After_signals.add(new After_Frame_And_Signal_start(two6Signal.cloneSignal(),60 * 1));
             level_gamemodel.After_signals.add(new After_Frame_And_Signal_start(recSignal.cloneSignal(), 60 * 5));
             level_gamemodel.After_signals.add(new After_Frame_And_Signal_start(recSignal.cloneSignal(), 60 * 2));
             level_gamemodel.After_signals.add(new After_Frame_And_Signal_start(triSignal.cloneSignal(), 60 * 5));
