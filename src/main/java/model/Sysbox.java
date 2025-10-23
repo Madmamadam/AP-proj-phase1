@@ -1,6 +1,8 @@
 package model;
 
+import javafx.scene.control.Label;
 import javafx.scene.shape.Rectangle;
+import javafx.scene.text.Font;
 import mains.Configg;
 
 import java.util.ArrayList;
@@ -14,8 +16,17 @@ public class Sysbox {
     public ArrayList<Gate> outer_gates = new ArrayList<>(); ;
     private boolean starter;
     private boolean healthy =true;
-    private String state; // 1.casual 2.data_spying 3.ddos_attacker 4.vpn
+    private String state;// 1.casual 2.data_spying 3.ddos_attacker 4.vpn
+    private Label state_label=new Label();
 
+
+    public Label getState_label() {
+        return state_label;
+    }
+
+    public void setState_label(Label state_label) {
+        this.state_label = state_label;
+    }
 
     public String getState() {
         return state;
@@ -85,11 +96,20 @@ public class Sysbox {
         this.indicator_rectangle.setX(this.rectangle.getX()+this.rectangle.getWidth()/2-this.indicator_rectangle.getWidth()/2);
         this.indicator_rectangle.setY(this.rectangle.getY()+cons.getIndicator_y_from_head());
         this.signal_bank=new ArrayList<>();
+
+        state_label.setLayoutX(indicator_rectangle.getX()-10);
+        state_label.setLayoutY(indicator_rectangle.getY()+20);
+
         state="casual";
+        state_label.setText(state);
+        state_label.setFont(new Font(10));
+
     }
     public Sysbox(int x , int y,String state){
         this(x,y);
         this.state=state;
+        state_label.setText(state);
+
     }
     public Sysbox(int x ,int y, int width, int height) {
         Configg cons=Configg.getInstance();
@@ -103,11 +123,20 @@ public class Sysbox {
         this.indicator_rectangle.setX(this.rectangle.getX()+this.rectangle.getWidth()/2-this.indicator_rectangle.getWidth()/2);
         this.indicator_rectangle.setY(this.rectangle.getY()+cons.getIndicator_y_from_head());
         this.signal_bank=new ArrayList<>();
+
+        state_label.setLayoutX(indicator_rectangle.getX()-10);
+        state_label.setLayoutY(indicator_rectangle.getY()+20);
+
         state="casual";
+        state_label.setText(state);
+        state_label.setFont(new Font(10));
     }
     public Sysbox(int x ,int y, int width, int height, String state) {
         this(x, y, width, height);
         this.state=state;
+        state_label.setText(state);
+        state_label.setLayoutX(indicator_rectangle.getX());
+        state_label.setLayoutY(indicator_rectangle.getY()+20);
     }
 
     public Sysbox getClone(){

@@ -32,7 +32,7 @@ public class Add_level {
             level_gamemodel.sysboxes.getLast().inner_gates.addAll(Arrays.asList(gatein1.cloneGate(), gatein2.cloneGate(), gatein1.cloneGate()));
             level_gamemodel.sysboxes.getLast().outer_gates.addAll(Arrays.asList(gateout1.cloneGate(), gateout1.cloneGate(), gateout2.cloneGate()));
 
-            level_gamemodel.sysboxes.add(new Sysbox(450, 400));
+            level_gamemodel.sysboxes.add(new Sysbox(450, 400,"vpn"));
             level_gamemodel.sysboxes.getLast().inner_gates.addAll(Arrays.asList(gatein1.cloneGate(), gatein2.cloneGate()));
             level_gamemodel.sysboxes.getLast().outer_gates.addAll(Arrays.asList(gateout1.cloneGate(), gateout2.cloneGate()));
             level_gamemodel.sysboxes.add(new Sysbox(450, 145));

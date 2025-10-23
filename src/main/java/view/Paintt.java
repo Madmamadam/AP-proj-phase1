@@ -106,6 +106,7 @@ public class Paintt {
         for (Sysbox sysbox : controller.mainGameViewAndModel.staticDataModel.sysboxes) {
             just_game_pane.getChildren().add(sysbox.getRectangle());
             just_game_pane.getChildren().add(sysbox.getIndicator_rectangle());
+            just_game_pane.getChildren().add(sysbox.getState_label());
         }
     }
     public void addtopane_gates(){

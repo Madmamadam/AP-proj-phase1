@@ -38,9 +38,9 @@ public class MainGame_Logics {
     public Timeline signals_virtual_run = new Timeline(new KeyFrame(Duration.millis(1000/cons.getVirtual_frequency()), event -> {
         if (staticDataModel.stop_wiring) {
             System.out.println("//////////in virtual run");
-            Signals_Update();
-            check_and_do_collision();
-            staticDataModel.signal_run_frame_counter++;
+                Signals_Update();
+                check_and_do_collision();
+                staticDataModel.signal_run_frame_counter++;
         }
 //            if(gameTimer.getTime_sec()>goToTime_sec){
 //                signals_virtual_run.stop();
@@ -55,20 +55,24 @@ public class MainGame_Logics {
             System.out.println("////////////// in real run");
 
 
-            Signals_Update();
-            check_and_do_collision();
-            ending_check();
-            update_seekSysbox();
+            run_one_frame_model_signalRun_part();
 
             signal_run_viewUpdate();
 
-            staticDataModel.signal_run_frame_counter++;
         }
         else {
             view.gameTimer.setStopping(true);
 //            System.out.println("signal update is short circled (virual_run:"+virtual_run+") & (stop_wiring:"+staticDataModel.stop_wiring+")");
         }
     }));
+
+    private void run_one_frame_model_signalRun_part() {
+        Signals_Update();
+        check_and_do_collision();
+        ending_check();
+        update_seekSysbox();
+        staticDataModel.signal_run_frame_counter++;
+    }
 
     private void update_seekSysbox() {
         for(EventHappenWithFrame event : staticDataModel.seekSysboxes){
