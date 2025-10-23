@@ -16,7 +16,7 @@ public class HighLevelController {
         architectureLoad(mainGameViewAndModelAndController, controller, view);
 
         mainGameViewAndModelAndController.controller = controller;
-        mainGameViewAndModelAndController.start(1);
+        mainGameViewAndModelAndController.start(2);
 
     }
     private void architectureLoad(MainGame_Logics mainGameViewAndModelAndController, Controller controller , Paintt view){

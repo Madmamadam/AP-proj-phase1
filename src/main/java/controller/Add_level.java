@@ -60,7 +60,7 @@ public class Add_level {
             //level constraint
             level_gamemodel.constraintss.setMaximum_length(10000);
             level_gamemodel.constraintss.setMaximum_noise(5.0);
-            level_gamemodel.constraintss.setMaximum_time_sec(40);
+            level_gamemodel.constraintss.setMaximum_time_sec(140);
             level_gamemodel.constraintss.setMaximum_dead_ratio(0.2);
 
 
@@ -78,15 +78,15 @@ public class Add_level {
             level_gamemodel.sysboxes.getLast().inner_gates.addAll(Arrays.asList(gatein1.cloneGate(), gatein2.cloneGate(), gatein1.cloneGate()));
             level_gamemodel.sysboxes.getLast().outer_gates.addAll(Arrays.asList(gateout1.cloneGate(), gateout1.cloneGate(), gateout2.cloneGate()));
 
-            level_gamemodel.sysboxes.add(new Sysbox(450, 400));
+            level_gamemodel.sysboxes.add(new Sysbox(450, 400,"vpn"));
             level_gamemodel.sysboxes.getLast().inner_gates.addAll(Arrays.asList(gatein1.cloneGate(), gatein2.cloneGate()));
             level_gamemodel.sysboxes.getLast().outer_gates.addAll(Arrays.asList(gateout1.cloneGate(), gateout2.cloneGate()));
 
-            level_gamemodel.sysboxes.add(new Sysbox(450, 145));
+            level_gamemodel.sysboxes.add(new Sysbox(450, 145,"data_spying"));
             level_gamemodel.sysboxes.getLast().inner_gates.addAll(Arrays.asList(gatein1.cloneGate(), gatein1.cloneGate()));
             level_gamemodel.sysboxes.getLast().outer_gates.addAll(Arrays.asList(gateout1.cloneGate(), gateout1.cloneGate()));
 
-            level_gamemodel.sysboxes.add(new Sysbox(450, 700));
+            level_gamemodel.sysboxes.add(new Sysbox(450, 700,"data_spying"));
             level_gamemodel.sysboxes.getLast().inner_gates.addAll(Arrays.asList(gatein1.cloneGate(), gatein2.cloneGate() , gatein1.cloneGate() , gatein2.cloneGate()));
             level_gamemodel.sysboxes.getLast().outer_gates.addAll(Arrays.asList(gateout1.cloneGate(), gateout1.cloneGate() , gateout2.cloneGate() , gateout2.cloneGate()));
 
@@ -96,7 +96,7 @@ public class Add_level {
 
 
 
-            level_gamemodel.sysboxes.add(new Sysbox(850,145));
+            level_gamemodel.sysboxes.add(new Sysbox(850,145,"data_spying"));
             level_gamemodel.sysboxes.getLast().inner_gates.addAll(Arrays.asList(gatein1.cloneGate(), gatein2.cloneGate()));
             level_gamemodel.sysboxes.getLast().outer_gates.addAll(Arrays.asList(gateout2.cloneGate(), gateout1.cloneGate()));
 

@@ -160,6 +160,8 @@ public class Sysbox {
         clone.rectangle=this.rectangle;
         clone.indicator_on_state=this.indicator_on_state;
         clone.indicator_rectangle=this.indicator_rectangle;
+        clone.state=this.state;
+        clone.state_label=this.state_label;
 
         clone.starter=this.starter;
         return clone;
