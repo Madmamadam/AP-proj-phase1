@@ -15,6 +15,7 @@ public class Signal {
     private boolean going_forward;
     private double each_frame_length_delta ;//that means velocity
     private boolean isSecure;
+    private Sysbox linked_vpn;
 
     private double x;
     private double y;
@@ -174,5 +175,13 @@ public class Signal {
 
     public void setEach_frame_length_delta(double each_frame_length_delta) {
         this.each_frame_length_delta = each_frame_length_delta;
+    }
+
+    public Sysbox getLinked_vpn() {
+        return linked_vpn;
+    }
+
+    public void setLinked_vpn(Sysbox linked_vpn) {
+        this.linked_vpn = linked_vpn;
     }
 }

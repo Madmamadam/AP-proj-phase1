@@ -225,15 +225,53 @@ public class MainGame_Logics {
     }
 
     private void signal_in_a_sysbox_wanna_go(Signal signal, Sysbox sysbox) {
+        boolean in_effective_attack =false;
         signal.setIs_updated(true);
 
-        if(methods.recommended_gate(sysbox,signal) != null && signal.getState()=="on_sysbox"){
-            Gate recom_gate = (Gate) methods.recommended_gate(sysbox,signal);
-            System.out.println("sysbox.signal_bank.size() "+sysbox.signal_bank.size());
-            System.out.println("nice2");
-            signal_go_to_wire(signal,recom_gate);
-            System.out.println("nice3");
+        if(sysbox.getState()=="vpn" && !signal.isSecure()){
+            weak_signal_go_to_vpn(signal,sysbox);
         }
+        if(sysbox.getState()=="ddos_attacker") {
+            if (!signal.isSecure()) {
+                weak_signal_attacking(signal);
+                in_effective_attack=true;
+            }
+            else{
+                secure_signal_attacking(signal);
+            }
+        }
+
+        if(!in_effective_attack){
+            if(methods.recommended_gate(sysbox,signal) != null && signal.getState()=="on_sysbox"){
+                Gate recom_gate = (Gate) methods.recommended_gate(sysbox,signal);
+                System.out.println("sysbox.signal_bank.size() "+sysbox.signal_bank.size());
+                System.out.println("nice2");
+                signal_go_to_wire(signal,recom_gate);
+                System.out.println("nice3");
+            }
+        }
+        else {
+            if(methods.nonRecommended_gate(sysbox,signal) != null && signal.getState()=="on_sysbox"){
+                Gate recom_gate = (Gate) methods.recommended_gate(sysbox,signal);
+                System.out.println("sysbox.signal_bank.size() "+sysbox.signal_bank.size());
+                System.out.println("nice2");
+                signal_go_to_wire(signal,recom_gate);
+                System.out.println("nice3");
+            }
+        }
+    }
+
+    private void weak_signal_attacking(Signal signal) {
+        signal.setNoise(signal.getNoise()+1);
+    }
+
+    private void secure_signal_attacking(Signal signal) {
+        signal.setSecure(false);
+    }
+
+    private void weak_signal_go_to_vpn(Signal signal, Sysbox sysbox) {
+        signal.setSecure(true);
+        signal.setLinked_vpn(sysbox);
     }
 
     private void update_signal_length_on_wire(Signal signal) {
@@ -422,12 +460,19 @@ public class MainGame_Logics {
             }
 
             //virtual add
-            if(sysbox.getState()=="data_spying" && !signal.isSecure() && !virtual_add){
-                weak_signal_spying(signal,sysbox);
+            if(sysbox.getState()=="data_spying" && !virtual_add && !signal.isSecure()){
+                    weak_signal_spying(signal, sysbox);
+
             }
 
-            //real add
+
             else {
+                //real add
+                if(sysbox.getState()=="data_spying" && !virtual_add && signal.isSecure()){
+                    secure_signal_spying(signal, sysbox);
+                }
+
+
                 sysbox.signal_bank.add(signal);
 
 
@@ -450,6 +495,10 @@ public class MainGame_Logics {
         }
     }
 
+    private void secure_signal_spying(Signal signal, Sysbox sysbox) {
+        signal.setSecure(false);
+    }
+
     private void weak_signal_spying(Signal signal, Sysbox sysbox) {
         int number=methods.number_of_healthy_spy(sysbox);
         int result = java.util.concurrent.ThreadLocalRandom.current().nextInt(1, number + 1);
@@ -468,9 +517,23 @@ public class MainGame_Logics {
     }
 
     private void high_speed_signal_added_to_sysbox(Signal signal, Sysbox sysbox) {
+        if(sysbox.getState()=="vpn"){
+            vpn_disabled(sysbox);
+        }
         sysbox.setHealthy(false);
         sysbox.getIndicator_rectangle().setFill(cons.getUnHealthy_indicator_color());
         staticDataModel.seekSysboxes.add(new EventHappenWithFrame(sysbox,staticDataModel.signal_run_frame_counter));
+    }
+
+    private void vpn_disabled(Sysbox sysbox) {
+        for (Signal signal:staticDataModel.signals){
+            if(signal.isSecure()){
+                if(Objects.equals(signal.getLinked_vpn(),sysbox)){
+                    signal.setSecure(false);
+                    signal.setLinked_vpn(null);
+                }
+            }
+        }
     }
 
     private void signal_go_to_wire(Signal signal, Gate recom_gate) {

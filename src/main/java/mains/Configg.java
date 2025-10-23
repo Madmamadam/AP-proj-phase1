@@ -49,16 +49,20 @@ public class Configg {
     private double gate_rectangle_width=10;
     private double gate_rectangle_height=gate_rectangle_width;
     private double gate_triangle_radius =gate_rectangle_width*4/5;
+    private double gate_two6_length=gate_rectangle_width*3/4;
+
     private Color gate_rectangle_color=Color.BROWN;
     private Color gate_triangle_color=Color.BROWN;
 
     private double signal_rectangle_width=gate_rectangle_width;
     private double signal_rectangle_height=gate_rectangle_height;
     private double signal_triangle_radius =gate_triangle_radius;
-    private double signal_two6_radius =gate_triangle_radius;
+    private double signal_two6_radius =gate_two6_length;
+    private double signal_lock_length=gate_rectangle_width;
     private Color signal_rectangle_color=Color.BLUE;
     private Color signal_triangle_color=Color.BLUE;
     private Color signal_two6_color=Color.BLACK;
+    private Color signal_lock_color=Color.BROWN;
 
     private double event_Handler_view_pref_width=100;
     private double event_Handler_view_pref_height=100;
@@ -372,5 +376,18 @@ public class Configg {
 
     public double getDefault_delta_wire_acceleration() {
         return default_delta_wire_acceleration;
+    }
+
+    public double getSignal_lock_length() {
+        return signal_lock_length;
+    }
+
+
+    public double getGate_two6_length() {
+        return gate_two6_length;
+    }
+
+    public Color getSignal_lock_color() {
+        return signal_lock_color;
     }
 }
