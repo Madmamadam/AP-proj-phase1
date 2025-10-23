@@ -58,7 +58,7 @@ public class Configg {
     private double signal_rectangle_height=gate_rectangle_height;
     private double signal_triangle_radius =gate_triangle_radius;
     private double signal_two6_radius =gate_two6_length;
-    private double signal_lock_length=4*gate_rectangle_width;
+    private double signal_lock_length=gate_rectangle_width;
     private Color signal_rectangle_color=Color.BLUE;
     private Color signal_triangle_color=Color.BLUE;
     private Color signal_two6_color=Color.BLACK;

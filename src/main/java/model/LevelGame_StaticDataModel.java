@@ -51,12 +51,8 @@ public class LevelGame_StaticDataModel {
     //i think must be used at safe state to work correctly
     public LevelGame_StaticDataModel getClone_inMainModel() {
         LevelGame_StaticDataModel clone_stack = new LevelGame_StaticDataModel();
-        clone_stack.signals = new ArrayList<Signal>();
-        clone_stack.sysboxes = new ArrayList<Sysbox>();
         clone_stack.level_wires_length = this.level_wires_length;
         clone_stack.sekke = this.sekke;
-        clone_stack.collapsedPairs = new ArrayList<Pairs>();
-        clone_stack.wires = new ArrayList<Wire>();
         clone_stack.constraintss = this.constraintss;
         clone_stack.Oairyaman = this.Oairyaman;
         clone_stack.Oatar = this.Oatar;
